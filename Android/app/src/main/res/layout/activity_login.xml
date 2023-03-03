@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".activities.LoginActivity"
+    android:background="#fafafa">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#fafafa">
+
+    <EditText
+        android:id="@+id/edit_text_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="21dp"
+        android:background="@drawable/view_border"
+        android:autofillHints=""
+        android:inputType="text"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:paddingRight="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.444"
+        app:layout_constraintStart_toStartOf="parent"
+        android:gravity="end"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <EditText
+        android:id="@+id/edit_text_seat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/view_border"
+        android:autofillHints=""
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:paddingRight="10dp"
+        android:inputType="text"
+        android:gravity="end"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_text_name" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:labelFor="@id/edit_text_name"
+        android:text="@string/login_name_label_text"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/edit_text_name"
+        app:layout_constraintBottom_toBottomOf="@id/edit_text_name"/>
+
+    <TextView
+        android:id="@+id/text_view_seat"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:labelFor="@id/edit_text_seat"
+        android:text="@string/login_seat_label_text"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/edit_text_seat"
+        app:layout_constraintBottom_toBottomOf="@id/edit_text_seat"/>
+
+<!--    <androidx.appcompat.widget.AppCompatButton-->
+<!--        android:id="@+id/button_nearby_flight"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        style="@style/PaxRowButton"-->
+<!--        android:text="Show nearby flights"-->
+<!--        android:layout_marginTop="25dp"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/edit_text_seat" />-->
+
+    <EditText
+        android:id="@+id/edit_text_flight_departure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/view_border"
+        android:autofillHints=""
+        android:inputType="text"
+        android:layout_marginTop="25dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:paddingRight="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.444"
+        app:layout_constraintStart_toStartOf="parent"
+        android:gravity="end"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/text_view_seat" />
+
+    <EditText
+        android:id="@+id/edit_text_flight_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/view_border"
+        android:autofillHints=""
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:paddingRight="10dp"
+        android:inputType="text"
+        android:gravity="end"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_text_flight_departure" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/selectionButton"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:stateListAnimator="@null"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/edit_text_flight_departure"
+        app:layout_constraintBottom_toBottomOf="@id/edit_text_flight_departure"/>
+
+    <TextView
+        android:id="@+id/text_view_departure"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:labelFor="@id/edit_text_flight_departure"
+        android:text="@string/login_departure_label_text"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/edit_text_flight_departure"
+        app:layout_constraintBottom_toBottomOf="@id/edit_text_flight_departure"/>
+
+    <TextView
+        android:id="@+id/text_view_flight_number"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:labelFor="@id/edit_text_flight_number"
+        android:text="@string/login_flight_label_text"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/edit_text_flight_number"
+        app:layout_constraintBottom_toBottomOf="@id/edit_text_flight_number"/>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/button_login"/>
+
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/button_login"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        style="@style/PaxRowButton"
+        android:text="Login"
+        android:layout_marginTop="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_text_flight_number" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

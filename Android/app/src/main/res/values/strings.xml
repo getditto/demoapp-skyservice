@@ -1,0 +1,62 @@
+<resources>
+    <string name="app_name">SkyService</string>
+    <string name="toolbar_name">SkyService</string>
+    <string name="preference_file_key">live.ditto.skyservice</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="action_orders">Orders</string>
+    <string name="action_menu">Menu</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_login">SkyService</string>
+    <string name="notification_key">live.ditto.skyservice</string>
+    <string name="notification_description">Notifcations for SkyService passenger meal ordering</string>
+    <string name="ordering_disabled">The crew has disabled ordering for now.</string>
+    <string name="clear_cart">Are you sure you want to clear your cart?</string>
+    <string name="no_nearby_flights">There is no nearby flight</string>
+    <string name="no_nearby_flights_detail">Not long to wait! You’ll be able to see our menus as soon as you’re on board.</string>
+
+    <string name="flight_dialog_header">Is this your flight?</string>
+    <string name="flight_dialog_subheader">Please choose your flight</string>
+    <string name="add_to_cart">Add to cart</string>
+    <string name="uncategorized">Uncategorised</string>
+
+    <string name="name_validation">The name must be 3 or more characters long</string>
+    <string name="seat_validation">Seat invalid\nformat example: 1A</string>
+    <string name="clear_yes">Yes, clear</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="order_status">(order %1$s)</string>
+    <string name="created_order">Created: %1$s</string>
+    <string name="order_status_long">Status: order %1$s</string>
+
+
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="hello_world">Hello Square World!</string>
+    <string name="login_name_label_text">Name:</string>
+    <string name="login_seat_label_text">Seat:</string>
+    <string name="login_departure_label_text">Departure date:</string>
+    <string name="login_flight_label_text">Flight number:</string>
+    <string name="login_seat_number_hint">You seat number</string>
+    <string name="login_name_hint">Your name</string>
+    <string name="ordering_enabled">Ordering enabled</string>
+    <string name="current_flight_info">CURRENT FLIGHT INFO</string>
+    <string name="my_profile">MY PROFILE</string>
+    <string name="app_info">APP INFO</string>
+
+    <string name="save_profile">Save profile</string>
+    <string name="send_feedback">Send feedback</string>
+    <string name="presence">Presence</string>
+    <string name="app_settings">App Settings</string>
+    <string name="logout">Logout</string>
+
+
+    <string name="android_label">Android:</string>
+    <string name="build_label">App version and build:</string>
+    <string name="version_label">Ditto version:</string>
+
+    <string name="build_info" formatted="true">Version %1$s build %2$s</string>
+
+</resources>

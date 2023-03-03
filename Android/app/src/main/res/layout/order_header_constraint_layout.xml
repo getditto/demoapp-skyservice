@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/divider">
+
+    <TextView
+        android:id="@+id/order_header_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:paddingTop="15dp"
+        android:textSize="25sp"
+        android:text="Order created"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:includeFontPadding="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/order_created_header_text_view"/>
+
+    <TextView
+        android:id="@+id/order_status_header_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:paddingTop="15dp"
+        android:layout_marginEnd="16dp"
+        android:textSize="25sp"
+        android:text="(Open)"
+        android:textColor="@color/primary_200"
+        android:includeFontPadding="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/order_header_text_view"
+        app:layout_constraintTop_toTopOf="@id/order_header_text_view"
+       app:layout_constraintBottom_toBottomOf="@id/order_header_text_view"/>
+
+    <TextView
+        android:id="@+id/order_created_header_text_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:textSize="20sp"
+        android:paddingBottom="9dp"
+        android:includeFontPadding="false"
+        android:textColor="@color/black"
+        android:text="Created: "
+        app:layout_constraintTop_toBottomOf="@id/order_header_text_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+    <include layout="@layout/order_status_constraint_layout"
+        android:id="@+id/order_segment_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintTop_toBottomOf="@id/order_created_header_text_view"
+        android:paddingBottom="9dp"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>

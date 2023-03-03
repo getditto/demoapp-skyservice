@@ -1,0 +1,3 @@
+rootProject.name = "SkyService"
+
+include ':app'

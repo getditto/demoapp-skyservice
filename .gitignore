@@ -85,3 +85,6 @@ local.properties
 # Environment Variable
 .env
 Env.swift
+
+# gradle.properties contains environment variables
+gradle.properties
