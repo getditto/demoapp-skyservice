@@ -1,0 +1,93 @@
+PODS:
+  - BetterSegmentedControl (2.0.1)
+  - Cartography (4.0.0)
+  - Chatto (4.1.0)
+  - ChattoAdditions (4.1.0):
+    - Chatto (= 4.1.0)
+  - Differentiator (5.0.0)
+  - Eureka (5.3.6)
+  - IQKeyboardManagerSwift (6.5.10)
+  - MarqueeLabel (4.0.5)
+  - NotificationBannerSwift (3.0.6):
+    - MarqueeLabel (~> 4.0.5)
+    - SnapKit (~> 5.0.1)
+  - RSKPlaceholderTextView (6.1.0)
+  - RxCocoa (6.5.0):
+    - RxRelay (= 6.5.0)
+    - RxSwift (= 6.5.0)
+  - RxDataSources (5.0.0):
+    - Differentiator (~> 5.0)
+    - RxCocoa (~> 6.0)
+    - RxSwift (~> 6.0)
+  - RxOptional (5.0.2):
+    - RxCocoa (~> 6.0)
+    - RxSwift (~> 6.0)
+  - RxRelay (6.5.0):
+    - RxSwift (= 6.5.0)
+  - RxSwift (6.5.0)
+  - RxUIAlert (1.6.1):
+    - RxCocoa
+    - RxSwift
+  - SnapKit (5.0.1)
+  - SwiftHEXColors (1.4.1)
+
+DEPENDENCIES:
+  - BetterSegmentedControl
+  - Cartography
+  - Chatto
+  - ChattoAdditions
+  - Eureka
+  - IQKeyboardManagerSwift
+  - NotificationBannerSwift (~> 3.0.0)
+  - RSKPlaceholderTextView
+  - RxCocoa
+  - RxDataSources
+  - RxOptional
+  - RxSwift
+  - RxUIAlert
+  - SwiftHEXColors
+
+SPEC REPOS:
+  trunk:
+    - BetterSegmentedControl
+    - Cartography
+    - Chatto
+    - ChattoAdditions
+    - Differentiator
+    - Eureka
+    - IQKeyboardManagerSwift
+    - MarqueeLabel
+    - NotificationBannerSwift
+    - RSKPlaceholderTextView
+    - RxCocoa
+    - RxDataSources
+    - RxOptional
+    - RxRelay
+    - RxSwift
+    - RxUIAlert
+    - SnapKit
+    - SwiftHEXColors
+
+SPEC CHECKSUMS:
+  BetterSegmentedControl: 09607b27861d49cbce48b7673b74f9150a3d371a
+  Cartography: c5626d29056b20f1e95c017326ee4df57cc39ad8
+  Chatto: dae34c377e0eca8bdcfe7a05a4d79d55eaccec3e
+  ChattoAdditions: 101f0ee674f16ecdf4177939b7ce9271ea732999
+  Differentiator: e8497ceab83c1b10ca233716d547b9af21b9344d
+  Eureka: 28ad9dec6286cd7cd601fdf8e8df39bb7356a8f4
+  IQKeyboardManagerSwift: 52962c76ab33532f15ad9f3ff4e5715eda5335bb
+  MarqueeLabel: 00cc0bcd087111dca575878b3531af980559707d
+  NotificationBannerSwift: 7021be2338f8f29cf424b0aca43da462bf9e2a1a
+  RSKPlaceholderTextView: 52f26e643b6f9bbf16f45cd2bbe2181b6dfe090c
+  RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
+  RxDataSources: aa47cc1ed6c500fa0dfecac5c979b723542d79cf
+  RxOptional: 3664964c96b69dd20c9cf78bdfe546615e26eca8
+  RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
+  RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
+  RxUIAlert: 315f87b14166c37a37b6bb32220b9f42090ab5ca
+  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
+  SwiftHEXColors: 1cb6e5d55c52749aa33db8f088ac55eb71ca4c7f
+
+PODFILE CHECKSUM: 59b246e2ed333f759b57f07e17d6045886d4fe47
+
+COCOAPODS: 1.11.3
