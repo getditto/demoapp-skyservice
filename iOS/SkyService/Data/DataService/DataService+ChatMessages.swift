@@ -7,7 +7,7 @@ extension DataService {
         return workspaceId$
             .flatMapLatest { [unowned chatMessages = self.chatMessages, users = self.users] (workspaceId) -> Observable<[ChatMessage]> in
                 let chatMessages: Observable<[ChatMessage]> = chatMessages
-                    .find("workspaceId == '\(workspaceId)'")
+                    .find("workspaceId == '\(workspaceId)' && deleted == false")
                     .sort("createdOn", direction: .ascending)
                     .documents$()
                     .mapToDittoModel(type: ChatMessage.self)
@@ -33,7 +33,8 @@ extension DataService {
             "body": body,
             "workspaceId": workspaceId,
             "senderUserId": self.userId,
-            "createdOn": Date().isoDateString
+            "createdOn": Date().isoDateString,
+            "deleted": false
         ])
     }
 
@@ -42,7 +43,14 @@ extension DataService {
             debugPrint("No workspaceId was found while attempting to call `deleteAllChatMessages`")
             return
         }
-        chatMessages.find("workspaceId == '\(workspaceId)'").remove()
+        
+        let chatDocs = chatMessages.find("workspaceId == '\(workspaceId)'").exec()
+        for doc in chatDocs {
+            chatMessages.findByID(doc.id).update { (mutable) in
+                guard let mutable = mutable else { return }
+                mutable["deleted"].set(true)
+            }
+        }
     }
 
 }

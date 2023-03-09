@@ -12,9 +12,9 @@ extension DataService {
             .flatMapLatest { [weak self] (workspaceId) -> Observable<[CartLineItem]> in
                 guard let `self` = self else { return Observable.empty() }
 
-                var query = "workspaceId == '\(workspaceId)' && userId == '\(userId)' && orderId == null"
+                var query = "workspaceId == '\(workspaceId)' && userId == '\(userId)' && orderId == null && deleted == false"
                 if let orderId = orderId {
-                    query = "workspaceId == '\(workspaceId)' && userId == '\(userId)' && orderId == '\(orderId)'"
+                    query = "workspaceId == '\(workspaceId)' && userId == '\(userId)' && orderId == '\(orderId)' deleted == false"
                 }
 
                 return self.ditto.store["cartLineItems"]
@@ -28,7 +28,7 @@ extension DataService {
             .flatMapLatest { [weak self] (workspaceId) -> Observable<[CartLineItem]> in
                 guard let `self` = self else { return Observable.empty() }
                 let containsPredicate: String = orderIds.map{ "'\($0)'" }.joined(separator: ",")
-                let query = "workspaceId == '\(workspaceId)' && contains([\(containsPredicate)], orderId)"
+                let query = "workspaceId == '\(workspaceId)' && contains([\(containsPredicate)], orderId) && deleted == false"
                 return self.ditto.store["cartLineItems"]
                     .find(query)
                     .documents$().mapToDittoModel(type: CartLineItem.self)
@@ -59,7 +59,8 @@ extension DataService {
                     "menuItemId": menuItemId,
                     "userId": userId,
                     "workspaceId": workspaceId,
-                    "orderId": nil
+                    "orderId": nil,
+                    "deleted": false
                 ])
             }
         }
@@ -74,14 +75,25 @@ extension DataService {
                 if let orderId = orderId {
                     query = "workspaceId == '\(workspaceId)' && userId == '\(userId)' && orderId == '\(orderId)'"
                 }
-
-                self.ditto.store["cartLineItems"].find(query).remove()
+                                
+                let cartLineItemsDocs = self.ditto.store["cartLineItems"].find(query).exec()
+                for doc in cartLineItemsDocs {
+                    self.ditto.store["cartLineItems"].findByID(doc.id).update { (mutable) in
+                        guard let mutable = mutable else { return }
+                        mutable["deleted"].set(true)
+                    }
+                }
+                
+                
                 return Observable.just(())
             }
     }
 
     func removeCartLineItem(id: String) -> Observable<Void> {
-        self.ditto.store["cartLineItems"].findByID(id).remove()
+        self.ditto.store["cartLineItems"].findByID(id).update { (mutable) in
+            guard let mutable = mutable else { return }
+            mutable["deleted"].set(true)
+        }
         return Observable.just(())
     }
 
@@ -92,7 +104,10 @@ extension DataService {
     }
 
     func deleteOrder(orderId: String) {
-        self.orders.findByID(orderId).remove()
+        self.orders.findByID(orderId).update { (mutable) in
+            guard let mutable = mutable else { return }
+            mutable["deleted"].set(true)
+        }
     }
 
 }

@@ -16,6 +16,7 @@ struct MenuItem: IdentifiableType, Equatable, Ordinal, DittoModel {
     var totalCount: Int?
     var usedCount: Int?
     var isCrewOnly: Bool
+    var deleted: Bool
     /**
      This is to specify maximum quantity that a user can select
      */
@@ -34,6 +35,7 @@ struct MenuItem: IdentifiableType, Equatable, Ordinal, DittoModel {
         self.totalCount = document["totalCount"].int
         self.usedCount = document["usedCount"].int
         self.isCrewOnly = document["isCrewOnly"].boolValue
+        self.deleted = document["deleted"].boolValue
 
         if let ordinal = document["ordinal"].float {
             self.ordinal = ordinal

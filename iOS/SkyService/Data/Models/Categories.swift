@@ -10,6 +10,7 @@ struct Category: Equatable, IdentifiableType, Ordinal, DittoModel {
     var details: String
     var ordinal: Float
     var isCrewOnly: Bool
+    var deleted: Bool
 
     init(document: DittoDocument) {
         self.id = document.id.toString()
@@ -17,6 +18,7 @@ struct Category: Equatable, IdentifiableType, Ordinal, DittoModel {
         self.details = document["details"].stringValue
         self.ordinal = document["ordinal"].floatValue
         self.isCrewOnly = document["isCrewOnly"].boolValue
+        self.deleted = document["deleted"].boolValue
     }
 }
 
