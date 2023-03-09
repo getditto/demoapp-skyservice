@@ -14,7 +14,7 @@ extension DataService {
 
                 var query = "workspaceId == '\(workspaceId)' && userId == '\(userId)' && orderId == null && deleted == false"
                 if let orderId = orderId {
-                    query = "workspaceId == '\(workspaceId)' && userId == '\(userId)' && orderId == '\(orderId)' deleted == false"
+                    query = "workspaceId == '\(workspaceId)' && userId == '\(userId)' && orderId == '\(orderId)' && deleted == false"
                 }
 
                 return self.ditto.store["cartLineItems"]
