@@ -9,14 +9,14 @@ Powered by [Ditto](https://ditto.live/).
 ## Features
 
 #### Real-time Meal Item Editing
-Set menu item name, details, price and more, syncing to passenger and crew devices in real-time
+* Set menu item name, details, price and more, syncing to passenger and crew devices in real-time
 
 #### Customizable Options
 
-Add multiple choice or single choice options to items such as "add milk", "sauce on side" etc...
+* Add multiple choice or single choice options to items such as "add milk", "sauce on side" etc...
 
 #### Category Control
-Categorize and reorder menu items into sections like "Appetizers", "Main Course", and "Desserts"
+* Categorize and reorder menu items into sections like "Appetizers", "Main Course", and "Desserts"
 
 #### Manage Passenger Information
 * Change seats, name, and description during the flight
