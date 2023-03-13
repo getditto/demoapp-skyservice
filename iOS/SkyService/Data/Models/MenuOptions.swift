@@ -28,6 +28,7 @@ struct MenuItemOption: DittoModel, Ordinal, Equatable {
     var menuItemId: String
     var type: MenuItemOptionType
     var isRequired: Bool
+    var deleted: Bool
 
     var allowedValues: [String]
 
@@ -42,6 +43,7 @@ struct MenuItemOption: DittoModel, Ordinal, Equatable {
         self.allowedValues = document["allowedValues"].register?.arrayValue.compactMap({ (v) -> String? in
             return v as? String
         }) ?? []
+        self.deleted = document["deleted"].boolValue
     }
 }
 
@@ -54,7 +56,7 @@ extension DataService {
                 guard let `self` = self else { return Observable.empty() }
                 return self.ditto
                     .store["menuItemOptions"]
-                    .find("workspaceId == '\(workspaceId)'")
+                    .find("workspaceId == '\(workspaceId)' && deleted == false")
                     .documents$()
                     .mapToDittoModel(type: MenuItemOption.self)
             }
@@ -63,7 +65,7 @@ extension DataService {
     func menuItemOptions(_ menuItemId: String) -> Observable<[MenuItemOption]> {
         return self.ditto
             .store["menuItemOptions"]
-            .find("menuItemId == '\(menuItemId)'")
+            .find("menuItemId == '\(menuItemId)' && deleted == false")
             .documents$()
             .mapToDittoModel(type: MenuItemOption.self)
     }
@@ -77,13 +79,16 @@ extension DataService {
     }
 
     func deleteMenuItemOption(menuItemOptionId: String) {
-        self.ditto.store["menuItemOptions"].findByID(menuItemOptionId).remove()
+        self.ditto.store["menuItemOptions"].findByID(menuItemOptionId).update{ (mutable) in
+            guard let mutable = mutable else { return }
+            mutable["deleted"].set(true)
+        }
     }
 
     func createMenuItemOption(menuItemId: String, type: MenuItemOption.MenuItemOptionType) {
         guard let workspaceId: String = UserDefaults.standard.workspaceId?.description else { return }
         self.ditto.store.write { (txn) in
-            let lastVal: DittoDocument? = txn["menuItemOptions"].find("menuItemId == '\(menuItemId)'")
+            let lastVal: DittoDocument? = txn["menuItemOptions"].find("menuItemId == '\(menuItemId)' && deleted == false")
                 .sort("ordinal", direction: .ascending).exec().last
 
             let ordinal: Float = {
@@ -120,7 +125,8 @@ extension DataService {
                     "ordinal": ordinal,
                     "menuItemId": menuItemId,
                     "workspaceId": workspaceId,
-                    "allowedValues": allowedValues
+                    "allowedValues": allowedValues,
+                    "deleted": false
                 ])
         }
     }

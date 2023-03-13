@@ -26,7 +26,7 @@ extension DataService {
             .flatMapLatest { [weak self] (workspaceId) -> Observable<[Note]> in
                 guard let `self` = self else { return .empty() }
                 return self.notes
-                    .find("workspaceId == '\(workspaceId)'")
+                    .find("workspaceId == '\(workspaceId)' && deleted == false")
                     .sort("ordinal", direction: .ascending)
                     .documents$()
                     .mapToDittoModel(type: Note.self)
@@ -68,7 +68,7 @@ extension DataService {
                     m?["userId"].set(self.userId)
                 })
             } else {
-                let currentNotes = txn["notes"].find("workspaceId == '\(workspaceId)'").exec()
+                let currentNotes = txn["notes"].find("workspaceId == '\(workspaceId)' && deleted == false").exec()
                 let ordinal: Float = {
                     guard let ordinal = currentNotes.last?["ordinal"].float else { return  Float.random(min: 0, max: 1) }
                     return ordinal + 1
@@ -81,7 +81,8 @@ extension DataService {
                     "createdOn": Date().isoDateString,
                     "editedOn": Date().isoDateString,
                     "isShared": isShared,
-                    "workspaceId": workspaceId
+                    "workspaceId": workspaceId,
+                    "deleted": false
                 ]).toString()
             }
         }
@@ -95,14 +96,29 @@ extension DataService {
     }
 
     func deleteNoteById(_ id: String) -> Observable<Bool> {
-        let deleted = self.notes.findByID(id).remove()
-        return Observable.just(deleted)
+        self.notes.findByID(id).update { (mutable) in
+            guard let mutable = mutable else { return }
+            mutable["deleted"].set(true)
+        }
+        
+        let doc = self.notes.findByID(id).exec()
+
+        return Observable.just(doc?["deleted"].boolValue ?? true)
     }
 
     func deletePersonalNotes() -> Observable<Void> {
         return workspaceId$
             .flatMapLatest { (workspaceId) -> Observable<Void> in
-                self.notes.find("workspaceId == '\(workspaceId)' && userId == '\(DataService.shared.userId)' && isShared == false").remove()
+                
+                let noteDocs = self.notes.find("workspaceId == '\(workspaceId)' && userId == '\(DataService.shared.userId)' && isShared == false").exec()
+                
+                for doc in noteDocs {
+                    self.notes.findByID(doc.id).update { (mutable) in
+                        guard let mutable = mutable else { return }
+                        mutable["deleted"].set(true)
+                    }
+                }
+
                 return Observable.just(())
             }
     }
@@ -110,7 +126,15 @@ extension DataService {
     func deleteAllNotes() -> Observable<Void> {
         return workspaceId$
             .flatMapLatest { (workspaceId) -> Observable<Void> in
-                self.notes.find("workspaceId == '\(workspaceId)'").remove()
+                
+                let noteDocs = self.notes.find("workspaceId == '\(workspaceId)' && isShared == true").exec()
+                
+                for doc in noteDocs {
+                    self.notes.findByID(doc.id).update { (mutable) in
+                        guard let mutable = mutable else { return }
+                        mutable["deleted"].set(true)
+                    }
+                }
                 return Observable.just(())
             }
     }

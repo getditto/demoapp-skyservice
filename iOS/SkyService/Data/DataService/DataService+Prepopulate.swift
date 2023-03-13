@@ -6,8 +6,21 @@ extension DataService {
     func deleteCategoriesAndMenu() {
         guard let workspaceId = UserDefaults.standard.workspaceId?.description else { return }
         ditto.store.write { (tx) in
-            tx["categories"].find("workspaceId == '\(workspaceId)'").remove()
-            tx["menuItems"].find("workspaceId == '\(workspaceId)'").remove()
+            let categoriesDocs = tx["categories"].find("workspaceId == '\(workspaceId)'").exec()
+            for doc in categoriesDocs {
+                tx["categories"].findByID(doc.id).update { (mutable) in
+                    guard let mutable = mutable else { return }
+                    mutable["deleted"].set(true)
+                }
+            }
+            
+            let menuDocs = tx["menuItems"].find("workspaceId == '\(workspaceId)'").exec()
+            for doc in menuDocs {
+                tx["menuItems"].findByID(doc.id).update { (mutable) in
+                    guard let mutable = mutable else { return }
+                    mutable["deleted"].set(true)
+                }
+            }
         }
     }
 
@@ -76,7 +89,8 @@ extension DataService {
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
                 "totalCount": nil,
-                "usedCount": nil
+                "usedCount": nil,
+                "deleted": false
             ],
             [
                 "name": "Focaccia Bread and Olive Oil",
@@ -88,7 +102,8 @@ extension DataService {
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
                 "totalCount": nil,
-                "usedCount": nil
+                "usedCount": nil,
+                "deleted": false
             ],
             [
                 "name": "Chips",
@@ -100,7 +115,8 @@ extension DataService {
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
                 "totalCount": nil,
-                "usedCount": nil
+                "usedCount": nil,
+                "deleted": false
             ],
             [
                 "name": "Chocolate Chip Cookies",
@@ -112,7 +128,8 @@ extension DataService {
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
                 "totalCount": nil,
-                "usedCount": nil
+                "usedCount": nil,
+                "deleted": false
             ],
             [
                 "name": "General Snackbox",
@@ -124,7 +141,8 @@ extension DataService {
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
                 "totalCount": nil,
-                "usedCount": nil
+                "usedCount": nil,
+                "deleted": false
             ],
             [
                 "name": "Turkey Sandwich",
@@ -136,7 +154,8 @@ extension DataService {
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
                 "totalCount": nil,
-                "usedCount": nil
+                "usedCount": nil,
+                "deleted": false
             ],
             [
                 "name": "Curry Chicken",
@@ -148,7 +167,8 @@ extension DataService {
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
                 "totalCount": nil,
-                "usedCount": nil
+                "usedCount": nil,
+                "deleted": false
             ],
             [
                 "name": "Roast Beef Sandwich",
@@ -160,7 +180,8 @@ extension DataService {
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
                 "totalCount": nil,
-                "usedCount": nil
+                "usedCount": nil,
+                "deleted": false
             ],
             [
                 "name": "Vegan Spaghetti",
@@ -172,7 +193,8 @@ extension DataService {
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
                 "totalCount": nil,
-                "usedCount": nil
+                "usedCount": nil,
+                "deleted": false
             ],
             // desserts
             [
@@ -185,7 +207,8 @@ extension DataService {
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
                 "totalCount": nil,
-                "usedCount": nil
+                "usedCount": nil,
+                "deleted": false
             ],
             [
                 "name": "Chocolate and Vanilla Fudge",
@@ -197,7 +220,8 @@ extension DataService {
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
                 "totalCount": nil,
-                "usedCount": nil
+                "usedCount": nil,
+                "deleted": false
             ],
 
             // alcoholic-drinks
@@ -211,7 +235,8 @@ extension DataService {
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
                 "totalCount": nil,
-                "usedCount": nil
+                "usedCount": nil,
+                "deleted": false
             ],
             [
                 "name": "Boston Lager",
@@ -223,7 +248,8 @@ extension DataService {
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
                 "totalCount": nil,
-                "usedCount": nil
+                "usedCount": nil,
+                "deleted": false
             ],
             [
                 "name": "Rosé",
@@ -235,7 +261,8 @@ extension DataService {
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
                 "totalCount": nil,
-                "usedCount": nil
+                "usedCount": nil,
+                "deleted": false
             ],
             // non-alcoholic-drinks
             [
@@ -248,7 +275,8 @@ extension DataService {
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
                 "totalCount": nil,
-                "usedCount": nil
+                "usedCount": nil,
+                "deleted": false
             ],
             [
                 "name": "Pepsi",
@@ -260,7 +288,8 @@ extension DataService {
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
                 "totalCount": nil,
-                "usedCount": nil
+                "usedCount": nil,
+                "deleted": false
             ],
             [
                 "name": "Coffee",
@@ -272,7 +301,8 @@ extension DataService {
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
                 "totalCount": nil,
-                "usedCount": nil
+                "usedCount": nil,
+                "deleted": false
             ]
         ]
 
@@ -291,7 +321,8 @@ extension DataService {
                     "details": details,
                     "ordinal": ordinal,
                     "workspaceId": workspaceId,
-                    "isCrewOnly": isCrewOnly
+                    "isCrewOnly": isCrewOnly,
+                    "deleted": false
                 ], writeStrategy: .insertIfAbsent)
             }
 

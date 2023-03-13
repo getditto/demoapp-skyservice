@@ -29,6 +29,8 @@ class ChatMessage: MessageModelProtocol, DittoModel {
     var user: User? = nil
 
     var workspaceId: String
+    
+    var deleted: Bool
 
     required init(document: DittoDocument) {
         self.uid = document.id.toString()
@@ -38,6 +40,8 @@ class ChatMessage: MessageModelProtocol, DittoModel {
         self.senderId = document["senderUserId"].stringValue
         self.body = document["body"].stringValue
         self.workspaceId = document["workspaceId"].stringValue
+        self.deleted = document["deleted"].boolValue
+
     }
 
 }

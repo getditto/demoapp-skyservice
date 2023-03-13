@@ -12,6 +12,7 @@ struct Note: DittoModel, Ordinal {
     var ordinal: Float
     var isCompleted: Bool
     var isShared: Bool
+    var deleted: Bool
 
     var user: User?
 
@@ -28,5 +29,7 @@ struct Note: DittoModel, Ordinal {
         }()
         self.ordinal = document["ordinal"].floatValue
         self.isShared = document["isShared"].boolValue
+        self.deleted = document["deleted"].boolValue
+
     }
 }

@@ -216,7 +216,7 @@ final class DataService {
         }
 
         let justMenuItems$ = menuItems
-            .find("workspaceId == '\(workspaceId)'")
+            .find("workspaceId == '\(workspaceId)' && deleted == false")
             .documents$()
             .map { (docs) -> [MenuItem] in
                 return docs.map({ MenuItem(document: $0) })
@@ -257,7 +257,10 @@ final class DataService {
     }
 
     func deleteMenuItem(id: String) {
-        menuItems.findByID(id).remove()
+        menuItems.findByID(id).update{ (mutable) in
+            guard let mutable = mutable else { return }
+            mutable["deleted"].set(true)
+        }
     }
 
     func setCartItem(forUserId: String, menuItemId: String, quantity: Int = 1) {
@@ -299,7 +302,10 @@ final class DataService {
     }
 
     func deleteUser(userId: String) {
-        users.findByID(userId).remove()
+        users.findByID(userId).update{ (mutable) in
+            guard let mutable = mutable else { return }
+            mutable["deleted"].set(true)
+        }
     }
 
     func me$() -> Observable<User?> {
@@ -318,7 +324,7 @@ final class DataService {
             .flatMapLatest { [weak users = self.users] (workspaceId) -> Observable<[User]> in
                 guard let users = users else { return Observable.empty() }
                 return users
-                    .find("workspaceId == '\(workspaceId)'")
+                    .find("workspaceId == '\(workspaceId)' && deleted == false")
                     .documents$()
                     .mapToDittoModel(type: User.self)
             }
@@ -346,7 +352,8 @@ final class DataService {
                     "workspaceId": workspaceId,
                     "seat": seat,
                     "isManuallyCreated": isManuallyCreated,
-                    "role": role.rawValue
+                    "role": role.rawValue,
+                    "deleted": false
                 ], writeStrategy: .insertIfAbsent)
             }
         }
@@ -356,7 +363,7 @@ final class DataService {
         return workspaceId$.flatMapLatest { [weak self] workspaceId -> Observable<[Category]> in
             guard let `self` = self else { return Observable.empty() }
             return self.categories
-                .find("workspaceId == '\(workspaceId)'")
+                .find("workspaceId == '\(workspaceId)' && deleted == false")
                 .documents$()
                 .map({ docs in
                     return docs.map { Category(document: $0) }
@@ -381,14 +388,15 @@ final class DataService {
             return
         }
         ditto.store.write { (txn) in
-            let count = txn["categories"].find("workspaceId == '\(workspaceId)'").exec().count
+            let count = txn["categories"].find("workspaceId == '\(workspaceId)' && deleted == false").exec().count
             let ordinal = Float.random(min: Float(count), max: Float(count + 1))
             try! txn["categories"].upsert([
                 "name": name,
                 "details": details,
                 "workspaceId": workspaceId,
                 "ordinal": ordinal,
-                "isCrewOnly": isCrewOnly
+                "isCrewOnly": isCrewOnly,
+                "deleted": false
             ])
         }
     }
@@ -415,7 +423,10 @@ final class DataService {
     }
 
     func deleteCategory(id: String) {
-        categories.findByID(id).remove()
+        categories.findByID(id).update { (mutable) in
+            guard let mutable = mutable else { return }
+            mutable["deleted"].set(true)
+        }
     }
 
     func evictAllData() {
