@@ -68,9 +68,9 @@ object DataService {
      * Start listening to orders and menu items
      */
     fun setupSubscriptions(workspaceId: String) {
-        dittoSubscriptions.add(ditto!!.store.collection("orders").find("workspaceId == '${workspaceId}'").subscribe())
-        dittoSubscriptions.add(ditto!!.store.collection("menuItems").find("workspaceId == '${workspaceId}'").subscribe())
-        dittoSubscriptions.add(ditto!!.store.collection("categories").find("workspaceId == '${workspaceId}'").subscribe())
+        dittoSubscriptions.add(ditto!!.store.collection("orders").find("workspaceId == '${workspaceId}' && deleted == false").subscribe())
+        dittoSubscriptions.add(ditto!!.store.collection("menuItems").find("workspaceId == '${workspaceId}' && deleted == false").subscribe())
+        dittoSubscriptions.add(ditto!!.store.collection("categories").find("workspaceId == '${workspaceId}' && deleted == false").subscribe())
         observeOrders()
     }
 
@@ -78,7 +78,7 @@ object DataService {
         val disposable = CompositeDisposable()
         val workspaceId = workspaceId ?: return
         val userId = this.userId ?: return
-        ditto!!.store.collection("orders").find("workspaceId == '${workspaceId}' && userId == '${userId}'")
+        ditto!!.store.collection("orders").find("workspaceId == '${workspaceId}' && userId == '${userId}' && deleted == false")
             .documentsWithEventInfo()
             .map { info ->
                 context?.let { context ->
@@ -118,7 +118,7 @@ object DataService {
         val cartLineItems = cartLineItems(userId)
         val menuItemOptions = menuItemOptions()
         val menuItemsObs: Observable<List<MenuItem>> =
-            ditto!!.store.collection("menuItems").find("workspaceId == '${workspaceId}'").documents().map { docs ->
+            ditto!!.store.collection("menuItems").find("workspaceId == '${workspaceId}' && deleted == false").documents().map { docs ->
                 docs.map { MenuItem(it) }
             } ?: Observable.empty()
         val categories = categories()
@@ -198,7 +198,7 @@ object DataService {
     fun orders(): Observable<List<Order>> {
         val workspaceId = workspaceId ?: return Observable.empty()
         val userId = this.userId ?: return Observable.empty()
-        return ditto!!.store.collection("orders").find("workspaceId == '${workspaceId}' && userId == '${userId}'")
+        return ditto!!.store.collection("orders").find("workspaceId == '${workspaceId}' && userId == '${userId}' && deleted == false")
             .documentsWithEventInfo()
             .map { info ->
                 return@map info.documents.map { Order(it) }.sortedByDescending { it.createdOn }
@@ -207,7 +207,7 @@ object DataService {
 
     fun categories(): Observable<List<Category>> {
         val workspaceId = workspaceId ?: return Observable.empty()
-        return ditto!!.store.collection("categories").find("workspaceId == '${workspaceId}'")
+        return ditto!!.store.collection("categories").find("workspaceId == '${workspaceId}' && deleted == false")
             .documents().map { docs -> docs.map { Category(it) }.sortedBy { it.ordinal }
             }
     }
@@ -250,7 +250,8 @@ object DataService {
                     "_id" to this.userId!!,
                     "name" to name,
                     "seat" to seat,
-                    "workspaceId" to workspaceId
+                    "workspaceId" to workspaceId,
+                    "deleted" to false
                 ))
             }
         }
@@ -271,7 +272,8 @@ object DataService {
                 "status" to Order.Status.OPEN.value,
                 "workspaceId" to workspaceId,
                 "total" to 0,
-                "usedCount" to DittoCounter()
+                "usedCount" to DittoCounter(),
+                "deleted" to false
 
             ))
             var usedItems = mutableListOf<Map<String, Any>>()
@@ -295,13 +297,13 @@ object DataService {
 
     fun menuItemOptions(): Observable<List<MenuItemOption>> {
         val workspaceId = workspaceId ?: return Observable.empty()
-        return ditto!!.store.collection("menuItemOptions").find("workspaceId == '${workspaceId}'")
+        return ditto!!.store.collection("menuItemOptions").find("workspaceId == '${workspaceId}' && deleted == false")
             .documents().map { docs -> docs.map { MenuItemOption(it) }
             }
     }
 
     fun menuItemOptions(menuItemId: String): Observable<List<MenuItemOption>> {
-        return ditto!!.store.collection("menuItemOptions").find("menuItemId == '${menuItemId}'")
+        return ditto!!.store.collection("menuItemOptions").find("menuItemId == '${menuItemId}' && deleted == false")
             .documents().map { docs -> docs.map { MenuItemOption(it) }
             }
     }
@@ -309,7 +311,7 @@ object DataService {
     fun menuItems(): Observable<List<MenuItem>> {
         val workspaceId = workspaceId ?: return Observable.empty()
         return ditto!!.store.collection("menuItems")
-            .find("workspaceId == '${workspaceId}'").documents().map { docs ->
+            .find("workspaceId == '${workspaceId}' && deleted == false").documents().map { docs ->
                 docs.map { MenuItem(it) }
             }
     }
@@ -341,7 +343,7 @@ object DataService {
      */
     fun cartLineItems(userId: String): Observable<List<CartLineItem>> {
         val workspaceId = workspaceId ?: return Observable.empty()
-        val query = "workspaceId == '${workspaceId}' && userId == '${userId}' && orderId == null"
+        val query = "workspaceId == '${workspaceId}' && userId == '${userId}' && orderId == null && deleted == false"
         return ditto!!.store.collection("cartLineItems").find(query)
             .observeLocalDocuments().map { docs ->
                 docs.map { CartLineItem(it) }
@@ -351,7 +353,7 @@ object DataService {
     fun cartLineItems(orderIds: List<String>): Observable<List<CartLineItem>> {
         val workspaceId = workspaceId ?: return Observable.empty()
         val containsPredicate: String = orderIds.joinToString { "'${it}'" }
-        val query = "workspaceId == '${workspaceId}' && contains([${containsPredicate}], orderId)"
+        val query = "workspaceId == '${workspaceId}' && contains([${containsPredicate}], orderId) &&  deleted == false"
         return ditto!!.store.collection("cartLineItems").find(query)
             .observeLocalDocuments().map { docs ->
                 docs.map { CartLineItem(it) }
@@ -367,7 +369,8 @@ object DataService {
                 "menuItemId" to menuItemId,
                 "userId" to userId,
                 "workspaceId" to workspaceId,
-                "orderId" to null
+                "orderId" to null,
+                "deleted" to false
             ))
         }
     }
@@ -376,11 +379,18 @@ object DataService {
         val workspaceId = workspaceId ?: return
         val userId = this.userId ?: return
         val query = "workspaceId == '${workspaceId}' && userId == '${userId}' && orderId == null"
-        ditto!!.store.collection("cartLineItems").find(query).remove()
+        ditto!!.store.collection("cartLineItems").find(query).update { mutableDocs ->
+            for (mutableDoc in mutableDocs) {
+                mutableDoc["deleted"].set(true)
+            }
+        }
     }
 
     fun removeCartLineItem(id: String) {
-        ditto!!.store.collection("cartLineItems").findByID(id).remove()
+        ditto!!.store.collection("cartLineItems").findByID(id).update { mutable ->
+            val mutableDoc = mutable.let { it } ?: return@update
+            mutableDoc["deleted"].set(true)
+        }
     }
 
     fun evictAllData() {

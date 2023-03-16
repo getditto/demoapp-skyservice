@@ -14,6 +14,8 @@ data class MenuItem(val document: DittoDocument) {
     var totalCount: Int? = document["totalCount"].int
     var usedCount: Int? = document["usedCount"].int
     var isCrewOnly: Boolean = document["isCrewOnly"].booleanValue
+    var deleted = document["deleted"].booleanValue
+
 
     var ordinal: Float? = null
 

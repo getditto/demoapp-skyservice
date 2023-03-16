@@ -10,6 +10,7 @@ class CartLineItem(document: DittoDocument) {
     var userId: String
     var options: List<String>
     var orderId: String? = null
+    var deleted: Boolean
 
     init {
         this.id = document.id.toString()
@@ -19,6 +20,7 @@ class CartLineItem(document: DittoDocument) {
         this.userId = document["userId"].stringValue
         this.options = document["options"].listValue.map { it as? String? ?: "" }
         this.orderId = document["orderId"].string
+        this.deleted = document["deleted"].booleanValue
     }
 }
 

@@ -7,4 +7,5 @@ data class Category(val document: DittoDocument) {
     val name: String = document["name"].stringValue
     val ordinal: Float = document["ordinal"].floatValue
     val isCrewOnly: Boolean = document["isCrewOnly"].booleanValue
+    var deleted = document["deleted"].booleanValue
 }

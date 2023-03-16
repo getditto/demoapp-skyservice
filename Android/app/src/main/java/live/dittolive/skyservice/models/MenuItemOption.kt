@@ -10,6 +10,7 @@ data class MenuItemOption(val document: DittoDocument) {
     var type = MenuItemOptionType.valueOf(document["type"].stringValue)
     var isRequired: Boolean = document["isRequired"].booleanValue
     var allowedValues = document["allowedValues"].listValue.map { it as? String ?: "" }
+    var deleted = document["deleted"].booleanValue
 
     companion object {
         enum class MenuItemOptionType constructor(val value: String) {
