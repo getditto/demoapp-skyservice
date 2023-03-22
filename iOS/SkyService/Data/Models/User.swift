@@ -11,9 +11,9 @@ struct User: Equatable, IdentifiableType, DittoModel {
     var id: String
     var name: String
     var seat: String?
-
     var role: Role
     var isManuallyCreated: Bool
+    var deleted: Bool
 
     /**
      TODO: remove this!
@@ -35,6 +35,7 @@ struct User: Equatable, IdentifiableType, DittoModel {
             // if something failed, we should assume it's a passenger
             return Role(rawValue: val) ?? .passenger
         }()
+        self.deleted = document["deleted"].boolValue
     }
 
     var seatAbreast: String? {

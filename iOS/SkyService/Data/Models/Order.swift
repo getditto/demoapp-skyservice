@@ -127,6 +127,7 @@ struct Order: Equatable, DittoModel {
     var status: Status
     var userId: String
     var crewNote: String
+    var deleted: Bool
 
     init(document: DittoDocument) {
         self.id = document.id.toString()
@@ -135,6 +136,7 @@ struct Order: Equatable, DittoModel {
         self.total = document["total"].floatValue
         self.status = Status(rawValue: document["status"].intValue) ?? .open
         self.crewNote = document["crewNote"].stringValue
+        self.deleted = document["deleted"].boolValue
     }
 }
 

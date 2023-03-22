@@ -6,10 +6,10 @@ extension DataService {
     func orders(for userId: String? = nil) -> Observable<[Order]> {
         return self.workspaceId$
             .flatMapLatest { workspaceId -> Observable<[Order]> in
-                var query = "workspaceId == '\(workspaceId)'"
+                var query = "workspaceId == '\(workspaceId)' && deleted == false"
                 if let userId = userId {
                     // provided a userId, so we want a more specific set
-                    query = "workspaceId == '\(workspaceId)' && userId == '\(userId)'"
+                    query = "workspaceId == '\(workspaceId)' && userId == '\(userId)' && deleted == false"
                 }
                 return self.orders.find(query).documents$().mapToDittoModel(type: Order.self)
             }.map { orders in
@@ -28,6 +28,7 @@ extension DataService {
                         "createdOn": Date().isoDateString,
                         "total": 0,
                         "status": Order.Status.open.rawValue,
+                        "deleted": false
                     ])
                     var usedItems = [[String: Any]]()
                     txn["cartLineItems"].find("workspaceId == '\(workspaceId)' && userId == '\(userId)' && orderId == null").update { mutableDocs in

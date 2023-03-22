@@ -24,7 +24,7 @@ extension DataService {
         return workspaceId$
             .flatMapLatest { [unowned menuItems = self.menuItems] (workspaceId) -> Observable<[MenuItem]> in
                 return menuItems
-                    .find("workspaceId == '\(workspaceId)'")
+                    .find("workspaceId == '\(workspaceId)' && deleted == false")
                     .documents$()
                     .mapToDittoModel(type: MenuItem.self)
             }
@@ -45,7 +45,8 @@ extension DataService {
             "ordinal": Float.random(min: 0, max: 1),
             "maxCartQuantityPerUser": maxCartQuantityPerUser,
             "totalCount": nil,
-            "usedCount": nil
+            "usedCount": nil,
+            "deleted": false
         ])
         return Observable.just(insertedId.toString())
     }

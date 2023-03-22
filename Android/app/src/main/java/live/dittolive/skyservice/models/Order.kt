@@ -51,4 +51,5 @@ data class Order(val document: DittoDocument) {
     var id: String = document.id.toString()
     val createdOn: DateTime = document["createdOn"].stringValue.toISODate()
     val status: Status = Status.fromInt(document["status"].intValue) ?: Status.OPEN
+    var deleted = document["deleted"].booleanValue
 }

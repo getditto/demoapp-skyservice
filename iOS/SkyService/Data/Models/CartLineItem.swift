@@ -8,6 +8,7 @@ struct CartLineItem: DittoModel, Equatable {
     var userId: String
     // these were the selected string values.
     var options: [String]
+    var deleted: Bool
 
     /**
      If the orderId is nil, then it's in the cart
@@ -22,6 +23,7 @@ struct CartLineItem: DittoModel, Equatable {
         self.userId = document["userId"].stringValue
         self.options = document["options"].register?.arrayValue.compactMap({ $0 as? String }) ?? []
         self.orderId = document["orderId"].string
+        self.deleted = document["deleted"].boolValue
     }
 }
 
@@ -36,6 +38,7 @@ extension CartLineItem {
         self.quantity = dictionary["quantity"] as! Int
         self.userId = dictionary["userId"] as! String
         self.options = dictionary["options"] as! [String]
+        self.deleted = dictionary["deleted"] as! Bool
     }
 
     var asDictionary: [String: Any] {
@@ -44,7 +47,8 @@ extension CartLineItem {
             "menuItemId": menuItemId,
             "quantity": quantity,
             "userId": userId,
-            "options": options
+            "options": options,
+            "deleted": deleted
         ]
     }
 
