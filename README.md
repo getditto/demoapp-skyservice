@@ -6,6 +6,13 @@ This passenger meal order demo showcases a set of premade user interface compone
 
 Powered by [Ditto](https://ditto.live/).
 
+
+- [Video Demo](https://www.youtube.com/watch?v=XuUpQ_Oabg0)
+- [iOS Download (Crew App)](https://apps.apple.com/us/app/skyservice-crew/id1578101315)
+- [iOS Download (Passenger App)](https://apps.apple.com/us/app/skyservice-ditto/id1578101340)
+- [Android Download (Passenger App)](https://play.google.com/store/apps/details?id=live.dittolive.skyservice)
+
+
 ## Features
 
 #### Real-time Meal Item Editing
@@ -31,6 +38,12 @@ Powered by [Ditto](https://ditto.live/).
 
 * Send text messages to other crew members
 * Invite ground staff for additional communication
+
+
+## Developing
+
+If you are a member of Ditto, please access to this page and copy-paste the environment variables to this project in order to build the app:
+https://www.notion.so/getditto/Environment-Variables-78261e05a2b44a299ee388f06e9ff86a
 
 
 ## License
