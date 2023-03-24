@@ -40,12 +40,6 @@ Powered by [Ditto](https://ditto.live/).
 * Invite ground staff for additional communication
 
 
-## Developing
-
-If you are a member of Ditto, please access to this page and copy-paste the environment variables to this project in order to build the app:
-https://www.notion.so/getditto/Environment-Variables-78261e05a2b44a299ee388f06e9ff86a
-
-
 ## License
 
 MIT
