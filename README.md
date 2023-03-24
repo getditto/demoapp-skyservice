@@ -6,6 +6,13 @@ This passenger meal order demo showcases a set of premade user interface compone
 
 Powered by [Ditto](https://ditto.live/).
 
+
+- [Video Demo](https://www.youtube.com/watch?v=XuUpQ_Oabg0)
+- [iOS Download (Crew App)](https://apps.apple.com/us/app/skyservice-crew/id1578101315)
+- [iOS Download (Passenger App)](https://apps.apple.com/us/app/skyservice-ditto/id1578101340)
+- [Android Download (Passenger App)](https://play.google.com/store/apps/details?id=live.dittolive.skyservice)
+
+
 ## Features
 
 #### Real-time Meal Item Editing
