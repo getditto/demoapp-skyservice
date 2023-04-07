@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import io.reactivex.rxjava3.core.Observable
 import live.ditto.*
 import live.ditto.android.DefaultAndroidDittoDependencies
@@ -30,6 +31,9 @@ class SkyServiceApplication: Application() {
         val dependencies = DefaultAndroidDittoDependencies(this)
         val persistanceDir = "${(context as SkyServiceApplication).filesDir}/ditto-skyservice"
         dependencies.ensureDirectoryExists(persistanceDir)
+
+        DittoLogger.minimumLogLevel = DittoLogLevel.DEBUG
+
         ditto = Ditto(
             dependencies,
             DittoIdentity.OnlineWithAuthentication(
@@ -39,7 +43,13 @@ class SkyServiceApplication: Application() {
                 true
             )
         )
-        DittoLogger.minimumLogLevel = DittoLogLevel.DEBUG
+
+        try {
+            ditto?.disableSyncWithV3()
+        } catch(e: DittoError) {
+            Log.e("DittoError:", e.message.toString())
+        }
+
         val name = getString(R.string.notification_key)
         val descriptionText = getString(R.string.notification_description)
         val importance = NotificationManager.IMPORTANCE_DEFAULT

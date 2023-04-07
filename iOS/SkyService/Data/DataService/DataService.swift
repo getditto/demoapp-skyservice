@@ -47,6 +47,12 @@ final class DataService {
 
         self.authDelegate = AuthDelegate()
         ditto = Ditto(identity: .onlineWithAuthentication(appID: Env.DITTO_APP_ID, authenticationDelegate: authDelegate))
+
+        do {
+            try ditto.disableSyncWithV3()
+        } catch {
+            assertionFailure(error.localizedDescription)
+        }
         
         menuItems = ditto.store["menuItems"]
         users = ditto.store["users"]
