@@ -23,9 +23,6 @@ struct MenuItem: IdentifiableType, Equatable, Ordinal, DittoModel {
     var maxCartQuantityPerUser: Int?
     var ordinal: Float
 
-    //usedForCombineLatest
-    var category: Category?
-
     init(document: DittoDocument) {
         self.id = document.id.toString()
         self.name = document["name"].stringValue

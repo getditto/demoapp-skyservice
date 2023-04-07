@@ -79,14 +79,18 @@ class EditMenuItemViewController: FormViewController {
 
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "trash"), style: .plain, target: self, action: #selector(delete(sender:)))
 
-        DataService.shared.menuItemById$(menuItemId)
-            .subscribeNext({ [weak self] (menuItem) in
+        let menuItem = DataService.shared.menuItemById$(menuItemId)
+        let categories = DataService.shared.categories$()
+
+        Observable.combineLatest(menuItem, categories)
+            .subscribeNext({ [weak self] menuItem, categories in
                 guard let menuItem = menuItem else { return }
+                let category = categories.first(where: { $0.id == menuItem.categoryId })
                 self?.form.setValues([
                     "name": menuItem.name,
                     "details": menuItem.details,
                     "price": Double(menuItem.price),
-                    "category": menuItem.category,
+                    "category": category,
                     "maxCartQuantityPerUser": menuItem.maxCartQuantityPerUser
                 ])
                 self?.tableView.reloadData()
