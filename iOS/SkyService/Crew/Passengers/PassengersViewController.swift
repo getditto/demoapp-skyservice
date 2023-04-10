@@ -1,7 +1,6 @@
 import UIKit
 import Cartography
 import RxSwift
-import RxUIAlert
 import RxDataSources
 
 final class PassengersViewController: UIViewController, UITableViewDelegate {
