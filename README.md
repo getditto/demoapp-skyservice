@@ -39,6 +39,18 @@ Powered by [Ditto](https://ditto.live/).
 * Send text messages to other crew members
 * Invite ground staff for additional communication
 
+## Building the App
+
+### Android
+1. Add android.useAndroidX=true in **gradle.properties** if it's not already set.
+2. Add the following environment variables to your **gradle.properties**, substituting your own values:
+```
+    # Environment Variables  
+    DITTO_APP_ID = "replace with your app id"  
+    DITTO_AUTH_TOKEN = "replace with your auth token"  
+    DITTO_AUTH_PROVIDER = "replace with your auth provider"
+
+```
 
 ## License
 
