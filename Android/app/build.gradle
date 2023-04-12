@@ -47,6 +47,12 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            def credsFile = rootProject.file("secure\\release_creds.properties")
+            def prop = new Properties()
+            prop.load(new FileInputStream(credsFile))
+            buildConfigField('String', 'DITTO_APP_ID', prop['DITTO_APP_ID']) // always use single quotes here
+            buildConfigField('String', 'DITTO_AUTH_TOKEN', prop['DITTO_AUTH_TOKEN'])
+            buildConfigField('String', 'DITTO_AUTH_PROVIDER', prop['DITTO_AUTH_PROVIDER'])
         }
     }
     compileOptions {
