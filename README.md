@@ -42,8 +42,11 @@ Powered by [Ditto](https://ditto.live/).
 ## Building the App
 
 ### Android
-1. Add android.useAndroidX=true in **gradle.properties** if it's not already set.
-2. Add the following environment variables to your **gradle.properties**, substituting your own values:
+You need to setup some environment variables in order to build this project:
+
+1. In your project root, create a directory called **secret**
+2. Add two files to that directory called **debug_creds.properties** and **release_creds.properties**, for the debug and release build variants as defined in the app **build.gradle** file.
+2. Add the following environment variables to each credential file, substituting your own values:
 ```
     # Environment Variables  
     DITTO_APP_ID = "replace with your app id"  
