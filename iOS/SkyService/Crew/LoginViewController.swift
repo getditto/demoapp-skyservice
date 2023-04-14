@@ -1,23 +1,13 @@
 import UIKit
 import Eureka
-import DittoSwift
 
 final class LoginViewController: FormViewController {
 
-    private var ditto: Ditto?
-    private var liveQuery: DittoLiveQuery?
-    private var subscription: DittoSubscription?
-    private var nearbyFlights = [[String:String]]()
-
-    private var password: String {
-        return Env.DITTO_AUTH_PASSWORD
-    }
+    private let password = "dittoskyservice"
 
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = Bundle.main.isCrew ? "SkyService Crew" : "SkyService"
-        configureDitto()
-        observeNearFlights()
 
         form
             +++ Section()
@@ -138,36 +128,6 @@ final class LoginViewController: FormViewController {
         tableView.reloadData()
     }
 
-    private func configureDitto() {
-        ditto = DataService.shared.ditto
-        do {
-            try ditto?.startSync()
-        } catch {
-            assertionFailure(error.localizedDescription)
-        }
-
-        resetWorkspaces()
-    }
-
-    private func observeNearFlights() {
-        subscription = ditto?.store["workspaces"].findAll().subscribe()
-        liveQuery = ditto?.store["workspaces"].findAll().observeLocal() { [weak self] docs, _ in
-            guard let self = self else { return }
-            let ids = docs.map {$0.id.toString().components(separatedBy: "::")}
-            let flights = ids.map { ["date":$0[0], "number":$0[1]] }
-
-            self.nearbyFlights = flights.sorted {
-                let left = self.format(string: $0["date"])!
-                let right = self.format(string: $1["date"])!
-                return left > right
-            }
-        }
-    }
-
-    private func resetWorkspaces() {
-        ditto?.store["workspaces"].findAll().evict()
-    }
-
     private func format(string: String?) -> Date? {
         let formatter = DateFormatter()
         formatter.dateFormat = "MM-dd-yyyy"
@@ -222,9 +182,7 @@ final class LoginViewController: FormViewController {
         let workspaceId: WorkspaceId = WorkspaceId(departureDate: departureDate, flightNumber: formattedFlightNumber)
         UserDefaults.standard.workspaceId = workspaceId
         DataService.shared.setUser(id: DataService.shared.userId, name: name, seat: seat, role: Bundle.main.isCrew ? .crew : .passenger)
-        ditto?.stopSync()
-        ditto = nil
-        liveQuery = nil
+
         if Bundle.main.isCrew {
             (UIApplication.shared.delegate as? AppDelegate)?.setRootViewController(MainCrewTabController(), animated: true)
         } else {
