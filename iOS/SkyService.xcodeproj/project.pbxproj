@@ -11,7 +11,6 @@
 		0E6382E3298C78AB0099A79A /* DittoPresenceViewer in Frameworks */ = {isa = PBXBuildFile; productRef = 0E6382E2298C78AB0099A79A /* DittoPresenceViewer */; };
 		0E6382EE298D94220099A79A /* DittoExportLogs in Frameworks */ = {isa = PBXBuildFile; productRef = 0E6382ED298D94220099A79A /* DittoExportLogs */; };
 		0E6382F0298D942C0099A79A /* DittoExportLogs in Frameworks */ = {isa = PBXBuildFile; productRef = 0E6382EF298D942C0099A79A /* DittoExportLogs */; };
-		2CE459836C674B97E677A8BB /* Pods_defaults_SkyService_Crew.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AC59B764F76969F8B98A578 /* Pods_defaults_SkyService_Crew.framework */; };
 		2D024B1C260D29C100EE1044 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D024B1B260D29C100EE1044 /* AppDelegate.swift */; };
 		2D024B25260D29C400EE1044 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2D024B24260D29C400EE1044 /* Assets.xcassets */; };
 		2D024B28260D29C400EE1044 /* LaunchScreen-pax.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D024B26260D29C400EE1044 /* LaunchScreen-pax.storyboard */; };
@@ -170,7 +169,6 @@
 		2DD80EB3261D62DE002F3545 /* Role.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DD80EB1261D62DE002F3545 /* Role.swift */; };
 		2DE41C482613AB57001E7C2E /* CustomTextArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DE41C472613AB57001E7C2E /* CustomTextArea.swift */; };
 		2DE41C492613AB57001E7C2E /* CustomTextArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DE41C472613AB57001E7C2E /* CustomTextArea.swift */; };
-		4A04F00108ECF14EAFEBAB44 /* Pods_defaults_SkyService_Crew.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AC59B764F76969F8B98A578 /* Pods_defaults_SkyService_Crew.framework */; };
 		5244CC7D261C106400494F69 /* Ordinal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5244CC7C261C106400494F69 /* Ordinal.swift */; };
 		5244CC7E261C106400494F69 /* Ordinal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5244CC7C261C106400494F69 /* Ordinal.swift */; };
 		CC1A40A028CB23C80019992C /* Randoms.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC1A409F28CB23C80019992C /* Randoms.swift */; };
@@ -183,12 +181,43 @@
 		CC1F4198264733EF00A4D72C /* OrdersFilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC1F4196264733EF00A4D72C /* OrdersFilterViewController.swift */; };
 		CC1F419B26484D3000A4D72C /* OrdersFilterDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC1F419A26484D3000A4D72C /* OrdersFilterDetailViewController.swift */; };
 		CC1F419C26484D3000A4D72C /* OrdersFilterDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC1F419A26484D3000A4D72C /* OrdersFilterDetailViewController.swift */; };
+		CC33F57029E4336F001CBF17 /* BetterSegmentedControl in Frameworks */ = {isa = PBXBuildFile; productRef = CC33F56F29E4336F001CBF17 /* BetterSegmentedControl */; };
+		CC33F57229E43379001CBF17 /* Cartography in Frameworks */ = {isa = PBXBuildFile; productRef = CC33F57129E43379001CBF17 /* Cartography */; };
+		CC33F57429E43382001CBF17 /* Chatto in Frameworks */ = {isa = PBXBuildFile; productRef = CC33F57329E43382001CBF17 /* Chatto */; };
+		CC33F57629E43382001CBF17 /* ChattoAdditions in Frameworks */ = {isa = PBXBuildFile; productRef = CC33F57529E43382001CBF17 /* ChattoAdditions */; };
+		CC33F57829E4338F001CBF17 /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = CC33F57729E4338F001CBF17 /* Differentiator */; };
+		CC33F57A29E43397001CBF17 /* Eureka in Frameworks */ = {isa = PBXBuildFile; productRef = CC33F57929E43397001CBF17 /* Eureka */; };
+		CC33F57C29E433A6001CBF17 /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = CC33F57B29E433A6001CBF17 /* IQKeyboardManagerSwift */; };
+		CC33F57E29E433AD001CBF17 /* NotificationBannerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = CC33F57D29E433AD001CBF17 /* NotificationBannerSwift */; };
+		CC33F58029E433BE001CBF17 /* RSKPlaceholderTextView in Frameworks */ = {isa = PBXBuildFile; productRef = CC33F57F29E433BE001CBF17 /* RSKPlaceholderTextView */; };
+		CC33F58229E433CD001CBF17 /* SwiftHEXColors in Frameworks */ = {isa = PBXBuildFile; productRef = CC33F58129E433CD001CBF17 /* SwiftHEXColors */; };
+		CC33F58429E433DF001CBF17 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = CC33F58329E433DF001CBF17 /* RxCocoa */; };
+		CC33F58629E433DF001CBF17 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = CC33F58529E433DF001CBF17 /* RxRelay */; };
+		CC33F58829E433DF001CBF17 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = CC33F58729E433DF001CBF17 /* RxSwift */; };
+		CC33F58A29E433DF001CBF17 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = CC33F58929E433DF001CBF17 /* RxDataSources */; };
+		CC33F58C29E433DF001CBF17 /* RxOptional in Frameworks */ = {isa = PBXBuildFile; productRef = CC33F58B29E433DF001CBF17 /* RxOptional */; };
+		CC33F58D29E433F9001CBF17 /* RxAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC60A5E029E4296B00237D3B /* RxAlert.swift */; };
+		CC60A5E129E4296B00237D3B /* RxAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC60A5E029E4296B00237D3B /* RxAlert.swift */; };
 		CC8F6070297927B00088D5CF /* DittoObjC in Frameworks */ = {isa = PBXBuildFile; productRef = CC8F606F297927B00088D5CF /* DittoObjC */; };
 		CC8F6072297927B00088D5CF /* DittoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = CC8F6071297927B00088D5CF /* DittoSwift */; };
 		CC8F6075297927BF0088D5CF /* DittoPresenceViewer in Frameworks */ = {isa = PBXBuildFile; productRef = CC8F6074297927BF0088D5CF /* DittoPresenceViewer */; };
+		CC93C62229E4065C0070B083 /* Eureka in Frameworks */ = {isa = PBXBuildFile; productRef = CC93C62129E4065C0070B083 /* Eureka */; };
+		CC93C62529E4068C0070B083 /* SwiftHEXColors in Frameworks */ = {isa = PBXBuildFile; productRef = CC93C62429E4068C0070B083 /* SwiftHEXColors */; };
+		CC93C62829E406FA0070B083 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = CC93C62729E406FA0070B083 /* RxCocoa */; };
+		CC93C62A29E406FA0070B083 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = CC93C62929E406FA0070B083 /* RxRelay */; };
+		CC93C62C29E406FA0070B083 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = CC93C62B29E406FA0070B083 /* RxSwift */; };
+		CC93C62F29E407FA0070B083 /* NotificationBannerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = CC93C62E29E407FA0070B083 /* NotificationBannerSwift */; };
+		CC93C63229E4083C0070B083 /* Chatto in Frameworks */ = {isa = PBXBuildFile; productRef = CC93C63129E4083C0070B083 /* Chatto */; };
+		CC93C63429E4083C0070B083 /* ChattoAdditions in Frameworks */ = {isa = PBXBuildFile; productRef = CC93C63329E4083C0070B083 /* ChattoAdditions */; };
+		CC93C63729E408710070B083 /* RSKPlaceholderTextView in Frameworks */ = {isa = PBXBuildFile; productRef = CC93C63629E408710070B083 /* RSKPlaceholderTextView */; };
+		CC93C63C29E40B690070B083 /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = CC93C63B29E40B690070B083 /* IQKeyboardManagerSwift */; };
+		CC93C63F29E40B810070B083 /* BetterSegmentedControl in Frameworks */ = {isa = PBXBuildFile; productRef = CC93C63E29E40B810070B083 /* BetterSegmentedControl */; };
 		CCB173A02642B74700FB0A35 /* EditMenuViewController+Stocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB1739F2642B74700FB0A35 /* EditMenuViewController+Stocks.swift */; };
 		CCB173A12642B74700FB0A35 /* EditMenuViewController+Stocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB1739F2642B74700FB0A35 /* EditMenuViewController+Stocks.swift */; };
-		FA080C8F2391134464D1D9A8 /* Pods_defaults_SkyService_Pax.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF057DA605D94B9B37B2FEF2 /* Pods_defaults_SkyService_Pax.framework */; };
+		CCB7014829E40C6600A0782C /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = CCB7014729E40C6600A0782C /* Differentiator */; };
+		CCB7014A29E40C6600A0782C /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = CCB7014929E40C6600A0782C /* RxDataSources */; };
+		CCBE0DA629E42BE60066AFAE /* RxOptional in Frameworks */ = {isa = PBXBuildFile; productRef = CCBE0DA529E42BE60066AFAE /* RxOptional */; };
+		CCF4696129E402A800C0EAE4 /* Cartography in Frameworks */ = {isa = PBXBuildFile; productRef = CCF4696029E402A800C0EAE4 /* Cartography */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -217,9 +246,6 @@
 /* Begin PBXFileReference section */
 		0198F0BD288872F400C05541 /* DittoObjC.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = DittoObjC.xcframework; path = Pods/DittoObjC/DittoObjC.xcframework; sourceTree = "<group>"; };
 		0198F0BE288872F400C05541 /* DittoSwift.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = DittoSwift.xcframework; path = Pods/DittoSwift/DittoSwift.xcframework; sourceTree = "<group>"; };
-		0C9ECA5115CD3F132FEE5E1E /* Pods-Etihad.release-crew.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Etihad.release-crew.xcconfig"; path = "Target Support Files/Pods-Etihad/Pods-Etihad.release-crew.xcconfig"; sourceTree = "<group>"; };
-		220D812CF9392ECC212FEDBE /* Pods-defaults-Etihad Pax.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-defaults-Etihad Pax.release.xcconfig"; path = "Target Support Files/Pods-defaults-Etihad Pax/Pods-defaults-Etihad Pax.release.xcconfig"; sourceTree = "<group>"; };
-		27657103E955866A53E40A9C /* Pods_Etihad.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Etihad.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D024B18260D29C100EE1044 /* SkyService Pax.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SkyService Pax.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D024B1B260D29C100EE1044 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2D024B24260D29C400EE1044 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -302,26 +328,15 @@
 		2DD80EAE261CDBFC002F3545 /* WorkspaceId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceId.swift; sourceTree = "<group>"; };
 		2DD80EB1261D62DE002F3545 /* Role.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Role.swift; sourceTree = "<group>"; };
 		2DE41C472613AB57001E7C2E /* CustomTextArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextArea.swift; sourceTree = "<group>"; };
-		413C45EA2AB27E8E65EB05A5 /* Pods-defaults-SkyService Pax.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-defaults-SkyService Pax.debug.xcconfig"; path = "Target Support Files/Pods-defaults-SkyService Pax/Pods-defaults-SkyService Pax.debug.xcconfig"; sourceTree = "<group>"; };
-		480F25D4225C552C2B100AEB /* Pods-defaults-Etihad Crew.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-defaults-Etihad Crew.debug.xcconfig"; path = "Target Support Files/Pods-defaults-Etihad Crew/Pods-defaults-Etihad Crew.debug.xcconfig"; sourceTree = "<group>"; };
 		5244CC7C261C106400494F69 /* Ordinal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ordinal.swift; sourceTree = "<group>"; };
-		6AC59B764F76969F8B98A578 /* Pods_defaults_SkyService_Crew.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_defaults_SkyService_Crew.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		7A2AFB15CD5750DA2C189B6E /* Pods-Etihad.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Etihad.release.xcconfig"; path = "Target Support Files/Pods-Etihad/Pods-Etihad.release.xcconfig"; sourceTree = "<group>"; };
-		8364B4CFEB5D1B4B37F3DDC7 /* Pods-defaults-Etihad Pax.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-defaults-Etihad Pax.debug.xcconfig"; path = "Target Support Files/Pods-defaults-Etihad Pax/Pods-defaults-Etihad Pax.debug.xcconfig"; sourceTree = "<group>"; };
 		8CCA1EED2616B493008111C5 /* SkyService Pax.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "SkyService Pax.entitlements"; sourceTree = "<group>"; };
-		907474BDF96274D5E0AC7C90 /* Pods-defaults-SkyService Crew.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-defaults-SkyService Crew.release.xcconfig"; path = "Target Support Files/Pods-defaults-SkyService Crew/Pods-defaults-SkyService Crew.release.xcconfig"; sourceTree = "<group>"; };
-		9607380F3EC84C350122B897 /* Pods-defaults-Etihad Crew.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-defaults-Etihad Crew.release.xcconfig"; path = "Target Support Files/Pods-defaults-Etihad Crew/Pods-defaults-Etihad Crew.release.xcconfig"; sourceTree = "<group>"; };
-		A85B64F027E157A1EF0CE13C /* Pods-Etihad.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Etihad.debug.xcconfig"; path = "Target Support Files/Pods-Etihad/Pods-Etihad.debug.xcconfig"; sourceTree = "<group>"; };
 		CC1A409F28CB23C80019992C /* Randoms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Randoms.swift; sourceTree = "<group>"; };
 		CC1DAFF329B21AD7005A49D8 /* Env.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Env.swift; sourceTree = "<group>"; };
 		CC1F41842646F30300A4D72C /* OrdersSortViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrdersSortViewController.swift; sourceTree = "<group>"; };
 		CC1F4196264733EF00A4D72C /* OrdersFilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrdersFilterViewController.swift; sourceTree = "<group>"; };
 		CC1F419A26484D3000A4D72C /* OrdersFilterDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrdersFilterDetailViewController.swift; sourceTree = "<group>"; };
+		CC60A5E029E4296B00237D3B /* RxAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxAlert.swift; sourceTree = "<group>"; };
 		CCB1739F2642B74700FB0A35 /* EditMenuViewController+Stocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditMenuViewController+Stocks.swift"; sourceTree = "<group>"; };
-		D845EA9B0B7F4456E95DD3AF /* Pods-defaults-SkyService Pax.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-defaults-SkyService Pax.release.xcconfig"; path = "Target Support Files/Pods-defaults-SkyService Pax/Pods-defaults-SkyService Pax.release.xcconfig"; sourceTree = "<group>"; };
-		DF057DA605D94B9B37B2FEF2 /* Pods_defaults_SkyService_Pax.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_defaults_SkyService_Pax.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EB0BE855B0A6D3D7B4CD2FDC /* Pods-Etihad.debug-crew.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Etihad.debug-crew.xcconfig"; path = "Target Support Files/Pods-Etihad/Pods-Etihad.debug-crew.xcconfig"; sourceTree = "<group>"; };
-		FD389352C4F3049440D4AEEA /* Pods-defaults-SkyService Crew.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-defaults-SkyService Crew.debug.xcconfig"; path = "Target Support Files/Pods-defaults-SkyService Crew/Pods-defaults-SkyService Crew.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -329,11 +344,25 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC93C62A29E406FA0070B083 /* RxRelay in Frameworks */,
+				CC93C62F29E407FA0070B083 /* NotificationBannerSwift in Frameworks */,
+				CCB7014829E40C6600A0782C /* Differentiator in Frameworks */,
+				CC93C62529E4068C0070B083 /* SwiftHEXColors in Frameworks */,
+				CC93C62C29E406FA0070B083 /* RxSwift in Frameworks */,
+				CCBE0DA629E42BE60066AFAE /* RxOptional in Frameworks */,
 				CC8F6072297927B00088D5CF /* DittoSwift in Frameworks */,
+				CC93C63C29E40B690070B083 /* IQKeyboardManagerSwift in Frameworks */,
+				CCF4696129E402A800C0EAE4 /* Cartography in Frameworks */,
 				0E6382F0298D942C0099A79A /* DittoExportLogs in Frameworks */,
-				FA080C8F2391134464D1D9A8 /* Pods_defaults_SkyService_Pax.framework in Frameworks */,
 				CC8F6075297927BF0088D5CF /* DittoPresenceViewer in Frameworks */,
+				CC93C63F29E40B810070B083 /* BetterSegmentedControl in Frameworks */,
 				CC8F6070297927B00088D5CF /* DittoObjC in Frameworks */,
+				CC93C63729E408710070B083 /* RSKPlaceholderTextView in Frameworks */,
+				CC93C63229E4083C0070B083 /* Chatto in Frameworks */,
+				CC93C62829E406FA0070B083 /* RxCocoa in Frameworks */,
+				CCB7014A29E40C6600A0782C /* RxDataSources in Frameworks */,
+				CC93C63429E4083C0070B083 /* ChattoAdditions in Frameworks */,
+				CC93C62229E4065C0070B083 /* Eureka in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -341,11 +370,24 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CC33F58629E433DF001CBF17 /* RxRelay in Frameworks */,
+				CC33F57229E43379001CBF17 /* Cartography in Frameworks */,
+				CC33F58029E433BE001CBF17 /* RSKPlaceholderTextView in Frameworks */,
+				CC33F57E29E433AD001CBF17 /* NotificationBannerSwift in Frameworks */,
 				0E6382E1298C78AB0099A79A /* DittoSwift in Frameworks */,
+				CC33F57029E4336F001CBF17 /* BetterSegmentedControl in Frameworks */,
+				CC33F57429E43382001CBF17 /* Chatto in Frameworks */,
+				CC33F57829E4338F001CBF17 /* Differentiator in Frameworks */,
+				CC33F57C29E433A6001CBF17 /* IQKeyboardManagerSwift in Frameworks */,
+				CC33F58229E433CD001CBF17 /* SwiftHEXColors in Frameworks */,
+				CC33F57629E43382001CBF17 /* ChattoAdditions in Frameworks */,
+				CC33F58A29E433DF001CBF17 /* RxDataSources in Frameworks */,
+				CC33F58429E433DF001CBF17 /* RxCocoa in Frameworks */,
 				0E6382EE298D94220099A79A /* DittoExportLogs in Frameworks */,
-				4A04F00108ECF14EAFEBAB44 /* Pods_defaults_SkyService_Crew.framework in Frameworks */,
+				CC33F58C29E433DF001CBF17 /* RxOptional in Frameworks */,
 				0E6382E3298C78AB0099A79A /* DittoPresenceViewer in Frameworks */,
-				2CE459836C674B97E677A8BB /* Pods_defaults_SkyService_Crew.framework in Frameworks */,
+				CC33F58829E433DF001CBF17 /* RxSwift in Frameworks */,
+				CC33F57A29E43397001CBF17 /* Eureka in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -358,7 +400,6 @@
 				2D024B1A260D29C100EE1044 /* SkyService */,
 				8CCA1EED2616B493008111C5 /* SkyService Pax.entitlements */,
 				CD6DD4019153FE1A9B2119FC /* Frameworks */,
-				E18D13F4AEE271984A9D57DA /* Pods */,
 				2D024B19260D29C100EE1044 /* Products */,
 				2D6B8641260E2A1D00D05A97 /* Recovered References */,
 			);
@@ -391,6 +432,7 @@
 				2D2E7158261E9DB00045F97A /* SettingsViewController.swift */,
 				2D92C128261A4BD000A936DB /* Sounds */,
 				CC1DAFF329B21AD7005A49D8 /* Env.swift */,
+				CC60A5DF29E4295500237D3B /* Libraries */,
 			);
 			path = SkyService;
 			sourceTree = "<group>";
@@ -481,7 +523,6 @@
 		2D6B8641260E2A1D00D05A97 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
-				27657103E955866A53E40A9C /* Pods_Etihad.framework */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -651,34 +692,21 @@
 			path = Filter;
 			sourceTree = "<group>";
 		};
+		CC60A5DF29E4295500237D3B /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				CC60A5E029E4296B00237D3B /* RxAlert.swift */,
+			);
+			path = Libraries;
+			sourceTree = "<group>";
+		};
 		CD6DD4019153FE1A9B2119FC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				0198F0BD288872F400C05541 /* DittoObjC.xcframework */,
 				0198F0BE288872F400C05541 /* DittoSwift.xcframework */,
-				6AC59B764F76969F8B98A578 /* Pods_defaults_SkyService_Crew.framework */,
-				DF057DA605D94B9B37B2FEF2 /* Pods_defaults_SkyService_Pax.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		E18D13F4AEE271984A9D57DA /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				A85B64F027E157A1EF0CE13C /* Pods-Etihad.debug.xcconfig */,
-				7A2AFB15CD5750DA2C189B6E /* Pods-Etihad.release.xcconfig */,
-				EB0BE855B0A6D3D7B4CD2FDC /* Pods-Etihad.debug-crew.xcconfig */,
-				0C9ECA5115CD3F132FEE5E1E /* Pods-Etihad.release-crew.xcconfig */,
-				480F25D4225C552C2B100AEB /* Pods-defaults-Etihad Crew.debug.xcconfig */,
-				9607380F3EC84C350122B897 /* Pods-defaults-Etihad Crew.release.xcconfig */,
-				8364B4CFEB5D1B4B37F3DDC7 /* Pods-defaults-Etihad Pax.debug.xcconfig */,
-				220D812CF9392ECC212FEDBE /* Pods-defaults-Etihad Pax.release.xcconfig */,
-				413C45EA2AB27E8E65EB05A5 /* Pods-defaults-SkyService Pax.debug.xcconfig */,
-				D845EA9B0B7F4456E95DD3AF /* Pods-defaults-SkyService Pax.release.xcconfig */,
-				FD389352C4F3049440D4AEEA /* Pods-defaults-SkyService Crew.debug.xcconfig */,
-				907474BDF96274D5E0AC7C90 /* Pods-defaults-SkyService Crew.release.xcconfig */,
-			);
-			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -688,11 +716,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D024B2C260D29C400EE1044 /* Build configuration list for PBXNativeTarget "SkyService Pax" */;
 			buildPhases = (
+
 				CC1DAFF129B219E8005A49D8 /* Generate Env.swift */,
 				1EB95158903591786EDCD2DF /* [CP] Check Pods Manifest.lock */,
 				2D024B14260D29C100EE1044 /* Sources */,
 				2D024B16260D29C100EE1044 /* Resources */,
-				8598038E744CC3F49A0290FD /* [CP] Embed Pods Frameworks */,
 				2D024B15260D29C100EE1044 /* Frameworks */,
 				2D024B91260D325400EE1044 /* Embed Frameworks */,
 			);
@@ -706,6 +734,21 @@
 				CC8F6071297927B00088D5CF /* DittoSwift */,
 				CC8F6074297927BF0088D5CF /* DittoPresenceViewer */,
 				0E6382EF298D942C0099A79A /* DittoExportLogs */,
+				CCF4696029E402A800C0EAE4 /* Cartography */,
+				CC93C62129E4065C0070B083 /* Eureka */,
+				CC93C62429E4068C0070B083 /* SwiftHEXColors */,
+				CC93C62729E406FA0070B083 /* RxCocoa */,
+				CC93C62929E406FA0070B083 /* RxRelay */,
+				CC93C62B29E406FA0070B083 /* RxSwift */,
+				CC93C62E29E407FA0070B083 /* NotificationBannerSwift */,
+				CC93C63129E4083C0070B083 /* Chatto */,
+				CC93C63329E4083C0070B083 /* ChattoAdditions */,
+				CC93C63629E408710070B083 /* RSKPlaceholderTextView */,
+				CC93C63B29E40B690070B083 /* IQKeyboardManagerSwift */,
+				CC93C63E29E40B810070B083 /* BetterSegmentedControl */,
+				CCB7014729E40C6600A0782C /* Differentiator */,
+				CCB7014929E40C6600A0782C /* RxDataSources */,
+				CCBE0DA529E42BE60066AFAE /* RxOptional */,
 			);
 			productName = Etihad;
 			productReference = 2D024B18260D29C100EE1044 /* SkyService Pax.app */;
@@ -719,7 +762,6 @@
 				2D6B8620260E283E00D05A97 /* [CP] Check Pods Manifest.lock */,
 				2D6B8621260E283E00D05A97 /* Sources */,
 				2D6B862D260E283E00D05A97 /* Resources */,
-				2D6B8630260E283E00D05A97 /* [CP] Embed Pods Frameworks */,
 				2D6B8631260E283E00D05A97 /* Frameworks */,
 				2D6B8635260E283E00D05A97 /* Embed Frameworks */,
 			);
@@ -732,6 +774,21 @@
 				0E6382E0298C78AB0099A79A /* DittoSwift */,
 				0E6382E2298C78AB0099A79A /* DittoPresenceViewer */,
 				0E6382ED298D94220099A79A /* DittoExportLogs */,
+				CC33F56F29E4336F001CBF17 /* BetterSegmentedControl */,
+				CC33F57129E43379001CBF17 /* Cartography */,
+				CC33F57329E43382001CBF17 /* Chatto */,
+				CC33F57529E43382001CBF17 /* ChattoAdditions */,
+				CC33F57729E4338F001CBF17 /* Differentiator */,
+				CC33F57929E43397001CBF17 /* Eureka */,
+				CC33F57B29E433A6001CBF17 /* IQKeyboardManagerSwift */,
+				CC33F57D29E433AD001CBF17 /* NotificationBannerSwift */,
+				CC33F57F29E433BE001CBF17 /* RSKPlaceholderTextView */,
+				CC33F58129E433CD001CBF17 /* SwiftHEXColors */,
+				CC33F58329E433DF001CBF17 /* RxCocoa */,
+				CC33F58529E433DF001CBF17 /* RxRelay */,
+				CC33F58729E433DF001CBF17 /* RxSwift */,
+				CC33F58929E433DF001CBF17 /* RxDataSources */,
+				CC33F58B29E433DF001CBF17 /* RxOptional */,
 			);
 			productName = Etihad;
 			productReference = 2D6B863C260E283E00D05A97 /* SkyService Crew.app */;
@@ -763,6 +820,17 @@
 			packageReferences = (
 				CC8F606E297927B00088D5CF /* XCRemoteSwiftPackageReference "DittoSwiftPackage" */,
 				CC8F6073297927BF0088D5CF /* XCRemoteSwiftPackageReference "DittoSwiftTools" */,
+				CCF4695F29E402A800C0EAE4 /* XCRemoteSwiftPackageReference "Cartography" */,
+				CC93C62029E4065C0070B083 /* XCRemoteSwiftPackageReference "Eureka" */,
+				CC93C62329E4068C0070B083 /* XCRemoteSwiftPackageReference "SwiftHEXColors" */,
+				CC93C62629E406FA0070B083 /* XCRemoteSwiftPackageReference "RxSwift" */,
+				CC93C62D29E407FA0070B083 /* XCRemoteSwiftPackageReference "NotificationBanner" */,
+				CC93C63029E4083C0070B083 /* XCRemoteSwiftPackageReference "Chatto" */,
+				CC93C63529E408710070B083 /* XCRemoteSwiftPackageReference "RSKPlaceholderTextView" */,
+				CC93C63A29E40B690070B083 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
+				CC93C63D29E40B810070B083 /* XCRemoteSwiftPackageReference "BetterSegmentedControl" */,
+				CCB7014629E40C6600A0782C /* XCRemoteSwiftPackageReference "RxDataSources" */,
+				CCBE0DA429E42BE60066AFAE /* XCRemoteSwiftPackageReference "RxOptional" */,
 			);
 			productRefGroup = 2D024B19260D29C100EE1044 /* Products */;
 			projectDirPath = "";
@@ -808,84 +876,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1EB95158903591786EDCD2DF /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-defaults-SkyService Pax-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		2D6B8620260E283E00D05A97 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-defaults-SkyService Crew-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		2D6B8630260E283E00D05A97 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-defaults-SkyService Crew/Pods-defaults-SkyService Crew-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-defaults-SkyService Crew/Pods-defaults-SkyService Crew-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-defaults-SkyService Crew/Pods-defaults-SkyService Crew-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		8598038E744CC3F49A0290FD /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-defaults-SkyService Pax/Pods-defaults-SkyService Pax-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-defaults-SkyService Pax/Pods-defaults-SkyService Pax-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-defaults-SkyService Pax/Pods-defaults-SkyService Pax-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		CC1DAFF129B219E8005A49D8 /* Generate Env.swift */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -956,6 +946,7 @@
 				2DCA6C0A2626B2E1007BE403 /* Categories.swift in Sources */,
 				2D2E7178261F4FFA0045F97A /* DataService+Notes.swift in Sources */,
 				2DCA6CD026274C45007BE403 /* AppAndDittoInfoSection.swift in Sources */,
+				CC60A5E129E4296B00237D3B /* RxAlert.swift in Sources */,
 				2D1748272635FB9A0033B7AB /* DataService+Orders.swift in Sources */,
 				2D1748212635C0400033B7AB /* VerticalTopAlignedLabel.swift in Sources */,
 				2DCA6BEC26265BAA007BE403 /* MenuItemOptionPushRow.swift in Sources */,
@@ -1041,6 +1032,7 @@
 				2DCA6C0B2626B2E1007BE403 /* Categories.swift in Sources */,
 				2D2E7179261F4FFA0045F97A /* DataService+Notes.swift in Sources */,
 				2DCA6CD126274C45007BE403 /* AppAndDittoInfoSection.swift in Sources */,
+				CC33F58D29E433F9001CBF17 /* RxAlert.swift in Sources */,
 				2D1748282635FB9A0033B7AB /* DataService+Orders.swift in Sources */,
 				2D1748222635C0400033B7AB /* VerticalTopAlignedLabel.swift in Sources */,
 				2DCA6BED26265BAA007BE403 /* MenuItemOptionPushRow.swift in Sources */,
@@ -1229,7 +1221,6 @@
 		};
 		2D024B2D260D29C400EE1044 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 413C45EA2AB27E8E65EB05A5 /* Pods-defaults-SkyService Pax.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-pax";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1256,7 +1247,6 @@
 		};
 		2D024B2E260D29C400EE1044 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D845EA9B0B7F4456E95DD3AF /* Pods-defaults-SkyService Pax.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-pax";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1285,7 +1275,6 @@
 		};
 		2D6B863A260E283E00D05A97 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FD389352C4F3049440D4AEEA /* Pods-defaults-SkyService Crew.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-crew";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1309,7 +1298,6 @@
 		};
 		2D6B863B260E283E00D05A97 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 907474BDF96274D5E0AC7C90 /* Pods-defaults-SkyService Crew.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-crew";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1381,6 +1369,94 @@
 				kind = branch;
 			};
 		};
+		CC93C62029E4065C0070B083 /* XCRemoteSwiftPackageReference "Eureka" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/xmartlabs/Eureka";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+		CC93C62329E4068C0070B083 /* XCRemoteSwiftPackageReference "SwiftHEXColors" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/thii/SwiftHEXColors.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+		CC93C62629E406FA0070B083 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
+		CC93C62D29E407FA0070B083 /* XCRemoteSwiftPackageReference "NotificationBanner" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Daltron/NotificationBanner";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
+		CC93C63029E4083C0070B083 /* XCRemoteSwiftPackageReference "Chatto" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/badoo/Chatto.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
+			};
+		};
+		CC93C63529E408710070B083 /* XCRemoteSwiftPackageReference "RSKPlaceholderTextView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ruslanskorb/RSKPlaceholderTextView";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
+		CC93C63A29E40B690070B083 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hackiftekhar/IQKeyboardManager";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		CC93C63D29E40B810070B083 /* XCRemoteSwiftPackageReference "BetterSegmentedControl" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/gmarm/BetterSegmentedControl";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		CCB7014629E40C6600A0782C /* XCRemoteSwiftPackageReference "RxDataSources" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RxSwiftCommunity/RxDataSources.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+		CCBE0DA429E42BE60066AFAE /* XCRemoteSwiftPackageReference "RxOptional" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RxSwiftCommunity/RxOptional";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		CCF4695F29E402A800C0EAE4 /* XCRemoteSwiftPackageReference "Cartography" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/robb/Cartography";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1404,6 +1480,81 @@
 			package = CC8F6073297927BF0088D5CF /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;
 			productName = DittoExportLogs;
 		};
+		CC33F56F29E4336F001CBF17 /* BetterSegmentedControl */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC93C63D29E40B810070B083 /* XCRemoteSwiftPackageReference "BetterSegmentedControl" */;
+			productName = BetterSegmentedControl;
+		};
+		CC33F57129E43379001CBF17 /* Cartography */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CCF4695F29E402A800C0EAE4 /* XCRemoteSwiftPackageReference "Cartography" */;
+			productName = Cartography;
+		};
+		CC33F57329E43382001CBF17 /* Chatto */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC93C63029E4083C0070B083 /* XCRemoteSwiftPackageReference "Chatto" */;
+			productName = Chatto;
+		};
+		CC33F57529E43382001CBF17 /* ChattoAdditions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC93C63029E4083C0070B083 /* XCRemoteSwiftPackageReference "Chatto" */;
+			productName = ChattoAdditions;
+		};
+		CC33F57729E4338F001CBF17 /* Differentiator */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CCB7014629E40C6600A0782C /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			productName = Differentiator;
+		};
+		CC33F57929E43397001CBF17 /* Eureka */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC93C62029E4065C0070B083 /* XCRemoteSwiftPackageReference "Eureka" */;
+			productName = Eureka;
+		};
+		CC33F57B29E433A6001CBF17 /* IQKeyboardManagerSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC93C63A29E40B690070B083 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */;
+			productName = IQKeyboardManagerSwift;
+		};
+		CC33F57D29E433AD001CBF17 /* NotificationBannerSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC93C62D29E407FA0070B083 /* XCRemoteSwiftPackageReference "NotificationBanner" */;
+			productName = NotificationBannerSwift;
+		};
+		CC33F57F29E433BE001CBF17 /* RSKPlaceholderTextView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC93C63529E408710070B083 /* XCRemoteSwiftPackageReference "RSKPlaceholderTextView" */;
+			productName = RSKPlaceholderTextView;
+		};
+		CC33F58129E433CD001CBF17 /* SwiftHEXColors */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC93C62329E4068C0070B083 /* XCRemoteSwiftPackageReference "SwiftHEXColors" */;
+			productName = SwiftHEXColors;
+		};
+		CC33F58329E433DF001CBF17 /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC93C62629E406FA0070B083 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		CC33F58529E433DF001CBF17 /* RxRelay */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC93C62629E406FA0070B083 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxRelay;
+		};
+		CC33F58729E433DF001CBF17 /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC93C62629E406FA0070B083 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+		CC33F58929E433DF001CBF17 /* RxDataSources */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CCB7014629E40C6600A0782C /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			productName = RxDataSources;
+		};
+		CC33F58B29E433DF001CBF17 /* RxOptional */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CCBE0DA429E42BE60066AFAE /* XCRemoteSwiftPackageReference "RxOptional" */;
+			productName = RxOptional;
+		};
 		CC8F606F297927B00088D5CF /* DittoObjC */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = CC8F606E297927B00088D5CF /* XCRemoteSwiftPackageReference "DittoSwiftPackage" */;
@@ -1418,6 +1569,81 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CC8F6073297927BF0088D5CF /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;
 			productName = DittoPresenceViewer;
+		};
+		CC93C62129E4065C0070B083 /* Eureka */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC93C62029E4065C0070B083 /* XCRemoteSwiftPackageReference "Eureka" */;
+			productName = Eureka;
+		};
+		CC93C62429E4068C0070B083 /* SwiftHEXColors */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC93C62329E4068C0070B083 /* XCRemoteSwiftPackageReference "SwiftHEXColors" */;
+			productName = SwiftHEXColors;
+		};
+		CC93C62729E406FA0070B083 /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC93C62629E406FA0070B083 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		CC93C62929E406FA0070B083 /* RxRelay */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC93C62629E406FA0070B083 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxRelay;
+		};
+		CC93C62B29E406FA0070B083 /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC93C62629E406FA0070B083 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+		CC93C62E29E407FA0070B083 /* NotificationBannerSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC93C62D29E407FA0070B083 /* XCRemoteSwiftPackageReference "NotificationBanner" */;
+			productName = NotificationBannerSwift;
+		};
+		CC93C63129E4083C0070B083 /* Chatto */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC93C63029E4083C0070B083 /* XCRemoteSwiftPackageReference "Chatto" */;
+			productName = Chatto;
+		};
+		CC93C63329E4083C0070B083 /* ChattoAdditions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC93C63029E4083C0070B083 /* XCRemoteSwiftPackageReference "Chatto" */;
+			productName = ChattoAdditions;
+		};
+		CC93C63629E408710070B083 /* RSKPlaceholderTextView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC93C63529E408710070B083 /* XCRemoteSwiftPackageReference "RSKPlaceholderTextView" */;
+			productName = RSKPlaceholderTextView;
+		};
+		CC93C63B29E40B690070B083 /* IQKeyboardManagerSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC93C63A29E40B690070B083 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */;
+			productName = IQKeyboardManagerSwift;
+		};
+		CC93C63E29E40B810070B083 /* BetterSegmentedControl */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC93C63D29E40B810070B083 /* XCRemoteSwiftPackageReference "BetterSegmentedControl" */;
+			productName = BetterSegmentedControl;
+		};
+		CCB7014729E40C6600A0782C /* Differentiator */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CCB7014629E40C6600A0782C /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			productName = Differentiator;
+		};
+		CCB7014929E40C6600A0782C /* RxDataSources */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CCB7014629E40C6600A0782C /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			productName = RxDataSources;
+		};
+		CCBE0DA529E42BE60066AFAE /* RxOptional */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CCBE0DA429E42BE60066AFAE /* XCRemoteSwiftPackageReference "RxOptional" */;
+			productName = RxOptional;
+		};
+		CCF4696029E402A800C0EAE4 /* Cartography */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CCF4695F29E402A800C0EAE4 /* XCRemoteSwiftPackageReference "Cartography" */;
+			productName = Cartography;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
