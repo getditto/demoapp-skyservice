@@ -1,3 +1,4 @@
+import UIKit
 import Chatto
 
 class TimeSeparatorCollectionViewCell: UICollectionViewCell {
