@@ -1,3 +1,4 @@
+import UIKit
 import Eureka
 
 final class CapitalizedLetterAndNumberRowCell: TextCell {
