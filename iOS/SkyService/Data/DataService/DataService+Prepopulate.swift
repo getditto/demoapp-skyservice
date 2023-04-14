@@ -323,11 +323,13 @@ extension DataService {
                     "workspaceId": workspaceId,
                     "isCrewOnly": isCrewOnly,
                     "deleted": false
-                ])
+                ], writeStrategy: .insertDefaultIfAbsent)
             }
 
             for menuItem in menuItemsData {
-                let _ = try? tx["menuItems"].upsert(menuItem)
+                let _ = try? tx["menuItems"].upsert(
+                    menuItem,
+                    writeStrategy: .insertDefaultIfAbsent)
             }
         }
     }
