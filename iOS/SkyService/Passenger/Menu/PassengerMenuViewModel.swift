@@ -73,7 +73,6 @@ class PassengerMenuViewModel {
                         if !Bundle.main.isCrew && remains <= 0 { return nil }
                     }
 
-                    menuItem.category = categories.first(where: { $0.id == menuItem.categoryId })
                     let cartLineItems = cartLineItems.filter({ $0.menuItemId == menuItem.id })
                     let options = menuItemOptions.filter({ $0.menuItemId == menuItem.id })
                     return MenuItemWithCartLineItems(menuItem: menuItem, cartLineItems: cartLineItems, options: options)
@@ -84,7 +83,7 @@ class PassengerMenuViewModel {
                 let items = menuItems.filter({ $0.menuItem.categoryId == category.id }).sorted(by: { $0.menuItem.ordinal < $1.menuItem.ordinal })
                 sectionOfPassengerMenuItems.append(SectionOfPassengerMenuItems(category: category, items: items))
             }
-            let uncategorized = menuItems.filter({ $0.menuItem.category == nil }).sorted(by: { $0.menuItem.ordinal < $1.menuItem.ordinal })
+            let uncategorized = menuItems.filter({ $0.menuItem.categoryId == nil }).sorted(by: { $0.menuItem.ordinal < $1.menuItem.ordinal })
             if !uncategorized.isEmpty {
                 sectionOfPassengerMenuItems.append(SectionOfPassengerMenuItems(category: nil, items: uncategorized))
             }
