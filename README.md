@@ -49,9 +49,9 @@ You need to setup some environment variables in order to build this project:
 2. Add the following environment variables to each credential file, substituting your own values:
 ```
     # Environment Variables  
-    DITTO_APP_ID = "replace with your app id"  
-    DITTO_AUTH_TOKEN = "replace with your auth token"  
-    DITTO_AUTH_PROVIDER = "replace with your auth provider"
+DITTO_APP_ID = replace with your app id
+DITTO_AUTH_TOKEN = replace with your auth token
+DITTO_AUTH_PROVIDER = replace with your auth provider
 
 ```
 
