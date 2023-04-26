@@ -55,6 +55,22 @@ You need to setup some environment variables in order to build this project:
 
 ```
 
+## How to build the apps
+
+### iOS
+
+1. Run `cp .env.template .env` at the root directory
+1. Edit `.env` to add environment variables
+1. Open the app project on Xcode and clean (<kbd>Command</kbd> + <kbd>Shift</kbd> + <kbd>K</kbd>)
+1. Build (<kbd>Command</kbd> + <kbd>B</kbd>)
+    - This will generate `Env.swift`
+
+### Android
+
+1. Open `/Android/gradle.properties` and add environment variables
+1. Build the app normally
+
+
 ## License
 
 MIT

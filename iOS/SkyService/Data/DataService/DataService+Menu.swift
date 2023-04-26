@@ -4,20 +4,13 @@ import DittoSwift
 extension DataService {
 
     func menuItemById$(_ id: String) -> Observable<MenuItem?> {
-        let menuItem$: Observable<MenuItem?> = menuItems.findByID(id).document$()
+        return menuItems.findByID(id).document$()
             .map { (doc) -> MenuItem? in
                 if let doc = doc {
                     return MenuItem(document: doc)
                 }
                 return nil
             }
-
-        let categories$ = self.categories$()
-        return Observable.combineLatest(menuItem$, categories$) { menuItem, categories in
-            guard var menuItem = menuItem else { return nil }
-            menuItem.category = categories.first(where: { $0.id == menuItem.categoryId })
-            return menuItem
-        }
     }
 
     func menuItems$() -> Observable<[MenuItem]> {

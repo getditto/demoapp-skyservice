@@ -29,7 +29,7 @@ extension DataService {
 
         let categoryData: [[String: Any]] = [
             [
-                "id": "appetizers",
+                "id": "appetizers" + workspaceId,
                 "name": "Appetizers",
                 "workspaceId": workspaceId,
                 "details": "Get started with some early bites.",
@@ -37,7 +37,7 @@ extension DataService {
                 "isCrewOnly": false
             ],
             [
-                "id": "snacks",
+                "id": "snacks" + workspaceId,
                 "name": "Snacks",
                 "workspaceId": workspaceId,
                 "details": "Not so hungry? Pass the time with some lovely snacks.",
@@ -45,7 +45,7 @@ extension DataService {
                 "isCrewOnly": false
             ],
             [
-                "id": "main-courses",
+                "id": "main-courses" + workspaceId,
                 "name": "Main Courses",
                 "workspaceId": workspaceId,
                 "details": "Land with a full stomach.",
@@ -53,7 +53,7 @@ extension DataService {
                 "isCrewOnly": false
             ],
             [
-                "id": "desserts",
+                "id": "desserts" + workspaceId,
                 "name": "Desserts",
                 "workspaceId": workspaceId,
                 "details": "Try our world class sweets.",
@@ -61,7 +61,7 @@ extension DataService {
                 "isCrewOnly": false
             ],
             [
-                "id": "alcoholic-drinks",
+                "id": "alcoholic-drinks" + workspaceId,
                 "name": "Alcoholic Beverages",
                 "workspaceId": workspaceId,
                 "details": "Enjoy a relaxing beer, wine or cocktail",
@@ -69,7 +69,7 @@ extension DataService {
                 "isCrewOnly": false
             ],
             [
-                "id": "non-alcoholic-drinks",
+                "id": "non-alcoholic-drinks" + workspaceId,
                 "name": "Sodas and Drinks",
                 "workspaceId": workspaceId,
                 "details": "Enjoy sodas, carbonated water, coffees, teas and more",
@@ -82,7 +82,7 @@ extension DataService {
             [
                 "name": "Garden Salad",
                 "price": 4.00,
-                "categoryId": "appetizers",
+                "categoryId": "appetizers" + workspaceId,
                 "ordinal": 0.1,
                 "workspaceId": workspaceId,
                 "details": "A simple light garden salad with red wine vinagrette.",
@@ -95,7 +95,7 @@ extension DataService {
             [
                 "name": "Focaccia Bread and Olive Oil",
                 "price": 4.00,
-                "categoryId": "appetizers",
+                "categoryId": "appetizers" + workspaceId,
                 "ordinal": 1.1,
                 "workspaceId": workspaceId,
                 "details": "Also comes with a side of balsamic vinagrette.",
@@ -108,7 +108,7 @@ extension DataService {
             [
                 "name": "Chips",
                 "price": 4.00,
-                "categoryId": "snacks",
+                "categoryId": "snacks" + workspaceId,
                 "ordinal": 0.1,
                 "workspaceId": workspaceId,
                 "details": "Crispy sea salted potato chips. 120 calories.",
@@ -121,7 +121,7 @@ extension DataService {
             [
                 "name": "Chocolate Chip Cookies",
                 "price": 4.00,
-                "categoryId": "snacks",
+                "categoryId": "snacks" + workspaceId,
                 "ordinal": 1.1,
                 "workspaceId": workspaceId,
                 "details": "Bite size chocolate cookies. 11 calories each.",
@@ -135,7 +135,7 @@ extension DataService {
                 "name": "General Snackbox",
                 "price": 10.00,
                 "ordinal": 2.3,
-                "categoryId": "snacks",
+                "categoryId": "snacks" + workspaceId,
                 "workspaceId": workspaceId,
                 "details": "Cheese, dates, nuts, and dried berries",
                 "maxCartQuantityPerUser": 5,
@@ -148,7 +148,7 @@ extension DataService {
                 "name": "Turkey Sandwich",
                 "price": 14.25,
                 "ordinal": 0.12,
-                "categoryId": "main-courses",
+                "categoryId": "main-courses" + workspaceId,
                 "workspaceId": workspaceId,
                 "details": "Turkey, lettuce, mustard, mayonaise sandwich warmed.",
                 "maxCartQuantityPerUser": 5,
@@ -161,7 +161,7 @@ extension DataService {
                 "name": "Curry Chicken",
                 "price": 12.00,
                 "ordinal": 1.22,
-                "categoryId": "main-courses",
+                "categoryId": "main-courses" + workspaceId,
                 "workspaceId": workspaceId,
                 "details": "Cold fresh curry and sweet potato chicken with fork and knife.",
                 "maxCartQuantityPerUser": 5,
@@ -173,7 +173,7 @@ extension DataService {
             [
                 "name": "Roast Beef Sandwich",
                 "price": 13.00,
-                "categoryId": "main-courses",
+                "categoryId": "main-courses" + workspaceId,
                 "ordinal": 2.15,
                 "workspaceId": workspaceId,
                 "details": "Roast beef, lettuce, mustard, mayonaise sandwich warmed.",
@@ -186,7 +186,7 @@ extension DataService {
             [
                 "name": "Vegan Spaghetti",
                 "price": 12.50,
-                "categoryId": "main-courses",
+                "categoryId": "main-courses" + workspaceId,
                 "ordinal": 3.15,
                 "workspaceId": workspaceId,
                 "details": "Spaghetti and vegan meatballs. Hot and comes with a side of grated parmesan cheese.",
@@ -200,7 +200,7 @@ extension DataService {
             [
                 "name": "Mochi",
                 "price": 12.50,
-                "categoryId": "desserts",
+                "categoryId": "desserts" + workspaceId,
                 "ordinal": 0.1124,
                 "workspaceId": workspaceId,
                 "details": "Comes with strawberry, mango, or green tea flavors",
@@ -213,7 +213,7 @@ extension DataService {
             [
                 "name": "Chocolate and Vanilla Fudge",
                 "price": 12.50,
-                "categoryId": "desserts",
+                "categoryId": "desserts" + workspaceId,
                 "ordinal": 1.4534,
                 "workspaceId": workspaceId,
                 "details": "Fudge comes hot.",
@@ -228,7 +228,7 @@ extension DataService {
             [
                 "name": "Brewster IPA",
                 "price": 12.50,
-                "categoryId": "alcoholic-drinks",
+                "categoryId": "alcoholic-drinks" + workspaceId,
                 "ordinal": 0.11349224,
                 "workspaceId": workspaceId,
                 "details": "From Australia",
@@ -241,7 +241,7 @@ extension DataService {
             [
                 "name": "Boston Lager",
                 "price": 12.50,
-                "categoryId": "alcoholic-drinks",
+                "categoryId": "alcoholic-drinks" + workspaceId,
                 "ordinal": 1.24543,
                 "workspaceId": workspaceId,
                 "details": "From Boston",
@@ -254,7 +254,7 @@ extension DataService {
             [
                 "name": "Rosé",
                 "price": 12.50,
-                "categoryId": "alcoholic-drinks",
+                "categoryId": "alcoholic-drinks" + workspaceId,
                 "ordinal": 2.1261,
                 "workspaceId": workspaceId,
                 "details": "From California",
@@ -268,7 +268,7 @@ extension DataService {
             [
                 "name": "Coca-Cola",
                 "price": 3.25,
-                "categoryId": "non-alcoholic-drinks",
+                "categoryId": "non-alcoholic-drinks" + workspaceId,
                 "ordinal": 0.00224432,
                 "workspaceId": workspaceId,
                 "details": "Classic or Vanilla",
@@ -281,7 +281,7 @@ extension DataService {
             [
                 "name": "Pepsi",
                 "price": 6.50,
-                "categoryId": "non-alcoholic-drinks",
+                "categoryId": "non-alcoholic-drinks" + workspaceId,
                 "ordinal":  1.204,
                 "workspaceId": workspaceId,
                 "details": "Comes also as diet pepsi",
@@ -294,7 +294,7 @@ extension DataService {
             [
                 "name": "Coffee",
                 "price": 4.50,
-                "categoryId": "non-alcoholic-drinks",
+                "categoryId": "non-alcoholic-drinks" + workspaceId,
                 "ordinal": 2.39261,
                 "workspaceId": workspaceId,
                 "details": "With Cream or Sugar",
@@ -323,11 +323,13 @@ extension DataService {
                     "workspaceId": workspaceId,
                     "isCrewOnly": isCrewOnly,
                     "deleted": false
-                ], writeStrategy: .insertIfAbsent)
+                ], writeStrategy: .insertDefaultIfAbsent)
             }
 
             for menuItem in menuItemsData {
-                let _ = try? tx["menuItems"].upsert(menuItem, writeStrategy: .insertIfAbsent)
+                let _ = try? tx["menuItems"].upsert(
+                    menuItem,
+                    writeStrategy: .insertDefaultIfAbsent)
             }
         }
     }
