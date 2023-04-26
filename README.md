@@ -39,6 +39,21 @@ Powered by [Ditto](https://ditto.live/).
 * Send text messages to other crew members
 * Invite ground staff for additional communication
 
+## Building the App
+
+### Android
+You need to setup some environment variables in order to build this project:
+
+1. In your project root, create a directory called **secret**
+2. Add two files to that directory called **debug_creds.properties** and **release_creds.properties**, for the debug and release build variants as defined in the app **build.gradle** file.
+2. Add the following environment variables to each credential file, substituting your own values:
+```
+    # Environment Variables  
+DITTO_APP_ID = replace with your app id
+DITTO_AUTH_TOKEN = replace with your auth token
+DITTO_AUTH_PROVIDER = replace with your auth provider
+
+```
 
 ## How to build the apps
 
