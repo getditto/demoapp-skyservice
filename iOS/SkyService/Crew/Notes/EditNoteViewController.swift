@@ -1,6 +1,6 @@
+import UIKit
 import RxCocoa
 import RxSwift
-import RxUIAlert
 import Cartography
 import RSKPlaceholderTextView
 import IQKeyboardManagerSwift

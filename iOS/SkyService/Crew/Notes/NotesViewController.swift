@@ -1,7 +1,7 @@
+import UIKit
 import Cartography
 import RxSwift
 import RxCocoa
-import RxUIAlert
 
 
 class NotesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {

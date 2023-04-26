@@ -1,16 +1,17 @@
+import UIKit
 import DittoSwift
 import RxSwift
 import RxOptional
 
 final class AuthDelegate: DittoAuthenticationDelegate {
     func authenticationRequired(authenticator: DittoAuthenticator) {
-        authenticator.loginWithToken(Env.DITTO_AUTH_PASSWORD, provider: Env.DITTO_AUTO_PROVIDER)  { err in
+        authenticator.loginWithToken(Env.DITTO_AUTH_PASSWORD, provider: Env.DITTO_AUTH_PROVIDER)  { err in
             print("Login request completed. Error? \(String(describing: err))")
         }
     }
 
     func authenticationExpiringSoon(authenticator: DittoAuthenticator, secondsRemaining: Int64) {
-        authenticator.loginWithToken(Env.DITTO_AUTH_PASSWORD, provider: Env.DITTO_AUTO_PROVIDER)  { err in
+        authenticator.loginWithToken(Env.DITTO_AUTH_PASSWORD, provider: Env.DITTO_AUTH_PROVIDER)  { err in
             print("Login request completed. Error? \(String(describing: err))")
         }
     }
@@ -239,20 +240,14 @@ final class DataService {
 
         let categories$ = self.categories$()
 
-        return Observable.combineLatest(justMenuItems$, cartItems$, expansionSet$, categories$, self.canOrder$()) { menuItemsOriginal, cartItems, expansionSet, categories, canOrder in
-            var menuItems = [MenuItem]()
-            for var menuItem in menuItemsOriginal {
-                menuItem.category = categories.first(where: { $0.id == menuItem.categoryId })
-                menuItems.append(menuItem)
-            }
-
+        return Observable.combineLatest(justMenuItems$, cartItems$, expansionSet$, categories$, self.canOrder$()) { menuItems, cartItems, expansionSet, categories, canOrder in
             var sectionOfMenuItems = [SectionOfMenuItems]()
             for category in categories.sorted(by: { $0.ordinal < $1.ordinal }) {
                 let menuItems = menuItems.filter({ $0.categoryId == category.id })
                     .sorted(by: { $0.ordinal < $1.ordinal })
                 sectionOfMenuItems.append(SectionOfMenuItems(items: menuItems, category: category))
             }
-            let uncatMenuItems = menuItems.filter({ $0.categoryId == nil || $0.category == nil })
+            let uncatMenuItems = menuItems.filter({ $0.categoryId == nil })
                 .sorted(by: { $0.ordinal < $1.ordinal })
             if !uncatMenuItems.isEmpty {
                 sectionOfMenuItems.append(SectionOfMenuItems(items: uncatMenuItems, category: nil))
