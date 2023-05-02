@@ -13,16 +13,6 @@ android {
         versionName "1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-        if (project.hasProperty('DITTO_APP_ID')) {
-            buildConfigField 'String', 'DITTO_APP_ID', project.DITTO_APP_ID
-        }
-        if (project.hasProperty('DITTO_AUTH_TOKEN')) {
-            buildConfigField 'String', 'DITTO_AUTH_TOKEN', project.DITTO_AUTH_TOKEN
-        }
-        if (project.hasProperty('DITTO_AUTH_PROVIDER')) {
-            buildConfigField 'String', 'DITTO_AUTH_PROVIDER', project.DITTO_AUTH_PROVIDER
-        }
     }
 
     flavorDimensions("arch")
