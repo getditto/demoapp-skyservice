@@ -17,6 +17,7 @@ class SkyServiceApplication: Application() {
     companion object {
         var context: Context? = null
         var ditto: Ditto? = null
+        lateinit var dittoAuthCallback: AuthCallback
 
         fun startSyncing() {
             val workspaceId = DataService.workspaceId ?: return
@@ -33,13 +34,14 @@ class SkyServiceApplication: Application() {
         dependencies.ensureDirectoryExists(persistanceDir)
 
         DittoLogger.minimumLogLevel = DittoLogLevel.DEBUG
+        dittoAuthCallback = AuthCallback()
 
         ditto = Ditto(
             dependencies,
             DittoIdentity.OnlineWithAuthentication(
                 dependencies,
                 BuildConfig.DITTO_APP_ID,
-                AuthCallback(),
+                dittoAuthCallback,
                 true
             )
         )
