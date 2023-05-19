@@ -716,9 +716,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D024B2C260D29C400EE1044 /* Build configuration list for PBXNativeTarget "SkyService Pax" */;
 			buildPhases = (
-
 				CC1DAFF129B219E8005A49D8 /* Generate Env.swift */,
-				1EB95158903591786EDCD2DF /* [CP] Check Pods Manifest.lock */,
 				2D024B14260D29C100EE1044 /* Sources */,
 				2D024B16260D29C100EE1044 /* Resources */,
 				2D024B15260D29C100EE1044 /* Frameworks */,
@@ -759,7 +757,6 @@
 			buildConfigurationList = 2D6B8639260E283E00D05A97 /* Build configuration list for PBXNativeTarget "SkyService Crew" */;
 			buildPhases = (
 				CC1DAFF229B219FF005A49D8 /* Generate Env.swift */,
-				2D6B8620260E283E00D05A97 /* [CP] Check Pods Manifest.lock */,
 				2D6B8621260E283E00D05A97 /* Sources */,
 				2D6B862D260E283E00D05A97 /* Resources */,
 				2D6B8631260E283E00D05A97 /* Frameworks */,
@@ -884,11 +881,13 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/buildEnv.sh",
 			);
 			name = "Generate Env.swift";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Env.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -902,11 +901,13 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/buildEnv.sh",
 			);
 			name = "Generate Env.swift";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Env.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
