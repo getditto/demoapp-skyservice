@@ -62,11 +62,13 @@ fun DittoPendingCursorOperation.documentsWithEventInfo(): Observable<DocumentsWi
     }
 }
 
-fun DittoPendingIdSpecificOperation.document(): Observable<DittoDocument?> {
+fun DittoPendingIdSpecificOperation.document(): Observable<DittoDocument> {
     return Observable.create { observer ->
         val s = this.subscribe()
         val h = this.observeLocal { doc, _ ->
-            observer.onNext(doc)
+            if (doc != null) {
+                observer.onNext(doc)
+            }
         }
         observer.setCancellable {
             h.close()
