@@ -18,6 +18,7 @@ import live.dittolive.skyservice.SkyServiceApplication.Companion.context
 import live.dittolive.skyservice.SkyServiceApplication.Companion.ditto
 import live.dittolive.skyservice.models.*
 import org.joda.time.DateTime
+import java.util.Optional
 import kotlin.collections.ArrayList
 
 
@@ -326,24 +327,24 @@ object DataService {
             }
     }
 
-    fun menuItemById(id: String): Observable<MenuItem> {
-        val menuItems: Observable<MenuItem?> = ditto!!.store.collection("menuItems")
+    fun menuItemById(id: String): Observable<Optional<MenuItem>> {
+        val menuItems: Observable<Optional<MenuItem>> = ditto!!.store.collection("menuItems")
             .findByID(id).documentWithOptional().map { optional ->
                 if (optional.isPresent) {
                     val document = optional.get()
-                    return@map MenuItem(document)
+                    return@map Optional.of(MenuItem(document))
                 }
-                return@map null
+                return@map Optional.empty()
         }
 
         val categories = categories()
-        return Observable.combineLatest(menuItems, categories, BiFunction<MenuItem?, List<Category>, MenuItem?> { menuItemOriginal, categoriesOriginal ->
+        return Observable.combineLatest(menuItems, categories, BiFunction<Optional<MenuItem>, List<Category>, Optional<MenuItem>> { menuItemOriginal, categoriesOriginal ->
                menuItemOriginal?.let { item ->
-                   item.category = categoriesOriginal.firstOrNull { it.id == item.categoryId }
+                   item.get().category = categoriesOriginal.firstOrNull { it.id == item.get().categoryId }
                    return@BiFunction item
                }
 
-                return@BiFunction null
+                return@BiFunction Optional.empty()
         })
     }
 
