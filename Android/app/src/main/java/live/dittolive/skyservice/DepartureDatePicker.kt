@@ -2,11 +2,9 @@ package live.dittolive.skyservice
 
 import android.app.DatePickerDialog
 import android.app.Dialog
-import android.graphics.Color
 import android.os.Bundle
 import android.widget.DatePicker
 import androidx.fragment.app.DialogFragment
-import kotlinx.android.synthetic.main.button_item_constraint_layout.*
 import java.util.*
 
 interface DateSelection {
