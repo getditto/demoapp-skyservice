@@ -238,6 +238,7 @@ object DataService {
     fun me(): Observable<User> {
         return ditto!!.store.collection("users").findByID(this.userId!!).document()
             .map { document ->
+
                 User(document)
             }
     }
