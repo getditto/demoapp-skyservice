@@ -22,6 +22,7 @@ import io.reactivex.rxjava3.functions.BiFunction
 import live.dittolive.skyservice.DataService
 import live.dittolive.skyservice.R
 import live.dittolive.skyservice.models.*
+import java.util.Optional
 
 interface AddToCart {
     fun addItemsToCart(menuItem: MenuItem, rowOfCartItems: List<RowOfCartItem>, quantity: Int)
@@ -49,19 +50,19 @@ class MenuItemActivity: AppCompatActivity(), AddToCart {
         val options = DataService.menuItemOptions(menuItemId)
 
         disposables = CompositeDisposable()
-        Observable.combineLatest(menuItem, options, BiFunction<MenuItem?, List<MenuItemOption>, Pair<MenuItem, List<RowOfCartItem>>> { menuItemOriginal, menuItemOptions ->
+        Observable.combineLatest(menuItem, options, BiFunction<Optional<MenuItem>, List<MenuItemOption>, Pair<Optional<MenuItem>, List<RowOfCartItem>>> { menuItemOriginal, menuItemOptions ->
             menuItemOriginal?.let {
-                val sectionOfCartItems = SectionOfMenuDetailItems(menuItemOriginal, menuItemOptions)
+                val sectionOfCartItems = SectionOfMenuDetailItems(menuItemOriginal.get(), menuItemOptions)
                 return@BiFunction Pair(menuItemOriginal, sectionOfCartItems.buildData())
             }
 
-            return@BiFunction null
+            return@BiFunction Pair(Optional.empty(), emptyList())
         })
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { disposables.add(it) }
             .subscribe { (menuItem, cartItems) ->
-                this.title = menuItem.name
-                adapter.set(menuItem, cartItems.toMutableList())
+                this.title = menuItem.get().name
+                adapter.set(menuItem.get(), cartItems.toMutableList())
             }
     }
 
