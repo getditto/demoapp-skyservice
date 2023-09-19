@@ -1,18 +1,20 @@
 {
-  "version": 2,
+  "version": 3,
   "artifactType": {
     "type": "APK",
     "kind": "Directory"
   },
   "applicationId": "live.dittolive.skyservice",
-  "variantName": "processAllReleaseResources",
+  "variantName": "allRelease",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
-      "versionCode": 1,
-      "versionName": "1.0",
+      "attributes": [],
+      "versionCode": 34,
+      "versionName": "1",
       "outputFile": "app-all-release.apk"
     }
-  ]
+  ],
+  "elementType": "File"
 }
