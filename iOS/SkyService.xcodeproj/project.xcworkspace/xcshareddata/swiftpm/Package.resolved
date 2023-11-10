@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getditto/DittoSwiftPackage",
       "state" : {
-        "revision" : "8036ffd9214dccbb2c4611c24a087594d0649378",
-        "version" : "4.4.0"
+        "revision" : "cc825b447b6292cc0a4a2f7e25d4fae0e3bfb1a8",
+        "version" : "4.4.4"
       }
     },
     {
@@ -42,7 +42,7 @@
       "location" : "https://github.com/getditto/DittoSwiftTools",
       "state" : {
         "branch" : "v4",
-        "revision" : "0d335bc55856e250b20bbac4859a9ba55467393c"
+        "revision" : "600e3b82dbdf5d70ee35d1b470f3e47f2b69bb54"
       }
     },
     {
@@ -60,7 +60,7 @@
       "location" : "https://github.com/hackiftekhar/IQKeyboardManager",
       "state" : {
         "branch" : "master",
-        "revision" : "87df5580201aae98b519999eafc7f35470c7d78d"
+        "revision" : "6f357ea18e0da4e089368da3b2b278d09102df65"
       }
     },
     {
@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/cbpowell/MarqueeLabel",
       "state" : {
-        "revision" : "bc00d4cbff7f6c416035e3d16c21885452cd159e",
-        "version" : "4.3.1"
+        "revision" : "ae3cf7c647dd7f67f1946658285f5f0ce2476caf",
+        "version" : "4.4.0"
       }
     },
     {
@@ -131,8 +131,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections",
       "state" : {
-        "revision" : "937e904258d22af6e447a0b72c0bc67583ef64a2",
-        "version" : "1.0.4"
+        "revision" : "a902f1823a7ff3c9ab2fba0f992396b948eda307",
+        "version" : "1.0.5"
       }
     },
     {
