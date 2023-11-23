@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -244,8 +244,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		0198F0BD288872F400C05541 /* DittoObjC.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = DittoObjC.xcframework; path = Pods/DittoObjC/DittoObjC.xcframework; sourceTree = "<group>"; };
-		0198F0BE288872F400C05541 /* DittoSwift.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = DittoSwift.xcframework; path = Pods/DittoSwift/DittoSwift.xcframework; sourceTree = "<group>"; };
 		2D024B18260D29C100EE1044 /* SkyService Pax.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SkyService Pax.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D024B1B260D29C100EE1044 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2D024B24260D29C400EE1044 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -703,8 +701,6 @@
 		CD6DD4019153FE1A9B2119FC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				0198F0BD288872F400C05541 /* DittoObjC.xcframework */,
-				0198F0BE288872F400C05541 /* DittoSwift.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1237,7 +1233,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.1;
+				MARKETING_VERSION = 2.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = live.ditto.skyservice.pax;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1263,7 +1259,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.1;
+				MARKETING_VERSION = 2.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = live.ditto.skyservice.pax;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore *";
@@ -1289,7 +1285,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.1;
+				MARKETING_VERSION = 2.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = live.ditto.skyservice.crew;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1312,7 +1308,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.1;
+				MARKETING_VERSION = 2.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = live.ditto.skyservice.crew;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = singlefile;
