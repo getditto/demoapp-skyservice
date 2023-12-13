@@ -69,7 +69,9 @@ class SettingsViewController: FormViewController {
                 row.disabled = Condition(booleanLiteral: !Bundle.main.isCrew)
             }.onChange({ (row) in
                 guard let value = row.value else { return }
-                DataService.shared.setEnableOrdering(isOrderingEnabled: value)
+                Task {
+                    await DataService.shared.setEnableOrdering(isOrderingEnabled: value)
+                }
             })
 
         form
@@ -118,7 +120,9 @@ class SettingsViewController: FormViewController {
                 let alert = UIAlertController(title: "DELETE user?", message: "Warning: This also deletes orders by this user", preferredStyle: .alert)
 
                 alert.addAction(UIAlertAction(title: "Yes, delete", style: .destructive, handler: { (_) in
-                    DataService.shared.deleteUser(userId: self.userId)
+                    Task {
+                        await DataService.shared.deleteUser(userId: self.userId)
+                    }
                     self.dismiss(animated: true)
                 }))
 
@@ -198,7 +202,9 @@ class SettingsViewController: FormViewController {
                 let alert = UIAlertController(title: "Prepopulate?", message: "This will prepopulate menu items and categories. This is primarily used for testing purposes!", preferredStyle: .alert)
 
                 alert.addAction(UIAlertAction(title: "Yes, prepopulate.", style: .default, handler: { (_) in
-                    DataService.shared.prepopulateMenuItems()
+                    Task {
+                        await DataService.shared.prepopulateMenuItems()
+                    }
                     let banner = StatusBarNotificationBanner(title: "Prepopulated menu items", style: .success)
                     banner.show()
                     AppDelegate.crewTabController?.goToController(CrewMenuViewController.self)
@@ -268,7 +274,9 @@ class SettingsViewController: FormViewController {
         let seat = (form.values()["seat"] as? String ?? "").trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         let role = form.values()["role"] as? Role ?? .passenger
         let isManuallyCreated = form.values()["isManuallyCreated"] as? Bool ?? false
-        DataService.shared.setUser(id: self.userId, name: name, seat: seat, role: role, isManuallyCreated: isManuallyCreated)
+        Task {
+            await DataService.shared.setUser(id: self.userId, name: name, seat: seat, role: role, isManuallyCreated: isManuallyCreated)
+        }
         let banner = StatusBarNotificationBanner(title: "Saved changes", style: .success)
         banner.show()
         dismiss(animated: true)

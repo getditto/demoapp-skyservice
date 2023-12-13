@@ -200,7 +200,9 @@ class PassengerMenuViewController: UIViewController, SettingsViewControllerDeleg
 
     func logoutButtonDidClick() {
         DataService.shared.stopSyncing()
-        DataService.shared.evictAllData()
+        Task {
+            await DataService.shared.evictAllData()
+        }
         UserDefaults.standard.workspaceId = nil
         let loginNav = UINavigationController(rootViewController: LoginViewController())
         (UIApplication.shared.delegate as! AppDelegate).setRootViewController(loginNav, animated: true)

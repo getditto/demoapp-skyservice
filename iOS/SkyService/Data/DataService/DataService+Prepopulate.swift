@@ -3,28 +3,30 @@ import DittoSwift
 
 extension DataService {
 
-    func deleteCategoriesAndMenu() {
+    func deleteCategoriesAndMenu() async {
         guard let workspaceId = UserDefaults.standard.workspaceId?.description else { return }
-        ditto.store.write { (tx) in
-            let categoriesDocs = tx["categories"].find("workspaceId == '\(workspaceId)'").exec()
-            for doc in categoriesDocs {
-                tx["categories"].findByID(doc.id).update { (mutable) in
-                    guard let mutable = mutable else { return }
-                    mutable["deleted"].set(true)
-                }
+        
+        //Use Write Transactions when available in DQL
+        do {
+            let categoryRresults = try await ditto.store.execute(query: "SELECT * FROM categories WHERE workspaceId = :workspaceId", arguments: ["workspaceId": workspaceId]).items
+            
+            for result in categoryRresults {
+                try await self.ditto.store.execute(query: "UPDATE categories SET deleted = :deleted WHERE _id = :id", arguments: ["deleted": true, "id": result.value["_id"] as Any?])
             }
             
-            let menuDocs = tx["menuItems"].find("workspaceId == '\(workspaceId)'").exec()
-            for doc in menuDocs {
-                tx["menuItems"].findByID(doc.id).update { (mutable) in
-                    guard let mutable = mutable else { return }
-                    mutable["deleted"].set(true)
-                }
+            let menuResults = try await ditto.store.execute(query: "SELECT * FROM menuItems WHERE workspaceId = :workspaceId", arguments: ["workspaceId": workspaceId]).items
+            
+            for result in menuResults {
+                try await self.ditto.store.execute(query: "UPDATE menuItems SET deleted = :deleted WHERE _id = :id", arguments: ["deleted": true, "id": result.value["_id"] as Any?])
             }
+
+        } catch {
+            print("Error: \(error)")
         }
+
     }
 
-    func prepopulateMenuItems() {
+    func prepopulateMenuItems() async {
         guard let workspaceId = UserDefaults.standard.workspaceId?.description else { return }
 
         let categoryData: [[String: Any]] = [
@@ -306,7 +308,7 @@ extension DataService {
             ]
         ]
 
-        ditto.store.write { (tx) in
+        do {
             for category in categoryData {
                 let id = category["id"] as! String
                 let name = category["name"] as! String
@@ -314,8 +316,8 @@ extension DataService {
                 let ordinal = category["ordinal"] as! Double
                 let workspaceId = category["workspaceId"] as! String
                 let isCrewOnly = category["isCrewOnly"] as! Bool
-
-                let _ = try! tx["categories"].upsert([
+                
+                let newDoc: [String:Any] = [
                     "_id": id.toDittoID(),
                     "name": name,
                     "details": details,
@@ -323,15 +325,21 @@ extension DataService {
                     "workspaceId": workspaceId,
                     "isCrewOnly": isCrewOnly,
                     "deleted": false
-                ], writeStrategy: .insertDefaultIfAbsent)
+                ]
+                
+                try await self.ditto.store.execute(query: "INSERT INTO categories DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE", arguments: ["newDoc": newDoc])
+            }
+                
+            for menuItem in menuItemsData {
+                try await self.ditto.store.execute(query: "INSERT INTO menuItems DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE", arguments: ["newDoc": menuItem])
             }
 
-            for menuItem in menuItemsData {
-                let _ = try? tx["menuItems"].upsert(
-                    menuItem,
-                    writeStrategy: .insertDefaultIfAbsent)
-            }
+        } catch {
+            print("Error \(error)")
         }
+        
+        
+        
     }
 
 

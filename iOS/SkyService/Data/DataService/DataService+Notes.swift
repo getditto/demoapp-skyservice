@@ -1,5 +1,6 @@
 import Foundation
 import RxSwift
+import DittoSwift
 
 extension DataService {
 
@@ -46,34 +47,56 @@ extension DataService {
         }
     }
 
-    func setNoteCompletion(id: String, isCompleted: Bool) {
-        notes.findByID(id).update { (m) in
-            m?["isCompleted"].set(isCompleted)
+    func setNoteCompletion(id: String, isCompleted: Bool) async {
+        do{
+            let query = "UPDATE notes SET isCompleted = :isCompleted WHERE _id = :id"
+            
+            let args: [String:Any] = [
+                "isCompleted": isCompleted,
+                "id": id
+            ]
+            
+            try await self.ditto.store.execute(query: query, arguments: args)
+            
+        } catch {
+            print("Error \(error)")
         }
     }
 
     @discardableResult
-    func setNote(id: String?, body: String, isCompleted: Bool, isShared: Bool) -> Result<String, WorkspaceIdError> {
+    func setNote(id: String?, body: String, isCompleted: Bool, isShared: Bool) async -> Result<String, WorkspaceIdError> {
         guard let workspaceId = UserDefaults.standard.workspaceId?.description else {
             return Result.failure(WorkspaceIdError.unavailable)
         }
         var noteId: String!
-        ditto.store.write { (txn) in
+        
+        do{
             if let id = id {
                 noteId = id
-                txn["notes"].findByID(id).update({ (m) in
-                    m?["body"].set(body)
-                    m?["editedOn"].set(Date().isoDateString)
-                    m?["isCompleted"].set(isCompleted)
-                    m?["userId"].set(self.userId)
-                })
+
+                let query = "UPDATE notes SET body = :body, editedOn = :editedOn, isCompleted = :isCompleted, userId = :userId WHERE _id = :id"
+                
+                let args: [String:Any] = [
+                    "body": body,
+                    "editedOn": Date().isoDateString,
+                    "isCompleted": isCompleted,
+                    "userId": self.userId,
+                    "id": id
+                ]
+                
+                try await self.ditto.store.execute(query: query, arguments: args)
+                
             } else {
-                let currentNotes = txn["notes"].find("workspaceId == '\(workspaceId)' && deleted == false").exec()
+                let currentNotesResult = try await ditto.store.execute(query: "SELECT * FROM notes WHERE workspaceId = :workspaceId AND deleted = 'false'", arguments: ["workspaceId": workspaceId]).items
+                
                 let ordinal: Float = {
-                    guard let ordinal = currentNotes.last?["ordinal"].float else { return  Float.random(min: 0, max: 1) }
-                    return ordinal + 1
+                    guard let lastOrdinal = currentNotesResult.last?.value["ordinal"] as? Float else {
+                        return Float.random(min: 0, max: 1)
+                    }
+                    return lastOrdinal + 1
                 }()
-                noteId = try! txn["notes"].upsert([
+                
+                let newDoc: [String:Any] = [
                     "isCompleted": false,
                     "body": body,
                     "ordinal": ordinal,
@@ -83,42 +106,92 @@ extension DataService {
                     "isShared": isShared,
                     "workspaceId": workspaceId,
                     "deleted": false
-                ]).toString()
+                ]
+                
+                let noteResult = try await self.ditto.store.execute(query: "INSERT INTO notes DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE", arguments: ["newDoc": newDoc])
+                noteId = noteResult.mutatedDocumentIDs().first?.stringValue
+
             }
+        } catch {
+            print("Error \(error)")
         }
+        
         return .success(noteId)
     }
 
-    func changeNoteOrdinal(id: String, newOrdinal: Float) {
-        self.notes.findByID(id).update { (mutableDoc) in
-            mutableDoc?["ordinal"].set(newOrdinal)
+    func changeNoteOrdinal(id: String, newOrdinal: Float) async {        
+        do{
+            let query = "UPDATE notes SET ordinal = :ordinal WHERE _id = :id"
+            
+            let args: [String:Any] = [
+                "ordinal": newOrdinal,
+                "id": id
+            ]
+            
+            try await self.ditto.store.execute(query: query, arguments: args)
+        } catch {
+          print("Error \(error)")
         }
     }
 
     func deleteNoteById(_ id: String) -> Observable<Bool> {
-        self.notes.findByID(id).update { (mutable) in
-            guard let mutable = mutable else { return }
-            mutable["deleted"].set(true)
-        }
-        
-        let doc = self.notes.findByID(id).exec()
+        return Observable.create { observer in
+            Task {
+                do {
+                    let query = "UPDATE notes SET deleted = :deleted WHERE _id = :id"
 
-        return Observable.just(doc?["deleted"].boolValue ?? true)
+                    let args: [String:Any] = [
+                        "deleted": true,
+                        "id": id
+                    ]
+
+                    try await self.ditto.store.execute(query: query, arguments: args)
+
+                    let result = try await self.ditto.store.execute(query: "SELECT * FROM notes WHERE _id = id", arguments: ["id": id]).items.first?.value["deleted"] as? Bool ?? true
+                    
+                    DispatchQueue.main.async {
+                        observer.onNext(result)
+                        observer.onCompleted()
+                    }
+                } catch {
+                    print("Error \(error)")
+
+                    DispatchQueue.main.async {
+                        observer.onError(error)
+                    }
+                }
+            }
+
+            return Disposables.create()
+        }
+
     }
 
     func deletePersonalNotes() -> Observable<Void> {
         return workspaceId$
             .flatMapLatest { (workspaceId) -> Observable<Void> in
                 
-                let noteDocs = self.notes.find("workspaceId == '\(workspaceId)' && userId == '\(DataService.shared.userId)' && isShared == false").exec()
-                
-                for doc in noteDocs {
-                    self.notes.findByID(doc.id).update { (mutable) in
-                        guard let mutable = mutable else { return }
-                        mutable["deleted"].set(true)
+                Task {
+                    do {
+                        
+                        let noteDocs = try await self.ditto.store.execute(query: "SELECT * FROM notes WHERE workspaceId = :workspaceId AND userId = :userId", arguments: ["workspaceId": workspaceId, "userId": DataService.shared.userId]).items
+                        
+                        for result in noteDocs {
+                            let query = "UPDATE notes SET deleted = :deleted WHERE _id = :id"
+                            
+                            let args: [String:Any] = [
+                                "deleted": true,
+                                "id": result.value["_id"] as Any
+                            ]
+                            
+                            try await self.ditto.store.execute(query: query, arguments: args)
+                        }
+                        
+                    } catch {
+                        print("Error \(error)")
                     }
                 }
-
+                
                 return Observable.just(())
             }
     }
@@ -126,15 +199,28 @@ extension DataService {
     func deleteAllNotes() -> Observable<Void> {
         return workspaceId$
             .flatMapLatest { (workspaceId) -> Observable<Void> in
-                
-                let noteDocs = self.notes.find("workspaceId == '\(workspaceId)' && isShared == true").exec()
-                
-                for doc in noteDocs {
-                    self.notes.findByID(doc.id).update { (mutable) in
-                        guard let mutable = mutable else { return }
-                        mutable["deleted"].set(true)
+
+                Task {
+                    do {
+                        
+                        let noteDocs = try await self.ditto.store.execute(query: "SELECT * FROM notes WHERE workspaceId = :workspaceId AND isShared = :isShared", arguments: ["workspaceId": workspaceId, "isShared": true]).items
+                        
+                        for result in noteDocs {
+                            let query = "UPDATE notes SET deleted = :deleted WHERE _id = :id"
+                            
+                            let args: [String:Any] = [
+                                "deleted": true,
+                                "id": result.value["_id"] as Any
+                            ]
+                            
+                            try await self.ditto.store.execute(query: query, arguments: args)
+                        }
+                        
+                    } catch {
+                        print("Error \(error)")
                     }
                 }
+                
                 return Observable.just(())
             }
     }

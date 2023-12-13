@@ -108,7 +108,9 @@ class MenuItemOptionRowViewController: FormViewController, TypedRowControllerTyp
 
                 alert.addAction(UIAlertAction(title: "Yes, delete", style: .destructive, handler: { [weak self, weak row = self?.row] (_) in
                     guard let `self` = self, let value = row?.value else { return }
-                    DataService.shared.deleteMenuItemOption(menuItemOptionId: value.id)
+                    Task {
+                        await DataService.shared.deleteMenuItemOption(menuItemOptionId: value.id)
+                    }
                     self.navigationController?.popViewController(animated: true)
                 }))
 
@@ -167,9 +169,9 @@ class MenuItemOptionRowViewController: FormViewController, TypedRowControllerTyp
         let allowedValues = self.form.sectionBy(tag: "allowedValues")?.allRows.compactMap({ $0 as? TextRow })
                 .compactMap({ $0.value }) ?? []
 
-        DataService.shared.saveMenuItemOption(menuItemOptionId: menuItemOptionId, label: label, details: details, isRequired: isRequired, allowedValues: allowedValues)
-
-
+        Task {
+            await DataService.shared.saveMenuItemOption(menuItemOptionId: menuItemOptionId, label: label, details: details, isRequired: isRequired, allowedValues: allowedValues)
+        }
     }
 
     deinit {

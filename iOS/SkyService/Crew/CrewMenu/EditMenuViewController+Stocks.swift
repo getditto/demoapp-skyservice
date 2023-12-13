@@ -18,7 +18,9 @@ extension EditMenuItemViewController {
             }.onChange({ [weak self] row in
                 guard let self = self else { return }
                 if let value = row.value {
-                    DataService.shared.updateMenuItemTotalCount(id: self.menuItemId, value: value)
+                    Task {
+                        await DataService.shared.updateMenuItemTotalCount(id: self.menuItemId, value: value)
+                    }
                 }
             }).cellUpdate({ (cell, row) in
                 if let value = row.value {

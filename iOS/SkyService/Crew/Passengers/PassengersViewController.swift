@@ -115,12 +115,14 @@ final class PassengersViewController: UIViewController, UITableViewDelegate {
         textField?.placeholder = "0A"
         let createAction = UIAlertAction(title: "Create", style: .default) { _ in
             guard let text = textField?.text, !text.isEmpty else { return }
-            DataService.shared.setUser(
-                id: UUID().uuidString,
-                name: "Manually Created User",
-                seat: text,
-                role: .passenger,
-                isManuallyCreated: true)
+            Task {
+                await DataService.shared.setUser(
+                    id: UUID().uuidString,
+                    name: "Manually Created User",
+                    seat: text,
+                    role: .passenger,
+                    isManuallyCreated: true)
+            }
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         alert.addAction(createAction)

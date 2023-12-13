@@ -26,30 +26,42 @@ extension DataService {
             }
     }
 
-    func sendChatMessage(body: String){
+    func sendChatMessage(body: String) async{
         guard let workspaceId: String = UserDefaults.standard.workspaceId?.description else { return }
-        try! chatMessages.upsert([
-            "mimeType": "text/plain",
-            "body": body,
-            "workspaceId": workspaceId,
-            "senderUserId": self.userId,
-            "createdOn": Date().isoDateString,
-            "deleted": false
-        ])
+        
+        do {
+            
+            let newDoc: [String:Any] = [
+                "mimeType": "text/plain",
+                "body": body,
+                "workspaceId": workspaceId,
+                "senderUserId": self.userId,
+                "createdOn": Date().isoDateString,
+                "deleted": false
+            ]
+                    
+            try await self.ditto.store.execute(query: "INSERT INTO chatMessages DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE", arguments: ["newDoc": newDoc])
+            
+        } catch {
+            print("Error \(error)")
+        }
     }
 
-    func deleteAllChatMessages() {
+    func deleteAllChatMessages() async {
         guard let workspaceId = UserDefaults.standard.workspaceId?.description else {
             debugPrint("No workspaceId was found while attempting to call `deleteAllChatMessages`")
             return
         }
         
-        let chatDocs = chatMessages.find("workspaceId == '\(workspaceId)'").exec()
-        for doc in chatDocs {
-            chatMessages.findByID(doc.id).update { (mutable) in
-                guard let mutable = mutable else { return }
-                mutable["deleted"].set(true)
+        do {
+            let chatResults = try await ditto.store.execute(query: "SELECT * FROM chatMessages WHERE workspaceId = :workspaceId", arguments: ["workspaceId": workspaceId]).items
+            
+            for result in chatResults {
+                try await self.ditto.store.execute(query: "UPDATE chatMessages SET deleted = :deleted WHERE _id = :id", arguments: ["deleted": true, "id": result.value["_id"] as Any?])
             }
+            
+        } catch {
+            print("Error \(error)")
         }
     }
 

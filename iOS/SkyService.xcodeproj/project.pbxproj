@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -1359,15 +1359,15 @@
 			repositoryURL = "https://github.com/getditto/DittoSwiftPackage";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 4.0.0;
+				minimumVersion = 4.5.0;
 			};
 		};
 		CC8F6073297927BF0088D5CF /* XCRemoteSwiftPackageReference "DittoSwiftTools" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/getditto/DittoSwiftTools";
 			requirement = {
-				branch = v4;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.4.0;
 			};
 		};
 		CC93C62029E4065C0070B083 /* XCRemoteSwiftPackageReference "Eureka" */ = {

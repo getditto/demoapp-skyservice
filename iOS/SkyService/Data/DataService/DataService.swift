@@ -257,10 +257,19 @@ final class DataService {
         }
     }
 
-    func deleteMenuItem(id: String) {
-        menuItems.findByID(id).update{ (mutable) in
-            guard let mutable = mutable else { return }
-            mutable["deleted"].set(true)
+    func deleteMenuItem(id: String) async {
+        do {
+            let query = "UPDATE menuItems SET deleted = :deleted WHERE _id = :id"
+            
+            let args: [String:Any] = [
+                "deleted": true,
+                "id": id
+            ]
+            
+            try await self.ditto.store.execute(query: query, arguments: args)
+                        
+        } catch {
+            print("Error: \(error)")
         }
     }
 
@@ -302,10 +311,19 @@ final class DataService {
             })
     }
 
-    func deleteUser(userId: String) {
-        users.findByID(userId).update{ (mutable) in
-            guard let mutable = mutable else { return }
-            mutable["deleted"].set(true)
+    func deleteUser(userId: String) async {
+        do {
+            let query = "UPDATE users SET deleted = :deleted WHERE _id = :id"
+            
+            let args: [String:Any] = [
+                "deleted": true,
+                "id": userId
+            ]
+            
+            try await self.ditto.store.execute(query: query, arguments: args)
+                        
+        } catch {
+            print("Error: \(error)")
         }
     }
 
@@ -331,32 +349,41 @@ final class DataService {
             }
     }
 
-    func setUser(id: String? = nil, name: String, seat: String?, role: Role, isManuallyCreated: Bool = false) {
+    func setUser(id: String? = nil, name: String, seat: String?, role: Role, isManuallyCreated: Bool = false) async {
         guard let workspaceId = UserDefaults.standard.workspaceId?.description else {
             debugPrint("Failed to get a workspaceId in `setUser`")
             return
         }
-        ditto.store.write { (tx) in
-            if let id = id, let _ = tx["users"].findByID(id).exec() {
-                tx["users"].findByID(id).update { (m) in
-                    m?["name"].set(name)
-                    m?["seat"].set(seat)
-                    m?["role"].set(role.rawValue)
-                    m?["workspaceId"].set(workspaceId)
-                    // no one should really override this
-                    //m?["isManuallyCreated"].set(isManuallyCreated)
-                }
+        
+        do {
+            if let id = id, !(try await ditto.store.execute(query: "SELECT * FROM users WHERE _id = :id", arguments: ["id": id]).items.isEmpty) {
+                
+                let query = "UPDATE users SET name = :name, seat = :seat, role = :role, workspaceId = :workspaceId WHERE _id = :id"
+                
+                let args: [String:Any] = [
+                    "name": name,
+                    "seat": seat as Any,
+                    "role": role.rawValue,
+                    "workspaceId": workspaceId,
+                    "id": id
+                ]
+                
+                try await self.ditto.store.execute(query: query, arguments: args)
             } else {
-                try! tx["users"].upsert([
-                    "_id": id?.toDittoID(),
+                let newDoc: [String:Any] = [
+                    "_id": id?.toDittoID() as Any,
                     "name": name,
                     "workspaceId": workspaceId,
-                    "seat": seat,
+                    "seat": seat as Any,
                     "isManuallyCreated": isManuallyCreated,
                     "role": role.rawValue,
                     "deleted": false
-                ], writeStrategy: .insertIfAbsent)
+                ]
+                        
+                try await self.ditto.store.execute(query: "INSERT INTO menuItemOptions DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE", arguments: ["newDoc": newDoc])
             }
+        } catch {
+            print("Error: \(error)")
         }
     }
 
@@ -383,56 +410,103 @@ final class DataService {
             }
     }
 
-    func createCategory(name: String, details: String, isCrewOnly: Bool) {
+    func createCategory(name: String, details: String, isCrewOnly: Bool) async {
         guard let workspaceId = UserDefaults.standard.workspaceId?.description else {
             debugPrint("No workspaceId was found while attempting to call `createCategory`")
             return
         }
-        ditto.store.write { (txn) in
-            let count = txn["categories"].find("workspaceId == '\(workspaceId)' && deleted == false").exec().count
+        
+        do {
+            
+            let count = try await ditto.store.execute(query: "SELECT * FROM categories WHERE workspaceId = :workspaceId AND deleted = 'false'", arguments: ["workspaceId": workspaceId]).items.count
+            
             let ordinal = Float.random(min: Float(count), max: Float(count + 1))
-            try! txn["categories"].upsert([
+            
+            let query = "INSERT INTO categories DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE"
+            
+            let newDoc: [String:Any] = [
                 "name": name,
                 "details": details,
-                "workspaceId": workspaceId,
-                "ordinal": ordinal,
                 "isCrewOnly": isCrewOnly,
+                "ordinal": ordinal,
+                "workspaceId": workspaceId,
                 "deleted": false
-            ])
+            ]
+            
+            try await self.ditto.store.execute(query: query, arguments: ["newDoc": newDoc])
+
+        } catch {
+            print("Error \(error)")
         }
+        
+        
     }
 
-    func updateCategory(id: String, name: String, details: String, isCrewOnly: Bool) {
+    func updateCategory(id: String, name: String, details: String, isCrewOnly: Bool) async {
         guard let workspaceId = UserDefaults.standard.workspaceId?.description else {
             debugPrint("No workspaceId was found while attempting to call `updateCategory`")
             return
         }
-        categories.findByID(id).update { (mutable) in
-            guard let mutable = mutable else { return }
-            mutable["name"].set(name)
-            mutable["workspaceId"].set(workspaceId)
-            mutable["details"].set(details)
-            mutable["isCrewOnly"].set(isCrewOnly)
+        
+        do {
+            let query = "UPDATE categories SET name = :name, details = :details, isCrewOnly = :isCrewOnly, workspaceId = :workspaceId WHERE _id = :id"
+            
+            let args: [String:Any] = [
+                "name": name,
+                "details": details,
+                "isCrewOnly": isCrewOnly,
+                "workspaceId": workspaceId,
+                "id": id
+            ]
+            
+            try await self.ditto.store.execute(query: query, arguments: args)
+        } catch {
+            print("Error \(error)")
         }
     }
 
-    func updateCategoryOrdinal(id: String, newOrdinal: Float) {
-        categories.findByID(id).update { (mutable) in
-            guard let mutable = mutable else { return }
-            mutable["ordinal"].set(newOrdinal)
+    func updateCategoryOrdinal(id: String, newOrdinal: Float) async {
+        do {
+            let query = "UPDATE categories SET ordinal = :ordinal WHERE _id = :id"
+            
+            let args: [String:Any] = [
+                "ordinal": newOrdinal,
+                "id": id
+            ]
+            
+            try await self.ditto.store.execute(query: query, arguments: args)
+        } catch {
+            print("Error \(error)")
         }
     }
 
-    func deleteCategory(id: String) {
-        categories.findByID(id).update { (mutable) in
-            guard let mutable = mutable else { return }
-            mutable["deleted"].set(true)
+    func deleteCategory(id: String) async {
+        do {
+            let query = "UPDATE categories SET deleted = :deleted WHERE _id = :id"
+            
+            let args: [String:Any] = [
+                "deleted": true,
+                "id": id
+            ]
+            
+            try await self.ditto.store.execute(query: query, arguments: args)
+        } catch {
+            print("Error \(error)")
         }
     }
 
-    func evictAllData() {
+    func evictAllData() async {
+        
         ditto.store.collectionNames().forEach {
-            ditto.store[$0].findAll().evict()
+            let query = "EVICT FROM \($0)"
+            
+            Task {
+                do {
+                    try await self.ditto.store.execute(query: query)
+                } catch {
+                    print("Error \(error)")
+                }
+            }
         }
     }
 }

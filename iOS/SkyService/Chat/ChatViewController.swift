@@ -73,14 +73,18 @@ class ChatViewController: BaseChatViewController {
     @objc func sendButtonDidClick() {
         guard let text = chatInputView.textView.text, text.count > 0 else { return }
         chatInputView.textView.text = ""
-        DataService.shared.sendChatMessage(body: text)
+        Task {
+            await DataService.shared.sendChatMessage(body: text)
+        }
     }
 
     @objc func clearChatMessages(barButtonItem: UIBarButtonItem) {
         let alert = UIAlertController(title: "Delete?", message: nil, preferredStyle: .actionSheet)
 
         alert.addAction(UIAlertAction(title: "Yes, Delete all messages", style: .destructive, handler: { (_) in
-            DataService.shared.deleteAllChatMessages()
+            Task {
+                await DataService.shared.deleteAllChatMessages()
+            }
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
 

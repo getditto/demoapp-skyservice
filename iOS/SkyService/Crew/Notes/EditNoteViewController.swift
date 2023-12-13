@@ -120,7 +120,9 @@ class EditNoteViewController: UIViewController {
     }
 
     func saveNote() {
-        DataService.shared.setNote(id: noteId, body: textView.text, isCompleted: isCompleted$.value, isShared: isShared$.value)
+        Task {
+            await DataService.shared.setNote(id: noteId, body: textView.text, isCompleted: isCompleted$.value, isShared: isShared$.value)
+        }
     }
 
 }

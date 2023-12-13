@@ -70,7 +70,9 @@ class CategoriesViewController: UIViewController {
                 let destinationIndex: Int = destinationIndexPath.row
                 let differentSection = (sourceIndexPath.section != destinationIndexPath.section)
                 let newOrdinal = calculateOrdinal(sourceIndex: sourceIndex, destinationIndex: destinationIndex, items: categories, differentSection: differentSection)
-                DataService.shared.updateCategoryOrdinal(id: categoryId, newOrdinal: newOrdinal)
+                Task {
+                    await DataService.shared.updateCategoryOrdinal(id: categoryId, newOrdinal: newOrdinal)
+                }
             }
             .disposed(by: disposeBag)
 
@@ -79,7 +81,9 @@ class CategoriesViewController: UIViewController {
             .modelDeleted(Category.self)
             .map({ $0.id })
             .bind { categoryId in
-                DataService.shared.deleteCategory(id: categoryId)
+                Task {
+                    await DataService.shared.deleteCategory(id: categoryId)
+                }
             }
             .disposed(by: disposeBag)
 
