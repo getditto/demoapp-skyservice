@@ -49,6 +49,10 @@ final class DataService {
         self.authDelegate = AuthDelegate()
         ditto = Ditto(identity: .onlineWithAuthentication(appID: Env.DITTO_APP_ID, authenticationDelegate: authDelegate))
 
+        // Sync Small Peer Info to Big Peer
+        ditto.smallPeerInfo.isEnabled = true
+        ditto.smallPeerInfo.syncScope = .bigPeerOnly
+
         do {
             try ditto.disableSyncWithV3()
         } catch {
