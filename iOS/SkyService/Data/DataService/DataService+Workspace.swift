@@ -7,10 +7,12 @@ extension DataService {
         return workspaceId$
             .flatMapLatest { [weak self] workspaceId -> Observable<Bool> in
                 guard let `self` = self else { return Observable.just(false) }
-                return self.ditto.store["workspaces"].findByID(workspaceId).document$()
-                    .map({ doc in
-                        guard let doc = doc else { return true }
-                        return doc["isOrderingEnabled"].bool ?? true
+                
+                return self.ditto
+                    .resultItems$(query: "SELECT * FROM workspaces WHERE _id = :id", args: ["id": workspaceId])
+                    .map({ docs in
+                        guard let doc = docs.first else { return true }
+                        return doc.value["isOrderingEnabled"] as? Bool ?? true
                     })
             }
     }
@@ -20,9 +22,12 @@ extension DataService {
         return workspaceId$
             .flatMapLatest { [weak self] workspaceId -> Observable<String> in
                 guard let self = self else { return Observable.just("") }
-                return self.ditto.store["workspaces"].findByID(workspaceId).document$()
-                    .map({ doc in
-                        return doc?["welcomeMessage"].string ?? defaultMessage
+                
+                return self.ditto
+                    .resultItems$(query: "SELECT * FROM workspaces WHERE _id = :id", args: ["id": workspaceId])
+                    .map({ docs in
+                        guard let doc = docs.first else { return "" }
+                        return doc.value["welcomeMessage"] as? String ?? defaultMessage
                     })
             }
     }

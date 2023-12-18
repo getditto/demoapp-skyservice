@@ -6,15 +6,23 @@ extension DataService {
     func chatMessages$() -> Observable<[ChatMessage]> {
         return workspaceId$
             .flatMapLatest { [unowned chatMessages = self.chatMessages, users = self.users] (workspaceId) -> Observable<[ChatMessage]> in
-                let chatMessages: Observable<[ChatMessage]> = chatMessages
-                    .find("workspaceId == '\(workspaceId)' && deleted == false")
-                    .sort("createdOn", direction: .ascending)
-                    .documents$()
+                
+                var query = "SELECT * FROM chatMessages WHERE workspaceId = :workspaceId AND deleted = false ORDER BY createdOn ASC"
+                var args: [String:Any?] = [
+                    "workspaceId": workspaceId,
+                ]
+                
+               let chatMessages: Observable<[ChatMessage]> = self.ditto
+                    .resultItems$(query: query, args: args)
                     .mapToDittoModel(type: ChatMessage.self)
-
-                let users: Observable<[User]> = users
-                    .find("workspaceId == '\(workspaceId)'")
-                    .documents$()
+                
+                query = "SELECT * FROM users WHERE workspaceId = :workspaceId"
+                args = [
+                    "workspaceId": workspaceId,
+                ]
+                
+               let users: Observable<[User]> = self.ditto
+                    .resultItems$(query: query, args: args)
                     .mapToDittoModel(type: User.self)
 
                 return Observable.combineLatest(chatMessages, users) { (chatMessages, users) in

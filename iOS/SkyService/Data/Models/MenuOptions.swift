@@ -45,38 +45,68 @@ struct MenuItemOption: DittoModel, Ordinal, Equatable {
         }) ?? []
         self.deleted = document["deleted"].boolValue
     }
+    
+    init(resultItem: [String:Any?]) {
+        self.id = resultItem["_id"] as! String
+        self.label = resultItem["label"] as? String ?? ""
+        self.details = resultItem["details"] as? String ?? ""
+        self.ordinal = resultItem["ordinal"] as? Float ?? 0
+        self.menuItemId = resultItem["menuItemId"] as? String ?? ""
+        self.type = MenuItemOptionType(rawValue: resultItem["type"] as? String ?? "") ?? MenuItemOptionType.single
+        self.isRequired = resultItem["isRequired"] as? Bool ?? false
+        self.allowedValues = (resultItem["allowedValues"] as? Array<Any?> ?? []).compactMap({ (v) -> String? in
+            return v as? String
+        })
+        self.deleted = resultItem["deleted"] as? Bool ?? false
+    }
 }
 
 
 extension DataService {
     func menuItemOptions$() -> Observable<[MenuItemOption]> {
         
-        
         return self.workspaceId$
             .flatMapLatest { [weak self] (workspaceId) -> Observable<[MenuItemOption]> in
                 guard let `self` = self else { return Observable.empty() }
+
+                let query = "SELECT * FROM menuItemOptions WHERE workspaceId = :workspaceId AND deleted = false"
+                let args: [String:Any?] = [
+                    "workspaceId": workspaceId,
+                ]
+                
                 return self.ditto
-                    .store["menuItemOptions"]
-                    .find("workspaceId == '\(workspaceId)' && deleted == false")
-                    .documents$()
+                    .resultItems$(query: query, args: args)
                     .mapToDittoModel(type: MenuItemOption.self)
             }
     }
 
     func menuItemOptions(_ menuItemId: String) -> Observable<[MenuItemOption]> {
+        
+        let query = "SELECT * FROM menuItemOptions WHERE menuItemId = :menuItemId AND deleted = false"
+        let args: [String:Any?] = [
+            "menuItemId": menuItemId
+        ]
+        
         return self.ditto
-            .store["menuItemOptions"]
-            .find("menuItemId == '\(menuItemId)' && deleted == false")
-            .documents$()
+            .resultItems$(query: query, args: args)
             .mapToDittoModel(type: MenuItemOption.self)
     }
 
     func menuItemOptionById(_ menuItemOptionId: String) -> Observable<MenuItemOption?> {
+        
+        let query = "SELECT * FROM menuItemOptions WHERE menuItemOptionId = :menuItemOptionId"
+        let args: [String:Any?] = [
+            "menuItemOptionId": menuItemOptionId
+        ]
+        
         return self.ditto
-            .store["menuItemOptions"]
-            .findByID(menuItemOptionId)
-            .document$()
+            .resultItems$(query: query, args: args)
+            .map { items in
+                // Extract the first element from the array
+                return items.first
+            }
             .mapToDittoModel(type: MenuItemOption.self)
+        
     }
 
     func deleteMenuItemOption(menuItemOptionId: String) async {

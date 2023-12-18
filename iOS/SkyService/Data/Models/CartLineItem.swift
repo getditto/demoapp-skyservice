@@ -2,6 +2,7 @@ import Foundation
 import DittoSwift
 
 struct CartLineItem: DittoModel, Equatable {
+
     var id: String
     var menuItemId: String
     var quantity: Int
@@ -25,6 +26,17 @@ struct CartLineItem: DittoModel, Equatable {
         self.orderId = document["orderId"].string
         self.deleted = document["deleted"].boolValue
     }
+    
+    init(resultItem: [String : Any?]) {
+        self.id = resultItem["_id"] as! String
+        self.menuItemId = resultItem["menuItemId"] as? String ?? ""
+        self.quantity = resultItem["quantity"] as? Int ?? 0
+        self.userId = resultItem["userId"] as? String ?? ""
+        self.options = (resultItem["options"] as? Array<Any?> ?? []).compactMap({ $0 as? String })
+        self.orderId = resultItem["orderId"] as? String ?? ""
+        self.deleted = resultItem["deleted"] as? Bool ?? false
+    }
+
 }
 
 /**

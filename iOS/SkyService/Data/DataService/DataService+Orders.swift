@@ -6,12 +6,24 @@ extension DataService {
     func orders(for userId: String? = nil) -> Observable<[Order]> {
         return self.workspaceId$
             .flatMapLatest { workspaceId -> Observable<[Order]> in
-                var query = "workspaceId == '\(workspaceId)' && deleted == false"
+                
+                var query = "SELECT * FROM orders WHERE workspaceId = :workspaceId AND deleted = false"
+                var args: [String: Any?] = [
+                    "workspaceId": workspaceId
+                ]
+                
                 if let userId = userId {
-                    // provided a userId, so we want a more specific set
-                    query = "workspaceId == '\(workspaceId)' && userId == '\(userId)' && deleted == false"
+                    query = "SELECT * FROM orders WHERE workspaceId = :workspaceId AND userId = :userId AND deleted = false"
+                    args = [
+                        "workspaceId": workspaceId,
+                        "userId": userId
+                    ]
                 }
-                return self.orders.find(query).documents$().mapToDittoModel(type: Order.self)
+                
+                return self.ditto
+                    .resultItems$(query: query, args: args)
+                    .mapToDittoModel(type: Order.self)
+                
             }.map { orders in
                 return orders.sorted(by: { $0.createdOn > $1.createdOn })
             }

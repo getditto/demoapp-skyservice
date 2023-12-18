@@ -139,6 +139,16 @@ struct Order: Equatable, DittoModel {
         self.crewNote = document["crewNote"].stringValue
         self.deleted = document["deleted"].boolValue
     }
+    
+    init(resultItem: [String : Any?]) {
+        self.id = resultItem["_id"] as! String
+        self.total = resultItem["total"] as? Float ?? 0
+        self.createdOn = Date(dateString: resultItem["createdOn"] as? String ?? "")
+        self.status = Status(rawValue: resultItem["status"] as? Int ?? 0) ?? .open
+        self.userId = resultItem["userId"] as? String ?? ""
+        self.crewNote = resultItem["crewNote"] as? String ?? ""
+        self.deleted = resultItem["deleted"] as? Bool ?? false
+    }
 }
 
 extension Array where Element == Order {

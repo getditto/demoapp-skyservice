@@ -2,6 +2,7 @@ import RxDataSources
 import DittoSwift
 
 struct Category: Equatable, IdentifiableType, Ordinal, DittoModel {
+    
     typealias Identity = String
     var identity: String { return self.id }
 
@@ -19,6 +20,15 @@ struct Category: Equatable, IdentifiableType, Ordinal, DittoModel {
         self.ordinal = document["ordinal"].floatValue
         self.isCrewOnly = document["isCrewOnly"].boolValue
         self.deleted = document["deleted"].boolValue
+    }
+    
+    init(resultItem: [String : Any?]) {
+        self.id = resultItem["_id"] as! String
+        self.name = resultItem["name"] as? String ?? ""
+        self.ordinal = resultItem["ordinal"] as? Float ?? 0
+        self.details = resultItem["details"] as? String ?? ""
+        self.isCrewOnly = resultItem["isCrewOnly"] as? Bool ?? false
+        self.deleted = resultItem["deleted"] as? Bool ?? false
     }
 }
 

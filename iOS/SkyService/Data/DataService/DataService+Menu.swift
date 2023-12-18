@@ -14,6 +14,7 @@ extension DataService {
     }
 
     func menuItems$() -> Observable<[MenuItem]> {
+        //Counter type not supported in DQL
         return workspaceId$
             .flatMapLatest { [unowned menuItems = self.menuItems] (workspaceId) -> Observable<[MenuItem]> in
                 return menuItems

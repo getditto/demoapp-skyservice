@@ -37,6 +37,21 @@ struct User: Equatable, IdentifiableType, DittoModel {
         }()
         self.deleted = document["deleted"].boolValue
     }
+    
+    init(resultItem: [String : Any?]) {
+        self.id = resultItem["_id"] as! String
+        self.name = resultItem["name"] as? String ?? ""
+        self.seat = resultItem["seat"] as? String ?? ""
+        self.isManuallyCreated = resultItem["isManuallyCreated"] as? Bool ?? false
+        self.role = {
+            guard let val = resultItem["role"] as? String else {
+            return .passenger
+        }
+            return Role(rawValue: val) ?? .passenger
+        }()
+        
+        self.deleted = resultItem["deleted"] as? Bool ?? false
+    }
 
     var seatAbreast: String? {
         if let seat = seat, !seat.isEmpty, let last = seat.last, last.isLetter {

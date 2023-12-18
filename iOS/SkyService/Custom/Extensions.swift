@@ -190,6 +190,48 @@ struct DocumentsWithEventInfo {
     }
 }
 
+extension Ditto {
+    
+    func resultItems$(query: String, args: [String:Any?]? = nil) -> Observable<[DittoQueryResultItem]> {
+        return Observable.create { (observer) -> Disposable in
+            
+            do {
+                var subs: DittoSyncSubscription
+                var handler: DittoStoreObserver
+                
+                if args == nil {
+                    subs = try self.sync.registerSubscription(query: query)
+                    
+                    handler = try self.store.registerObserver(query: query) { [weak self] result in
+                        guard let self = self else { return }
+                        
+                        observer.onNext(result.items)
+                    }
+                    
+                } else {
+                    subs = try self.sync.registerSubscription(query: query, arguments: args)
+                    
+                    handler = try self.store.registerObserver(query: query, arguments: args) { [weak self] result in
+                        guard let self = self else { return }
+                        
+                        observer.onNext(result.items)
+                    }
+                }
+                
+                return Disposables.create {
+                    subs.cancel()
+                    handler.cancel()
+                }
+            } catch {
+                print("Error \(error)")
+                
+                return Disposables.create {}
+            }
+        }
+    }
+}
+
+//Needed until Counters are supported in DQL
 extension DittoPendingCursorOperation {
     
     func documents$() -> Observable<[DittoDocument]> {
@@ -246,12 +288,12 @@ extension DittoPendingIDSpecificOperation {
     }
 }
 
+//Needed until DQL supports Counters
 extension Observable where Element == Array<DittoDocument> {
     
     func mapToDittoModel<T: DittoModel>(type: T.Type) -> Observable<Array<T>> {
         return self.map({ $0.map { T(document: $0) } })
     }
-    
 }
 
 extension Observable where Element == DittoDocument? {
@@ -262,7 +304,23 @@ extension Observable where Element == DittoDocument? {
             return T(document: doc)
         }
     }
+}
+
+extension Observable where Element == Array<DittoQueryResultItem> {
     
+    func mapToDittoModel<T: DittoModel>(type: T.Type) -> Observable<Array<T>> {
+        return self.map({ $0.map { T(resultItem: $0.value) } })
+    }
+}
+
+extension Observable where Element == DittoQueryResultItem? {
+    
+    func mapToDittoModel<T: DittoModel>(type: T.Type) -> Observable<T?> {
+        return self.map { resultItem in
+            guard let resultItem = resultItem else { return nil }
+            return T(resultItem: resultItem.value)
+        }
+    }
 }
 
 extension ViewProxy {

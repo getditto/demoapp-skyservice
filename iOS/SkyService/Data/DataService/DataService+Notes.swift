@@ -9,12 +9,21 @@ extension DataService {
 
         let users$ = workspaceId$.flatMapLatest { [weak self] (workspaceId) -> Observable<[User]> in
             guard let `self` = self else { return .empty() }
-            return self.users
-                .documents$()
-                .mapToDittoModel(type: User.self)
-        }
-        let note$: Observable<Note?> = self.notes.findByID(id).document$().mapToDittoModel(type: Note.self)
 
+            let query = "SELECT * FROM users"
+            
+            return self.ditto
+                .resultItems$(query: query)
+                .mapToDittoModel(type: User.self)
+            
+        }
+                
+        let note$: Observable<Note?> = self.ditto.resultItems$(query: "SELECT * FROM notes WHERE _id = :id", args: ["id": id])
+            .map { notes in
+                return notes.first
+            }
+            .mapToDittoModel(type: Note.self)
+        
         return Observable.combineLatest(users$, note$) { users, note in
             var noteCopy = note;
             noteCopy?.user = users.first(where: { $0.id == note?.userId })
@@ -26,16 +35,25 @@ extension DataService {
         let justNotes$ = workspaceId$
             .flatMapLatest { [weak self] (workspaceId) -> Observable<[Note]> in
                 guard let `self` = self else { return .empty() }
-                return self.notes
-                    .find("workspaceId == '\(workspaceId)' && deleted == false")
-                    .sort("ordinal", direction: .ascending)
-                    .documents$()
+                
+                let query = "SELECT * FROM notes WHERE workspaceId = :workspaceId AND deleted = false ORDER BY ordinal ASC "
+                let args: [String:Any?] = [
+                    "workspaceId": workspaceId
+                    
+                ]
+                
+                return self.ditto
+                    .resultItems$(query: query, args: args)
                     .mapToDittoModel(type: Note.self)
+                
             }
         let users$ = workspaceId$.flatMapLatest { [weak self] (workspaceId) -> Observable<[User]> in
             guard let `self` = self else { return .empty() }
-            return self.users
-                .documents$()
+            
+            let query = "SELECT * FROM users"
+            
+            return self.ditto
+                .resultItems$(query: query)
                 .mapToDittoModel(type: User.self)
         }
         return Observable.combineLatest(justNotes$, users$) { notes, users in
@@ -146,7 +164,7 @@ extension DataService {
                     ]
 
                     try await self.ditto.store.execute(query: query, arguments: args)
-
+                    
                     let result = try await self.ditto.store.execute(query: "SELECT * FROM notes WHERE _id = id", arguments: ["id": id]).items.first?.value["deleted"] as? Bool ?? true
                     
                     DispatchQueue.main.async {
@@ -174,7 +192,7 @@ extension DataService {
                 Task {
                     do {
                         
-                        let noteDocs = try await self.ditto.store.execute(query: "SELECT * FROM notes WHERE workspaceId = :workspaceId AND userId = :userId", arguments: ["workspaceId": workspaceId, "userId": DataService.shared.userId]).items
+                        let noteDocs = try await self.ditto.store.execute(query: "SELECT * FROM notes WHERE workspaceId = :workspaceId AND userId = :userId AND isShared = false", arguments: ["workspaceId": workspaceId, "userId": DataService.shared.userId]).items
                         
                         for result in noteDocs {
                             let query = "UPDATE notes SET deleted = :deleted WHERE _id = :id"
@@ -203,7 +221,7 @@ extension DataService {
                 Task {
                     do {
                         
-                        let noteDocs = try await self.ditto.store.execute(query: "SELECT * FROM notes WHERE workspaceId = :workspaceId AND isShared = :isShared", arguments: ["workspaceId": workspaceId, "isShared": true]).items
+                        let noteDocs = try await self.ditto.store.execute(query: "SELECT * FROM notes WHERE workspaceId = :workspaceId AND isShared = true", arguments: ["workspaceId": workspaceId]).items
                         
                         for result in noteDocs {
                             let query = "UPDATE notes SET deleted = :deleted WHERE _id = :id"

@@ -40,6 +40,25 @@ struct MenuItem: IdentifiableType, Equatable, Ordinal, DittoModel {
             self.ordinal = Float.random(min: 0, max: 0.5)
         }
     }
+    
+    init(resultItem: [String : Any?]) {
+        self.id = resultItem["_id"] as! String
+        self.name = resultItem["name"] as? String ?? ""
+        self.details = resultItem["details"] as? String ?? ""
+        self.isCrewOnly = resultItem["isCrewOnly"] as? Bool ?? false
+        self.deleted = resultItem["deleted"] as? Bool ?? false
+        self.price = resultItem["price"] as? Float ?? 0
+        self.categoryId = resultItem["categoryId"] as? String ?? ""
+        self.totalCount = resultItem["totalCount"] as? Int ?? 0
+        self.usedCount = resultItem["usedCount"] as? Int ?? 0
+        
+        if let ordinal = resultItem["ordinal"] as? Float {
+            self.ordinal = ordinal
+        } else {
+            self.ordinal = Float.random(min: 0, max: 0.5)
+        }
+
+    }
 
     var remainsCount: Int? {
         guard let total = totalCount else { return nil }

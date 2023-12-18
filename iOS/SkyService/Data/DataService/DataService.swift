@@ -47,7 +47,8 @@ final class DataService {
         DittoLogger.minimumLogLevel = DittoLogLevel.debug
 
         self.authDelegate = AuthDelegate()
-        ditto = Ditto(identity: .onlineWithAuthentication(appID: Env.DITTO_APP_ID, authenticationDelegate: authDelegate))
+//        ditto = Ditto(identity: .onlineWithAuthentication(appID: Env.DITTO_APP_ID, authenticationDelegate: authDelegate))
+        ditto = Ditto(identity: .onlinePlayground(appID: Env.DITTO_APP_ID, token: Env.DITTO_PLAYGROUND_TOKEN, enableDittoCloudSync: true))
 
         do {
             try ditto.disableSyncWithV3()
@@ -94,13 +95,24 @@ final class DataService {
             categories,
             notes
         ].forEach { (collection) in
-            collection?.find(queryString).documents$()
+            let query = "SELECT * FROM \(collection.name) WHERE workspaceId = :workspaceId"
+            let args: [String: Any?] = [
+                "workspaceId": workspaceId
+            ]
+            
+            self.ditto
+                .resultItems$(query: query, args: args)
                 .subscribeNext({ _ in })
                 .disposed(by: disposeBag)
         }
-
-        self.ditto.store["workspaces"].findByID(workspaceId)
-            .document$()
+        
+        let query = "SELECT * FROM workspaces WHERE _id = :id"
+        let args: [String: Any?] = [
+            "id": workspaceId
+        ]
+        
+        self.ditto
+            .resultItems$(query: query, args: args)
             .bind { _ in }
             .disposed(by: disposeBag)
 
@@ -222,6 +234,7 @@ final class DataService {
             return Observable.empty()
         }
 
+        //Counter type not supported in DQL
         let justMenuItems$ = menuItems
             .find("workspaceId == '\(workspaceId)' && deleted == false")
             .documents$()
@@ -301,10 +314,16 @@ final class DataService {
 
 
     func userById(_ id: String) -> Observable<User?> {
-        return users.findByID(id).document$()
-            .map({ doc in
-                if let doc = doc {
-                    return User(document: doc)
+        let query = "SELECT * FROM users WHERE _id = :id"
+        let args: [String: Any?] = [
+            "id": id
+        ]
+        
+        return self.ditto
+            .resultItems$(query: query, args: args)
+            .map({ item in
+                if let doc = item.first {
+                    return User(resultItem: doc.value)
                 } else {
                     return nil
                 }
@@ -328,10 +347,16 @@ final class DataService {
     }
 
     func me$() -> Observable<User?> {
-        return users.findByID("\(ditto.siteID)").document$()
-            .map({ doc in
-                if let doc = doc {
-                    return User(document: doc)
+        let query = "SELECT * FROM users WHERE _id = :id"
+        let args: [String: Any?] = [
+            "id": ditto.siteID
+        ]
+        
+        return self.ditto
+            .resultItems$(query: query, args: args)
+            .map({ item in
+                if let doc = item.first {
+                    return User(resultItem: doc.value)
                 } else {
                     return nil
                 }
@@ -342,9 +367,14 @@ final class DataService {
         workspaceId$
             .flatMapLatest { [weak users = self.users] (workspaceId) -> Observable<[User]> in
                 guard let users = users else { return Observable.empty() }
-                return users
-                    .find("workspaceId == '\(workspaceId)' && deleted == false")
-                    .documents$()
+                
+                let query = "SELECT * FROM users WHERE workspaceId =:workspaceId AND deleted = false"
+                let args: [String:Any?] = [
+                    "workspaceId": workspaceId
+                ]
+                
+                return self.ditto
+                    .resultItems$(query: query, args: args)
                     .mapToDittoModel(type: User.self)
             }
     }
@@ -380,7 +410,7 @@ final class DataService {
                     "deleted": false
                 ]
                         
-                try await self.ditto.store.execute(query: "INSERT INTO menuItemOptions DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE", arguments: ["newDoc": newDoc])
+                try await self.ditto.store.execute(query: "INSERT INTO users DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE", arguments: ["newDoc": newDoc])
             }
         } catch {
             print("Error: \(error)")
@@ -390,11 +420,16 @@ final class DataService {
     func categories$() -> Observable<[Category]> {
         return workspaceId$.flatMapLatest { [weak self] workspaceId -> Observable<[Category]> in
             guard let `self` = self else { return Observable.empty() }
-            return self.categories
-                .find("workspaceId == '\(workspaceId)' && deleted == false")
-                .documents$()
-                .map({ docs in
-                    return docs.map { Category(document: $0) }
+            
+            let query = "SELECT * FROM categories WHERE workspaceId = :workspaceId AND deleted = false"
+            let args: [String:Any?] = [
+                "workspaceId": workspaceId
+            ]
+            
+            return self.ditto
+                .resultItems$(query: query, args: args)
+                .map({ results in
+                    return results.map { Category(resultItem: $0.value) }
                         .sorted { (a, b) -> Bool in
                             return a.ordinal < b.ordinal
                         }
@@ -403,11 +438,18 @@ final class DataService {
     }
 
     func categoryById$(id: String) -> Observable<Category?> {
-        return categories.findByID(id).document$()
-            .map { (doc) -> Category? in
-                guard let doc = doc else { return nil }
-                return Category(document: doc)
+        let query = "SELECT * FROM categories WHERE _id = :id"
+        let args: [String:Any?] = [
+            "id": id
+        ]
+        
+        return self.ditto
+            .resultItems$(query: query, args: args)
+            .map { (result) -> Category? in
+                guard let resultItem = result.first?.value as? [String: Any?] else { return nil }
+                return Category(resultItem: resultItem)
             }
+        
     }
 
     func createCategory(name: String, details: String, isCrewOnly: Bool) async {
