@@ -67,22 +67,6 @@ extension DataService {
                             }
                         }
                         
-                        //Coounters not yet supported in DQL
-                        usedItems.forEach { used in
-                            let id = used["menuItemId"] as! String
-                            let quantity = used["quantity"] as! Double
-                            self.ditto.store["menuItems"].findByID(id).update { mutableDoc in
-                                let usedCount = mutableDoc?["usedCount"].int
-                                
-                                if usedCount == nil {
-                                    mutableDoc?["usedCount"].set(DittoCounter())
-                                    mutableDoc?["usedCount"].counter?.increment(by: quantity)
-                                } else {
-                                    mutableDoc?["usedCount"].counter?.increment(by: quantity)
-                                }
-                            }
-                        }
-                        
                     } catch {
                         print("Error \(error)")
                     }

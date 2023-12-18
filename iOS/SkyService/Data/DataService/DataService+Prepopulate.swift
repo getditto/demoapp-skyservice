@@ -90,8 +90,6 @@ extension DataService {
                 "details": "A simple light garden salad with red wine vinagrette.",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -103,8 +101,6 @@ extension DataService {
                 "details": "Also comes with a side of balsamic vinagrette.",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -116,8 +112,6 @@ extension DataService {
                 "details": "Crispy sea salted potato chips. 120 calories.",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -129,8 +123,6 @@ extension DataService {
                 "details": "Bite size chocolate cookies. 11 calories each.",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -142,8 +134,6 @@ extension DataService {
                 "details": "Cheese, dates, nuts, and dried berries",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -155,8 +145,6 @@ extension DataService {
                 "details": "Turkey, lettuce, mustard, mayonaise sandwich warmed.",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -168,8 +156,6 @@ extension DataService {
                 "details": "Cold fresh curry and sweet potato chicken with fork and knife.",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -181,8 +167,6 @@ extension DataService {
                 "details": "Roast beef, lettuce, mustard, mayonaise sandwich warmed.",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -194,8 +178,6 @@ extension DataService {
                 "details": "Spaghetti and vegan meatballs. Hot and comes with a side of grated parmesan cheese.",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             // desserts
@@ -208,8 +190,6 @@ extension DataService {
                 "details": "Comes with strawberry, mango, or green tea flavors",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -221,8 +201,6 @@ extension DataService {
                 "details": "Fudge comes hot.",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
 
@@ -236,8 +214,6 @@ extension DataService {
                 "details": "From Australia",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -249,8 +225,6 @@ extension DataService {
                 "details": "From Boston",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -262,8 +236,6 @@ extension DataService {
                 "details": "From California",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             // non-alcoholic-drinks
@@ -276,8 +248,6 @@ extension DataService {
                 "details": "Classic or Vanilla",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -289,8 +259,6 @@ extension DataService {
                 "details": "Comes also as diet pepsi",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -302,8 +270,6 @@ extension DataService {
                 "details": "With Cream or Sugar",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ]
         ]

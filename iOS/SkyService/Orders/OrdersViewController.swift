@@ -127,11 +127,7 @@ class OrdersViewController: UIViewController, UITableViewDelegate, OrdersHeaderT
                 cell = tableView.dequeueReusableCell(withIdentifier: "Cell") ?? UITableViewCell(style: .subtitle, reuseIdentifier: "Cell")
                 cell.backgroundColor = UIColor.systemGray6
                 cell.selectionStyle = .none
-                if let remainsCount = i.menuItem.remainsCount, Bundle.main.isCrew {
-                    cell.textLabel?.text = "\(i.cartLineItem.quantity) \(i.menuItem.name) (remains: \(remainsCount))"
-                } else {
-                    cell.textLabel?.text = "\(i.cartLineItem.quantity) \(i.menuItem.name)"
-                }
+                cell.textLabel?.text = "\(i.cartLineItem.quantity) \(i.menuItem.name)"
                 cell.textLabel?.font = UIFont.boldSystemFont(ofSize: UIFont.labelFontSize + 2)
                 cell.textLabel?.numberOfLines = 0
                 cell.detailTextLabel?.text = i.menuItem.details + self.createOptionsText(i.cartLineItem)

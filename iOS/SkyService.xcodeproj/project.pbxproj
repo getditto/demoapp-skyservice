@@ -212,8 +212,6 @@
 		CC93C63729E408710070B083 /* RSKPlaceholderTextView in Frameworks */ = {isa = PBXBuildFile; productRef = CC93C63629E408710070B083 /* RSKPlaceholderTextView */; };
 		CC93C63C29E40B690070B083 /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = CC93C63B29E40B690070B083 /* IQKeyboardManagerSwift */; };
 		CC93C63F29E40B810070B083 /* BetterSegmentedControl in Frameworks */ = {isa = PBXBuildFile; productRef = CC93C63E29E40B810070B083 /* BetterSegmentedControl */; };
-		CCB173A02642B74700FB0A35 /* EditMenuViewController+Stocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB1739F2642B74700FB0A35 /* EditMenuViewController+Stocks.swift */; };
-		CCB173A12642B74700FB0A35 /* EditMenuViewController+Stocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCB1739F2642B74700FB0A35 /* EditMenuViewController+Stocks.swift */; };
 		CCB7014829E40C6600A0782C /* Differentiator in Frameworks */ = {isa = PBXBuildFile; productRef = CCB7014729E40C6600A0782C /* Differentiator */; };
 		CCB7014A29E40C6600A0782C /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = CCB7014929E40C6600A0782C /* RxDataSources */; };
 		CCBE0DA629E42BE60066AFAE /* RxOptional in Frameworks */ = {isa = PBXBuildFile; productRef = CCBE0DA529E42BE60066AFAE /* RxOptional */; };
@@ -336,7 +334,6 @@
 		CC1F4196264733EF00A4D72C /* OrdersFilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrdersFilterViewController.swift; sourceTree = "<group>"; };
 		CC1F419A26484D3000A4D72C /* OrdersFilterDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrdersFilterDetailViewController.swift; sourceTree = "<group>"; };
 		CC60A5E029E4296B00237D3B /* RxAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxAlert.swift; sourceTree = "<group>"; };
-		CCB1739F2642B74700FB0A35 /* EditMenuViewController+Stocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditMenuViewController+Stocks.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -476,7 +473,6 @@
 				2D6B8653260E2B8C00D05A97 /* EditMenuItemViewController.swift */,
 				2DCA6BE5262628E9007BE403 /* EditMenuItemOptionsViewController.swift */,
 				2DCA6BE826263153007BE403 /* EditMenuViewController+Options.swift */,
-				CCB1739F2642B74700FB0A35 /* EditMenuViewController+Stocks.swift */,
 				2DCA6BEB26265BAA007BE403 /* MenuItemOptionPushRow.swift */,
 			);
 			path = CrewMenu;
@@ -953,7 +949,6 @@
 				2DCA6BEC26265BAA007BE403 /* MenuItemOptionPushRow.swift in Sources */,
 				2D6B8654260E2B8C00D05A97 /* EditMenuItemViewController.swift in Sources */,
 				2DCA6C0D2626B3CF007BE403 /* Note.swift in Sources */,
-				CCB173A02642B74700FB0A35 /* EditMenuViewController+Stocks.swift in Sources */,
 				2DCA6CCD262743F9007BE403 /* OrderSegmentedControl.swift in Sources */,
 				2D84A4252615CB6E00E6AC50 /* NameCollectionViewCell.swift in Sources */,
 				2D17482A2635FD1A0033B7AB /* ItemCustomizationViewModel.swift in Sources */,
@@ -1039,7 +1034,6 @@
 				2DCA6BED26265BAA007BE403 /* MenuItemOptionPushRow.swift in Sources */,
 				2D6B8655260E2B8C00D05A97 /* EditMenuItemViewController.swift in Sources */,
 				2DCA6C0E2626B3CF007BE403 /* Note.swift in Sources */,
-				CCB173A12642B74700FB0A35 /* EditMenuViewController+Stocks.swift in Sources */,
 				2DCA6CCE262743FA007BE403 /* OrderSegmentedControl.swift in Sources */,
 				2D84A4262615CB6E00E6AC50 /* NameCollectionViewCell.swift in Sources */,
 				2D17482B2635FD1A0033B7AB /* ItemCustomizationViewModel.swift in Sources */,

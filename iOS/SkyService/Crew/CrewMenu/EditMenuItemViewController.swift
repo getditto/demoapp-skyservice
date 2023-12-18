@@ -78,7 +78,6 @@ class EditMenuItemViewController: FormViewController {
             })
 
         setupOptionsSection()
-        setupStocksSection()
 
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "trash"), style: .plain, target: self, action: #selector(delete(sender:)))
 

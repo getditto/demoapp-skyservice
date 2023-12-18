@@ -44,8 +44,6 @@ extension DataService {
                         "categoryId": categoryId,
                         "ordinal": Float.random(min: 0, max: 1),
                         "maxCartQuantityPerUser": maxCartQuantityPerUser,
-                        "totalCount": nil,
-                        "usedCount": nil,
                         "deleted": false
                     ]
                     
@@ -110,25 +108,6 @@ extension DataService {
         } catch {
             print("Error \(error)")
         }
-    }
-
-    func updateMenuItemTotalCount(id: String, value: Double) async {
-        
-        //Counter type not yet supported in DQL
-        if let item = menuItems.findByID(id).exec() {
-            if let current = item["totalCount"].double {
-                menuItems.findByID(id).update { mutable in
-                    guard let mutable = mutable else { return }
-                    mutable["totalCount"].counter?.increment(by: value - current)
-                }
-            } else {
-                menuItems.findByID(id).update { mutable in
-                    guard let mutable = mutable else { return }
-                    mutable["totalCount"].set(DittoCounter())
-                    mutable["totalCount"].counter?.increment(by: value)
-                }
-            }
-        } 
     }
 
     func changeIsCrewOnly(menuItemId: String, isCrewOnly: Bool) async {

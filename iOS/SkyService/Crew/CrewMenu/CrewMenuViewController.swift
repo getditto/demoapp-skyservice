@@ -160,11 +160,7 @@ class CrewMenuViewController: UIViewController, UITableViewDataSource, UITableVi
             cell = UITableViewCell(style: .subtitle, reuseIdentifier: "Cell")
             cell.accessoryType = .disclosureIndicator
         }
-        if let remainsCount = item.remainsCount {
-            cell.textLabel?.text = "(\(remainsCount)) " + item.name
-        } else {
-            cell.textLabel?.text = item.name
-        }
+        cell.textLabel?.text = item.name
         cell.textLabel?.font = UIFont.boldSystemFont(ofSize: UIFont.labelFontSize + 3)
         cell.detailTextLabel?.text = item.details
         cell.detailTextLabel?.font = UIFont.systemFont(ofSize: UIFont.systemFontSize)
