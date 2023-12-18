@@ -46,6 +46,10 @@ class SkyServiceApplication: Application() {
             )
         )
 
+        // Sync Small Peer Info to Big Peer
+        ditto?.smallPeerInfo?.isEnabled = true
+        ditto?.smallPeerInfo?.syncScope = DittoSmallPeerInfoSyncScope.BigPeerOnly
+
         try {
             ditto?.disableSyncWithV3()
         } catch(e: DittoError) {
