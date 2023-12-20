@@ -16,22 +16,6 @@ struct Note: DittoModel, Ordinal {
 
     var user: User?
 
-    init(document: DittoDocument) {
-        self.id = document.id.toString()
-        self.userId = document["userId"].stringValue
-        self.workspaceId = document["workspaceId"].stringValue
-        self.body = document["body"].stringValue
-        self.createdOn = Date(dateString: document["createdOn"].stringValue)
-        self.isCompleted = document["isCompleted"].boolValue
-        self.editedOn = {
-            guard let s = document["editedOn"].string else { return nil }
-            return Date(dateString: s)
-        }()
-        self.ordinal = document["ordinal"].floatValue
-        self.isShared = document["isShared"].boolValue
-        self.deleted = document["deleted"].boolValue
-    }
-    
     init(resultItem: [String : Any?]) {
         self.id = resultItem["_id"] as! String
         self.userId = resultItem["userId"] as? String ?? ""

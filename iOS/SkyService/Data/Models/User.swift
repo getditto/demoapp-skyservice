@@ -22,22 +22,6 @@ struct User: Equatable, IdentifiableType, DittoModel {
         return self.role == .crew
     }
 
-    init(document: DittoDocument) {
-        self.id = document.id.toString()
-        self.name = document["name"].stringValue
-        self.seat = document["seat"].string
-        self.isManuallyCreated = document["isManuallyCreated"].boolValue
-        self.role = {
-            guard let val = document["role"].string else {
-                // no role? just assume passenger
-                return .passenger
-            }
-            // if something failed, we should assume it's a passenger
-            return Role(rawValue: val) ?? .passenger
-        }()
-        self.deleted = document["deleted"].boolValue
-    }
-    
     init(resultItem: [String : Any?]) {
         self.id = resultItem["_id"] as! String
         self.name = resultItem["name"] as? String ?? ""

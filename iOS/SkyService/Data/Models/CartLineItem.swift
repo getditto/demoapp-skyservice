@@ -16,17 +16,7 @@ struct CartLineItem: DittoModel, Equatable {
      If the orderId has a value then it's already an open order
      */
     var orderId: String?
-
-    init(document: DittoDocument) {
-        self.id = document.id.toString()
-        self.menuItemId = document["menuItemId"].stringValue
-        self.quantity = document["quantity"].intValue
-        self.userId = document["userId"].stringValue
-        self.options = document["options"].register?.arrayValue.compactMap({ $0 as? String }) ?? []
-        self.orderId = document["orderId"].string
-        self.deleted = document["deleted"].boolValue
-    }
-    
+ 
     init(resultItem: [String : Any?]) {
         self.id = resultItem["_id"] as! String
         self.menuItemId = resultItem["menuItemId"] as? String ?? ""

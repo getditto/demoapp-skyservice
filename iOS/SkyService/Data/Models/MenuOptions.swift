@@ -31,20 +31,6 @@ struct MenuItemOption: DittoModel, Ordinal, Equatable {
     var deleted: Bool
 
     var allowedValues: [String]
-
-    init(document: DittoDocument) {
-        self.id = document.id.toString()
-        self.label = document["label"].stringValue
-        self.details = document["details"].stringValue
-        self.ordinal = document["ordinal"].floatValue
-        self.menuItemId = document["menuItemId"].stringValue
-        self.type = MenuItemOptionType(rawValue: document["type"].stringValue) ?? MenuItemOptionType.single
-        self.isRequired = document["isRequired"].boolValue
-        self.allowedValues = document["allowedValues"].register?.arrayValue.compactMap({ (v) -> String? in
-            return v as? String
-        }) ?? []
-        self.deleted = document["deleted"].boolValue
-    }
     
     init(resultItem: [String:Any?]) {
         self.id = resultItem["_id"] as! String

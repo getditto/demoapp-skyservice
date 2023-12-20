@@ -129,16 +129,6 @@ struct Order: Equatable, DittoModel {
     var userId: String
     var crewNote: String
     var deleted: Bool
-
-    init(document: DittoDocument) {
-        self.id = document.id.toString()
-        self.createdOn = Date(dateString: document["createdOn"].stringValue)
-        self.userId = document["userId"].stringValue
-        self.total = document["total"].floatValue
-        self.status = Status(rawValue: document["status"].intValue) ?? .open
-        self.crewNote = document["crewNote"].stringValue
-        self.deleted = document["deleted"].boolValue
-    }
     
     init(resultItem: [String : Any?]) {
         self.id = resultItem["_id"] as! String

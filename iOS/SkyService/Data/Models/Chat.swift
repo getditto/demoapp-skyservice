@@ -21,17 +21,6 @@ class ChatMessage: MessageModelProtocol, DittoModel {
     var user: User? = nil
     var workspaceId: String
     var deleted: Bool
-
-    required init(document: DittoDocument) {
-        self.uid = document.id.toString()
-        self.type = document["mimeType"].string ?? Self.chatItemType
-        self.status = .success
-        self.date = Date(dateString: document["date"].stringValue)
-        self.senderId = document["senderUserId"].stringValue
-        self.body = document["body"].stringValue
-        self.workspaceId = document["workspaceId"].stringValue
-        self.deleted = document["deleted"].boolValue
-    }
     
     required init(resultItem: [String:Any?]) {
         self.uid = resultItem["_id"] as! String

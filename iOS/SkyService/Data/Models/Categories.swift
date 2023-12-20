@@ -12,16 +12,7 @@ struct Category: Equatable, IdentifiableType, Ordinal, DittoModel {
     var ordinal: Float
     var isCrewOnly: Bool
     var deleted: Bool
-
-    init(document: DittoDocument) {
-        self.id = document.id.toString()
-        self.name = document["name"].stringValue
-        self.details = document["details"].stringValue
-        self.ordinal = document["ordinal"].floatValue
-        self.isCrewOnly = document["isCrewOnly"].boolValue
-        self.deleted = document["deleted"].boolValue
-    }
-    
+ 
     init(resultItem: [String : Any?]) {
         self.id = resultItem["_id"] as! String
         self.name = resultItem["name"] as? String ?? ""

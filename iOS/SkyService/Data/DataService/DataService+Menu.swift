@@ -4,23 +4,29 @@ import DittoSwift
 extension DataService {
 
     func menuItemById$(_ id: String) -> Observable<MenuItem?> {
-        return menuItems.findByID(id).document$()
+        return self.ditto
+            .resultItems$(query: "SELECT * FROM menuItems WHERE _id = :id", args: ["id": id])
             .map { (doc) -> MenuItem? in
-                if let doc = doc {
-                    return MenuItem(document: doc)
+                if let doc = doc.first {
+                    return MenuItem(resultItem: doc.value)
                 }
                 return nil
             }
     }
 
     func menuItems$() -> Observable<[MenuItem]> {
-        //Counter type not supported in DQL
         return workspaceId$
             .flatMapLatest { [unowned menuItems = self.menuItems] (workspaceId) -> Observable<[MenuItem]> in
-                return menuItems
-                    .find("workspaceId == '\(workspaceId)' && deleted == false")
-                    .documents$()
+                
+                let query = "SELECT * FROM menuItems WHERE workspaceId = :workspaceId AND deleted = false"
+                let args: [String: Any?] = [
+                    "workspaceId": workspaceId
+                ]
+                
+                return self.ditto
+                    .resultItems$(query: query, args: args)
                     .mapToDittoModel(type: MenuItem.self)
+
             }
     }
 

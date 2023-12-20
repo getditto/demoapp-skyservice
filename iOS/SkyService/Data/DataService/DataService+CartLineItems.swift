@@ -11,16 +11,6 @@ extension DataService {
         return self.workspaceId$
             .flatMapLatest { [weak self] (workspaceId) -> Observable<[CartLineItem]> in
                 guard let `self` = self else { return Observable.empty() }
-
-//                var query = "workspaceId == '\(workspaceId)' && userId == '\(userId)' && orderId == null && deleted == false"
-//                if let orderId = orderId {
-//                    query = "workspaceId == '\(workspaceId)' && userId == '\(userId)' && orderId == '\(orderId)' && deleted == false"
-//                }
-//
-//                return self.ditto.store["cartLineItems"]
-//                    .find(query)
-//                    .documents$()
-//                    .mapToDittoModel(type: CartLineItem.self)
                 
                 var query = "SELECT * FROM cartLineItems WHERE workspaceId = :workspaceId AND userId = :userId AND orderId IS NULL AND deleted = false"
                 var args: [String: Any?] = [
@@ -47,25 +37,19 @@ extension DataService {
         return self.workspaceId$
             .flatMapLatest { [weak self] (workspaceId) -> Observable<[CartLineItem]> in
                 guard let `self` = self else { return Observable.empty() }
-//                let containsPredicate: [String] = orderIds.map { "\($0)" }
-                let containsPredicate: String = orderIds.map{ "'\($0)'" }.joined(separator: ",")
 
+                let containsPredicate: [String] = orderIds.map { $0 }
                 
-                let query = "workspaceId == '\(workspaceId)' && contains([\(containsPredicate)], orderId) && deleted == false"
-                return self.ditto.store["cartLineItems"]
-                    .find(query)
-                    .documents$().mapToDittoModel(type: CartLineItem.self)
+                let query = "SELECT * FROM cartLineItems WHERE workspaceId = :workspaceId AND deleted = false AND array_contains(:containsPredicate, orderId)"
                 
-//                let query = "SELECT * FROM cartLineItems WHERE workspaceId = :workspaceId AND deleted = false AND orderId IN :containsPredicate"
-//                
-//                let args: [String: Any?] = [
-//                    "workspaceId": workspaceId,
-//                    "containsPredicate": containsPredicate
-//                ]
-//                
-//                return self.ditto
-//                    .resultItems$(query: query, args: args)
-//                    .mapToDittoModel(type: CartLineItem.self)
+                let args: [String: Any?] = [
+                    "workspaceId": workspaceId,
+                    "containsPredicate": containsPredicate
+                ]
+                
+                return self.ditto
+                    .resultItems$(query: query, args: args)
+                    .mapToDittoModel(type: CartLineItem.self)
             }
     }
 
