@@ -8,7 +8,7 @@ android {
         applicationId "live.dittolive.skyservice"
         minSdkVersion 26
         targetSdkVersion 33
-        versionCode 34
+        versionCode 37
         versionName "1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -58,7 +58,7 @@ android {
 }
 
 dependencies {
-    implementation "live.ditto:ditto:4.4.0"
+    implementation "live.ditto:ditto:4.5.0"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     implementation 'androidx.appcompat:appcompat:1.2.0'
