@@ -30,6 +30,9 @@ final class DataService {
     private(set) var authDelegate: AuthDelegate
 
     static var shared = DataService()
+    
+    private var seenOrders = [DittoQueryResultItem]()
+    private var seenChats_crew = [DittoQueryResultItem]()
 
     let workspaceId$: Observable<String> = UserDefaults.standard.rx.observe(String.self, "workspaceId")
         .filterNil()
@@ -65,6 +68,21 @@ final class DataService {
         chatMessages = ditto.store["chatMessages"]
         categories = ditto.store["categories"]
         notes = ditto.store["notes"]
+        
+    }
+    
+    func populateSeenItems(workspaceId: String) {
+        // initialze seen arrays with data that came through before app start up
+        // Makes it so app does not get bombarded with notifications for every previous order
+        Task {
+            do {
+                self.seenOrders = try await self.ditto.store.execute(query: "SELECT * FROM orders WHERE deleted = false AND workspaceId = :workspaceId", arguments: ["workspaceId": workspaceId]).items
+                
+                self.seenChats_crew = try await self.ditto.store.execute(query: "SELECT * FROM chatMessages WHERE deleted = false AND workspaceId = :workspaceId", arguments: ["workspaceId": workspaceId]).items
+            } catch {
+                print("Error \(error)")
+            }
+        }
     }
 
     func startSyncing() {
@@ -87,8 +105,9 @@ final class DataService {
         } catch {
             assertionFailure(error.localizedDescription)
         }
+        
+        self.populateSeenItems(workspaceId: workspaceId)
 
-        let queryString: String = "workspaceId == '\(workspaceId)'"
         // i had no way to stop a subscription
         [
             menuItems,
@@ -98,88 +117,51 @@ final class DataService {
             categories,
             notes
         ].forEach { (collection) in
-            collection?.find(queryString).documents$()
+            let query = "SELECT * FROM \(collection.name) WHERE workspaceId = :workspaceId"
+            let args: [String: Any?] = [
+                "workspaceId": workspaceId
+            ]
+            
+            self.ditto
+                .resultItems$(query: query, args: args)
                 .subscribeNext({ _ in })
                 .disposed(by: disposeBag)
         }
-
-        self.ditto.store["workspaces"].findByID(workspaceId)
-            .document$()
+        
+        let query = "SELECT * FROM workspaces WHERE _id = :id"
+        let args: [String: Any?] = [
+            "id": workspaceId
+        ]
+        
+        self.ditto
+            .resultItems$(query: query, args: args)
             .bind { _ in }
             .disposed(by: disposeBag)
 
         // registering background notifications
 
-        chatMessages
-            .find(queryString)
-            .documentsWithEventInfo$()
-            .filter { _ in Bundle.main.isCrew } // notify only crew
-            .filter { _ in UIApplication.shared.applicationState == .background } // notify only in background
-            .flatMapLatest { event -> Observable<ChatMessage> in
-                var chatMessages: [ChatMessage] = []
-                if case .update(let updates) = event.liveQueryEvent {
-                    chatMessages = updates.insertions.map({ ChatMessage(document: event.documents[$0] ) })
-                }
-                return Observable.from(chatMessages)
-            }
-            .bind { (insertedChatMessage) in
-                let content = UNMutableNotificationContent()
-                content.title = "New Message"
-                content.body = insertedChatMessage.body
-                content.userInfo = [
-                    "notificationType": "newChatMessage"
-                ]
-                content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "chat_notification.wav"))
-                let req = UNNotificationRequest.init(identifier: "chatMessages", content: content, trigger: nil)
-                UNUserNotificationCenter.current().add(req, withCompletionHandler: nil)
-            }
-            .disposed(by: disposeBag)
-
-
-        orders
-            .find(queryString)
-            .documentsWithEventInfo$()
-            .filter { _ in Bundle.main.isCrew } // only crew should see this
-            .flatMapLatest({ e -> Observable<DittoDocument> in
-                let documents = e.documents
-                let eventInfo = e.liveQueryEvent
-                var insertedDocuments = [DittoDocument]()
-                if case .update(let u) = eventInfo {
-                    let insertionIndices = u.insertions
-                    insertedDocuments = insertionIndices.map { documents[$0] }
-                }
-                return Observable.from(insertedDocuments)
-            })
-            .bind { insertedDoc in
-                let content = UNMutableNotificationContent()
-                content.title = "Meal Order"
-                content.body = "A new order has been received"
-                content.userInfo = [
-                    "notificationType": "receivedNewOrder"
-                ]
-                content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "new_order.wav"))
-                let req = UNNotificationRequest.init(identifier: "orders", content: content, trigger: nil)
-                UNUserNotificationCenter.current().add(req, withCompletionHandler: nil)
-            }
-            .disposed(by: disposeBag)
-
-
-        orders
-            .find(queryString)
-            .documentsWithEventInfo$()
+        self.ditto
+            .resultItems$(query: "SELECT * FROM orders WHERE workspaceId = :workspaceId AND deleted = false", args: ["workspaceId": workspaceId])
             .filter { _ in !Bundle.main.isCrew } // pax app only
-            .flatMapLatest { e -> Observable<Order> in
-                let documents = e.documents
-                let eventInfo = e.liveQueryEvent
+            .flatMapLatest { resultItems -> Observable<Order> in
                 var updatedOrders = [Order]()
-                if case let .update(u) = eventInfo {
-                    updatedOrders = u.updates
-                        .compactMap({
-                            let previousStatus = u.oldDocuments[$0]["status"].intValue
-                            let newStatus = e.documents[$0]["status"].intValue
-                            return previousStatus == newStatus ? nil: Order(document: documents[$0])
-                        })
-                        .filter({ $0.userId == self.userId })
+                resultItems.forEach { item in
+                    guard let itemId = item.value["_id"] as? String else {
+                        return // Skip items without a valid "_id"
+                    }
+                    
+                    let prevStatus = self.seenOrders.compactMap { seenItem in
+                        if (seenItem.value["_id"] as? String) == itemId {
+                            return seenItem.value["status"] as? Int
+                        }
+                        return nil
+                    }.first
+                    
+                    let newStatus = item.value["status"] as? Int
+                    
+                    if !(prevStatus == newStatus) {
+                        updatedOrders.append(Order(resultItem: item.value))
+                    }
                 }
                 return Observable.from(updatedOrders)
             }
@@ -196,6 +178,72 @@ final class DataService {
                 UNUserNotificationCenter.current().add(req, withCompletionHandler: nil)
             }
             .disposed(by: disposeBag)
+        
+        self.ditto
+            .resultItems$(query: "SELECT * FROM orders WHERE workspaceId = :workspaceId AND deleted = false", args: ["workspaceId": workspaceId])
+            .filter { _ in Bundle.main.isCrew } // only crew should see this
+            .flatMapLatest { resultItems -> Observable<DittoQueryResultItem> in
+                let insertedItems = resultItems.filter { item in
+                    guard let itemId = item.value["_id"] as? String else {
+                        return false // Skip items without a valid "_id"
+                    }
+                    let isItemAlreadySeen = self.seenOrders.contains { seenItem in
+                        return (seenItem.value["_id"] as? String) == itemId
+                    }
+                    if !isItemAlreadySeen {
+                        self.seenOrders.append(item)
+                        return true
+                    }
+                    return false
+                }
+                return Observable.from(insertedItems)
+            }
+            .bind { insertedDoc in
+                let content = UNMutableNotificationContent()
+                content.title = "Meal Order"
+                content.body = "A new order has been received"
+                content.userInfo = [
+                    "notificationType": "receivedNewOrder"
+                ]
+                content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "new_order.wav"))
+                let req = UNNotificationRequest.init(identifier: "orders", content: content, trigger: nil)
+                UNUserNotificationCenter.current().add(req, withCompletionHandler: nil)
+            }
+            .disposed(by: disposeBag)
+        
+        self.ditto
+            .resultItems$(query: "SELECT * FROM chatMessages WHERE workspaceId = :workspaceId AND deleted = false", args: ["workspaceId": workspaceId])
+            .filter { _ in Bundle.main.isCrew } // notify only crew
+            .filter { _ in UIApplication.shared.applicationState == .background } // notify only in background
+            .flatMapLatest { resultItems -> Observable<DittoQueryResultItem> in
+                let insertedItems = resultItems.filter { item in
+                    guard let itemId = item.value["_id"] as? String else {
+                        return false // Skip items without a valid "_id"
+                    }
+                    let isItemAlreadySeen = self.seenChats_crew.contains { seenItem in
+                        return (seenItem.value["_id"] as? String) == itemId
+                    }
+                    if !isItemAlreadySeen {
+                        self.seenChats_crew.append(item)
+                        return true
+                    }
+                    return false
+                }
+                return Observable.from(insertedItems)
+            }
+            .bind { (insertedChatMessage) in
+                let content = UNMutableNotificationContent()
+                content.title = "New Message"
+                content.body = insertedChatMessage.value["body"] as? String ?? ""
+                content.userInfo = [
+                    "notificationType": "newChatMessage"
+                ]
+                content.sound = UNNotificationSound(named: UNNotificationSoundName(rawValue: "chat_notification.wav"))
+                let req = UNNotificationRequest.init(identifier: "chatMessages", content: content, trigger: nil)
+                UNUserNotificationCenter.current().add(req, withCompletionHandler: nil)
+            }
+            .disposed(by: disposeBag)
+     
     }
     
     private func getStatusUpdateText (status: String) -> String {
@@ -225,12 +273,16 @@ final class DataService {
             debugPrint("Failed to find a workspaceId while attempting to save a menuItem `menuItemsAndAllCategories`")
             return Observable.empty()
         }
-
-        let justMenuItems$ = menuItems
-            .find("workspaceId == '\(workspaceId)' && deleted == false")
-            .documents$()
+        
+        let query = "SELECT * FROM menuItems WHERE workspaceId = :workspaceId AND deleted = false"
+        let args: [String: Any?] = [
+            "workspaceId": workspaceId
+        ]
+        
+        let justMenuItems$ = self.ditto
+            .resultItems$(query: query, args: args)
             .map { (docs) -> [MenuItem] in
-                return docs.map({ MenuItem(document: $0) })
+                return docs.map({ MenuItem(resultItem: $0.value) })
             }
 
         let cartItems$: Observable<[String: Int]> = {
@@ -261,10 +313,19 @@ final class DataService {
         }
     }
 
-    func deleteMenuItem(id: String) {
-        menuItems.findByID(id).update{ (mutable) in
-            guard let mutable = mutable else { return }
-            mutable["deleted"].set(true)
+    func deleteMenuItem(id: String) async {
+        do {
+            let query = "UPDATE menuItems SET deleted = :deleted WHERE _id = :id"
+            
+            let args: [String:Any] = [
+                "deleted": true,
+                "id": id
+            ]
+            
+            try await self.ditto.store.execute(query: query, arguments: args)
+                        
+        } catch {
+            print("Error: \(error)")
         }
     }
 
@@ -296,28 +357,49 @@ final class DataService {
 
 
     func userById(_ id: String) -> Observable<User?> {
-        return users.findByID(id).document$()
-            .map({ doc in
-                if let doc = doc {
-                    return User(document: doc)
+        let query = "SELECT * FROM users WHERE _id = :id"
+        let args: [String: Any?] = [
+            "id": id
+        ]
+        
+        return self.ditto
+            .resultItems$(query: query, args: args)
+            .map({ item in
+                if let doc = item.first {
+                    return User(resultItem: doc.value)
                 } else {
                     return nil
                 }
             })
     }
 
-    func deleteUser(userId: String) {
-        users.findByID(userId).update{ (mutable) in
-            guard let mutable = mutable else { return }
-            mutable["deleted"].set(true)
+    func deleteUser(userId: String) async {
+        do {
+            let query = "UPDATE users SET deleted = :deleted WHERE _id = :id"
+            
+            let args: [String:Any] = [
+                "deleted": true,
+                "id": userId
+            ]
+            
+            try await self.ditto.store.execute(query: query, arguments: args)
+                        
+        } catch {
+            print("Error: \(error)")
         }
     }
 
     func me$() -> Observable<User?> {
-        return users.findByID("\(ditto.siteID)").document$()
-            .map({ doc in
-                if let doc = doc {
-                    return User(document: doc)
+        let query = "SELECT * FROM users WHERE _id = :id"
+        let args: [String: Any?] = [
+            "id": ditto.siteID
+        ]
+        
+        return self.ditto
+            .resultItems$(query: query, args: args)
+            .map({ item in
+                if let doc = item.first {
+                    return User(resultItem: doc.value)
                 } else {
                     return nil
                 }
@@ -328,50 +410,69 @@ final class DataService {
         workspaceId$
             .flatMapLatest { [weak users = self.users] (workspaceId) -> Observable<[User]> in
                 guard let users = users else { return Observable.empty() }
-                return users
-                    .find("workspaceId == '\(workspaceId)' && deleted == false")
-                    .documents$()
+                
+                let query = "SELECT * FROM users WHERE workspaceId =:workspaceId AND deleted = false"
+                let args: [String:Any?] = [
+                    "workspaceId": workspaceId
+                ]
+                
+                return self.ditto
+                    .resultItems$(query: query, args: args)
                     .mapToDittoModel(type: User.self)
             }
     }
 
-    func setUser(id: String? = nil, name: String, seat: String?, role: Role, isManuallyCreated: Bool = false) {
+    func setUser(id: String? = nil, name: String, seat: String?, role: Role, isManuallyCreated: Bool = false) async {
         guard let workspaceId = UserDefaults.standard.workspaceId?.description else {
             debugPrint("Failed to get a workspaceId in `setUser`")
             return
         }
-        ditto.store.write { (tx) in
-            if let id = id, let _ = tx["users"].findByID(id).exec() {
-                tx["users"].findByID(id).update { (m) in
-                    m?["name"].set(name)
-                    m?["seat"].set(seat)
-                    m?["role"].set(role.rawValue)
-                    m?["workspaceId"].set(workspaceId)
-                    // no one should really override this
-                    //m?["isManuallyCreated"].set(isManuallyCreated)
-                }
+        
+        do {
+            if let id = id, !(try await ditto.store.execute(query: "SELECT * FROM users WHERE _id = :id", arguments: ["id": id]).items.isEmpty) {
+                
+                let query = "UPDATE users SET name = :name, seat = :seat, role = :role, workspaceId = :workspaceId WHERE _id = :id"
+                
+                let args: [String:Any] = [
+                    "name": name,
+                    "seat": seat as Any,
+                    "role": role.rawValue,
+                    "workspaceId": workspaceId,
+                    "id": id
+                ]
+                
+                try await self.ditto.store.execute(query: query, arguments: args)
             } else {
-                try! tx["users"].upsert([
-                    "_id": id?.toDittoID(),
+                let newDoc: [String:Any] = [
+                    "_id": id?.toDittoID() as Any,
                     "name": name,
                     "workspaceId": workspaceId,
-                    "seat": seat,
+                    "seat": seat as Any,
                     "isManuallyCreated": isManuallyCreated,
                     "role": role.rawValue,
                     "deleted": false
-                ], writeStrategy: .insertIfAbsent)
+                ]
+                        
+                try await self.ditto.store.execute(query: "INSERT INTO users DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE", arguments: ["newDoc": newDoc])
             }
+        } catch {
+            print("Error: \(error)")
         }
     }
 
     func categories$() -> Observable<[Category]> {
         return workspaceId$.flatMapLatest { [weak self] workspaceId -> Observable<[Category]> in
             guard let `self` = self else { return Observable.empty() }
-            return self.categories
-                .find("workspaceId == '\(workspaceId)' && deleted == false")
-                .documents$()
-                .map({ docs in
-                    return docs.map { Category(document: $0) }
+            
+            let query = "SELECT * FROM categories WHERE workspaceId = :workspaceId AND deleted = false"
+            let args: [String:Any?] = [
+                "workspaceId": workspaceId
+            ]
+            
+            return self.ditto
+                .resultItems$(query: query, args: args)
+                .map({ results in
+                    return results.map { Category(resultItem: $0.value) }
                         .sorted { (a, b) -> Bool in
                             return a.ordinal < b.ordinal
                         }
@@ -380,63 +481,116 @@ final class DataService {
     }
 
     func categoryById$(id: String) -> Observable<Category?> {
-        return categories.findByID(id).document$()
-            .map { (doc) -> Category? in
-                guard let doc = doc else { return nil }
-                return Category(document: doc)
+        let query = "SELECT * FROM categories WHERE _id = :id"
+        let args: [String:Any?] = [
+            "id": id
+        ]
+        
+        return self.ditto
+            .resultItems$(query: query, args: args)
+            .map { (result) -> Category? in
+                guard let resultItem = result.first?.value as? [String: Any?] else { return nil }
+                return Category(resultItem: resultItem)
             }
+        
     }
 
-    func createCategory(name: String, details: String, isCrewOnly: Bool) {
+    func createCategory(name: String, details: String, isCrewOnly: Bool) async {
         guard let workspaceId = UserDefaults.standard.workspaceId?.description else {
             debugPrint("No workspaceId was found while attempting to call `createCategory`")
             return
         }
-        ditto.store.write { (txn) in
-            let count = txn["categories"].find("workspaceId == '\(workspaceId)' && deleted == false").exec().count
+        
+        do {
+            
+            let count = try await ditto.store.execute(query: "SELECT * FROM categories WHERE workspaceId = :workspaceId AND deleted = 'false'", arguments: ["workspaceId": workspaceId]).items.count
+            
             let ordinal = Float.random(min: Float(count), max: Float(count + 1))
-            try! txn["categories"].upsert([
+            
+            let query = "INSERT INTO categories DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE"
+            
+            let newDoc: [String:Any] = [
                 "name": name,
                 "details": details,
-                "workspaceId": workspaceId,
-                "ordinal": ordinal,
                 "isCrewOnly": isCrewOnly,
+                "ordinal": ordinal,
+                "workspaceId": workspaceId,
                 "deleted": false
-            ])
+            ]
+            
+            try await self.ditto.store.execute(query: query, arguments: ["newDoc": newDoc])
+
+        } catch {
+            print("Error \(error)")
         }
+        
+        
     }
 
-    func updateCategory(id: String, name: String, details: String, isCrewOnly: Bool) {
+    func updateCategory(id: String, name: String, details: String, isCrewOnly: Bool) async {
         guard let workspaceId = UserDefaults.standard.workspaceId?.description else {
             debugPrint("No workspaceId was found while attempting to call `updateCategory`")
             return
         }
-        categories.findByID(id).update { (mutable) in
-            guard let mutable = mutable else { return }
-            mutable["name"].set(name)
-            mutable["workspaceId"].set(workspaceId)
-            mutable["details"].set(details)
-            mutable["isCrewOnly"].set(isCrewOnly)
+        
+        do {
+            let query = "UPDATE categories SET name = :name, details = :details, isCrewOnly = :isCrewOnly, workspaceId = :workspaceId WHERE _id = :id"
+            
+            let args: [String:Any] = [
+                "name": name,
+                "details": details,
+                "isCrewOnly": isCrewOnly,
+                "workspaceId": workspaceId,
+                "id": id
+            ]
+            
+            try await self.ditto.store.execute(query: query, arguments: args)
+        } catch {
+            print("Error \(error)")
         }
     }
 
-    func updateCategoryOrdinal(id: String, newOrdinal: Float) {
-        categories.findByID(id).update { (mutable) in
-            guard let mutable = mutable else { return }
-            mutable["ordinal"].set(newOrdinal)
+    func updateCategoryOrdinal(id: String, newOrdinal: Float) async {
+        do {
+            let query = "UPDATE categories SET ordinal = :ordinal WHERE _id = :id"
+            
+            let args: [String:Any] = [
+                "ordinal": newOrdinal,
+                "id": id
+            ]
+            
+            try await self.ditto.store.execute(query: query, arguments: args)
+        } catch {
+            print("Error \(error)")
         }
     }
 
-    func deleteCategory(id: String) {
-        categories.findByID(id).update { (mutable) in
-            guard let mutable = mutable else { return }
-            mutable["deleted"].set(true)
+    func deleteCategory(id: String) async {
+        do {
+            let query = "UPDATE categories SET deleted = :deleted WHERE _id = :id"
+            
+            let args: [String:Any] = [
+                "deleted": true,
+                "id": id
+            ]
+            
+            try await self.ditto.store.execute(query: query, arguments: args)
+        } catch {
+            print("Error \(error)")
         }
     }
 
-    func evictAllData() {
-        ditto.store.collectionNames().forEach {
-            ditto.store[$0].findAll().evict()
+    func evictAllData() async {
+                
+        for collection in ditto.store.collectionNames() {
+            do {
+                try await self.ditto.store.execute(query: "EVICT FROM \(collection)")
+            } catch {
+                print("Error \(error)")
+            }
         }
+        
     }
+    
+    
 }

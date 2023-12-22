@@ -2,5 +2,7 @@ import Foundation
 import DittoSwift
 
 protocol DittoModel {
-    init(document: DittoDocument)
+    init(resultItem: [String: Any?])
 }
+
+

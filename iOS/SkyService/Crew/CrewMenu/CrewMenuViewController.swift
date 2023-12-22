@@ -127,7 +127,9 @@ class CrewMenuViewController: UIViewController, UITableViewDataSource, UITableVi
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
         alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
-            DataService.shared.updateWelcomeMessage(textView.text)
+            Task {
+                await DataService.shared.updateWelcomeMessage(textView.text)
+            }
         })
         present(alert, animated: false, completion: nil)
 
@@ -158,11 +160,7 @@ class CrewMenuViewController: UIViewController, UITableViewDataSource, UITableVi
             cell = UITableViewCell(style: .subtitle, reuseIdentifier: "Cell")
             cell.accessoryType = .disclosureIndicator
         }
-        if let remainsCount = item.remainsCount {
-            cell.textLabel?.text = "(\(remainsCount)) " + item.name
-        } else {
-            cell.textLabel?.text = item.name
-        }
+        cell.textLabel?.text = item.name
         cell.textLabel?.font = UIFont.boldSystemFont(ofSize: UIFont.labelFontSize + 3)
         cell.detailTextLabel?.text = item.details
         cell.detailTextLabel?.font = UIFont.systemFont(ofSize: UIFont.systemFontSize)
@@ -196,13 +194,15 @@ class CrewMenuViewController: UIViewController, UITableViewDataSource, UITableVi
         let menuItems = sectionsOfMenuItems[destinationIndexPath.section].items;
         let differentSection = (sourceIndexPath.section != destinationIndexPath.section)
         let newOrdinal = calculateOrdinal(sourceIndex: sourceIndexPath.row, destinationIndex: destinationIndex, items: menuItems, differentSection: differentSection)
-        DataService.shared.updateMenuItemOrdinal(id: menuItemToMove.id, newOrdinal: newOrdinal, categoryId: categoryId)
+        Task {
+            await DataService.shared.updateMenuItemOrdinal(id: menuItemToMove.id, newOrdinal: newOrdinal, categoryId: categoryId)
+        }
     }
 
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    private func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) async {
         if editingStyle == .delete {
             let item = sectionsOfMenuItems[indexPath.section].items[indexPath.row]
-            DataService.shared.deleteMenuItem(id: item.id)
+            await DataService.shared.deleteMenuItem(id: item.id)
         }
     }
 

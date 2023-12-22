@@ -68,11 +68,6 @@ class PassengerMenuViewModel {
                     if !Bundle.main.isCrew && menuItem.isCrewOnly {
                         return nil
                     }
-                    // Don't show out-of-stock items to pax
-                    if let remains = menuItem.remainsCount {
-                        if !Bundle.main.isCrew && remains <= 0 { return nil }
-                    }
-
                     let cartLineItems = cartLineItems.filter({ $0.menuItemId == menuItem.id })
                     let options = menuItemOptions.filter({ $0.menuItemId == menuItem.id })
                     return MenuItemWithCartLineItems(menuItem: menuItem, cartLineItems: cartLineItems, options: options)

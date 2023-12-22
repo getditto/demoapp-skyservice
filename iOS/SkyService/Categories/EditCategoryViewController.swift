@@ -83,7 +83,9 @@ class EditCategoryViewController: FormViewController {
                 return
             }
             self.dismiss(animated: true) {
-                DataService.shared.deleteCategory(id: categoryId)
+                Task {
+                    await DataService.shared.deleteCategory(id: categoryId)
+                }
             }
 
         }))
@@ -103,9 +105,13 @@ class EditCategoryViewController: FormViewController {
         }
         
         if let categoryId = self.categoryId {
-            DataService.shared.updateCategory(id: categoryId, name: name, details: details, isCrewOnly: isCrewOnly)
+            Task {
+                await DataService.shared.updateCategory(id: categoryId, name: name, details: details, isCrewOnly: isCrewOnly)
+            }
         } else {
-            DataService.shared.createCategory(name: name, details: details, isCrewOnly: isCrewOnly)
+            Task {
+                await DataService.shared.createCategory(name: name, details: details, isCrewOnly: isCrewOnly)
+            }
         }
         self.dismiss(animated: true, completion: nil)
     }

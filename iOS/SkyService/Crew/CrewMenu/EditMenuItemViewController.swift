@@ -64,7 +64,9 @@ class EditMenuItemViewController: FormViewController {
             .onChange({ [weak self] row in
                 guard let self = self else { return }
                 guard let value = row.value else { return }
-                DataService.shared.changeIsCrewOnly(menuItemId: self.menuItemId, isCrewOnly: value)
+                Task {
+                    await DataService.shared.changeIsCrewOnly(menuItemId: self.menuItemId, isCrewOnly: value)
+                }
             })
             +++ Section()
             <<< ButtonRow("save", { (row) in
@@ -76,7 +78,6 @@ class EditMenuItemViewController: FormViewController {
             })
 
         setupOptionsSection()
-        setupStocksSection()
 
         navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "trash"), style: .plain, target: self, action: #selector(delete(sender:)))
 
@@ -110,7 +111,9 @@ class EditMenuItemViewController: FormViewController {
     @objc func dismissButtonDidClick() {
         let name = form.values()["name"] as? String ?? ""
         if name.isEmpty {
-            DataService.shared.deleteMenuItem(id: menuItemId)
+            Task {
+                await DataService.shared.deleteMenuItem(id: menuItemId)
+            }
         }
         dismiss(animated: true, completion: nil)
     }
@@ -133,7 +136,9 @@ class EditMenuItemViewController: FormViewController {
         }
 
         let maxCartQuantityPerUser = self.form.values()["maxCartQuantityPerUser"] as? Int ?? nil
-        DataService.shared.saveMenuItem(id: menuItemId, name: name, price: price, details: details, categoryId: categoryId, maxCartQuantityPerUser: maxCartQuantityPerUser)
+        Task {
+            await DataService.shared.saveMenuItem(id: menuItemId, name: name, price: price, details: details, categoryId: categoryId, maxCartQuantityPerUser: maxCartQuantityPerUser)
+        }
         self.dismiss(animated: true, completion: nil)
     }
 
@@ -142,7 +147,9 @@ class EditMenuItemViewController: FormViewController {
 
         alert.addAction(UIAlertAction(title: "Yes, delete", style: .destructive, handler: { [weak self] (_) in
             guard let `self` = self else { return }
-            DataService.shared.deleteMenuItem(id: self.menuItemId)
+            Task {
+                await DataService.shared.deleteMenuItem(id: self.menuItemId)
+            }
             self.dismiss(animated: true, completion: nil)
         }))
 

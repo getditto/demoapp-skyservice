@@ -155,114 +155,63 @@ extension UInt64 {
     }
 }
 
-extension DittoCollection {
+extension Ditto {
     
-    func documents$() -> Observable<[DittoDocument]> {
-        return self.findAll().documents$()
-    }
-
-    func findByID(_ id: String) -> DittoPendingIDSpecificOperation {
-        return findByID(id.toDittoID())
-    }
-}
-
-struct DocumentsWithEventInfo {
-    var documents: [DittoDocument]
-    var liveQueryEvent: DittoLiveQueryEvent
-
-    var insertedDocuments: [DittoDocument] {
-        if case let .update(updateInfo) = self.liveQueryEvent {
-            return updateInfo.insertions.map({ index in self.documents[index] })
-        }
-        return []
-    }
-    var updatedDocuments: [DittoDocument] {
-        if case let .update(updateInfo) = self.liveQueryEvent {
-            return updateInfo.updates.map({ index in self.documents[index] })
-        }
-        return []
-    }
-    var removedDocuments: [DittoDocument] {
-        if case let .update(updateInfo) = self.liveQueryEvent {
-            return updateInfo.deletions.map({ index in updateInfo.oldDocuments[index] })
-        }
-        return []
-    }
-}
-
-extension DittoPendingCursorOperation {
-    
-    func documents$() -> Observable<[DittoDocument]> {
+    func resultItems$(query: String, args: [String:Any?]? = nil) -> Observable<[DittoQueryResultItem]> {
         return Observable.create { (observer) -> Disposable in
             
-            let subs = self.subscribe()
-            let handler = self.observeLocal { (docs, _) in
-                observer.onNext(docs)
-            }
-            
-            return Disposables.create {
-                subs.cancel()
-                handler.stop()
-            }
-        }
-    }
-    
-    func documentsWithEventInfo$() -> Observable<DocumentsWithEventInfo> {
-        return Observable.create { (observer) -> Disposable in
-            
-            let s = self.subscribe()
-            let h = self.observeLocal { (docs, event) in
-                observer.onNext(DocumentsWithEventInfo(documents: docs, liveQueryEvent: event))
-            }
-            
-            return Disposables.create {
-                h.stop()
-                s.cancel()
-            }
-        }
-    }
-    
-}
-
-extension DittoScopedWriteTransaction {
-    func findByID(_ id: String) -> DittoWriteTransactionPendingIDSpecificOperation {
-        return findByID(id.toDittoID())
-    }
-}
-
-extension DittoPendingIDSpecificOperation {
-    func document$() -> Observable<DittoDocument?> {
-        return Observable.create { (observer) -> Disposable in
-            let handler = self.observeLocal { (docs, _) in
-                observer.onNext(docs)
-            }
-            let s = self.subscribe()
-            
-            return Disposables.create {
-                handler.stop()
-                s.cancel()
+            do {
+                var subs: DittoSyncSubscription
+                var handler: DittoStoreObserver
+                
+                if args == nil {
+                    subs = try self.sync.registerSubscription(query: query)
+                    
+                    handler = try self.store.registerObserver(query: query) { [weak self] result in
+                        guard self != nil else { return }
+                        
+                        observer.onNext(result.items)
+                    }
+                    
+                } else {
+                    subs = try self.sync.registerSubscription(query: query, arguments: args)
+                    
+                    handler = try self.store.registerObserver(query: query, arguments: args) { [weak self] result in
+                        guard self != nil else { return }
+                        
+                        observer.onNext(result.items)
+                    }
+                }
+                
+                return Disposables.create {
+                    subs.cancel()
+                    handler.cancel()
+                }
+            } catch {
+                print("Error \(error)")
+                
+                return Disposables.create {}
             }
         }
     }
+
 }
 
-extension Observable where Element == Array<DittoDocument> {
+extension Observable where Element == Array<DittoQueryResultItem> {
     
     func mapToDittoModel<T: DittoModel>(type: T.Type) -> Observable<Array<T>> {
-        return self.map({ $0.map { T(document: $0) } })
+        return self.map({ $0.map { T(resultItem: $0.value) } })
     }
-    
 }
 
-extension Observable where Element == DittoDocument? {
+extension Observable where Element == DittoQueryResultItem? {
     
     func mapToDittoModel<T: DittoModel>(type: T.Type) -> Observable<T?> {
-        return self.map { doc in
-            guard let doc = doc else { return nil }
-            return T(document: doc)
+        return self.map { resultItem in
+            guard let resultItem = resultItem else { return nil }
+            return T(resultItem: resultItem.value)
         }
     }
-    
 }
 
 extension ViewProxy {

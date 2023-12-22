@@ -57,8 +57,10 @@ class NotesViewController: UIViewController, UITableViewDataSource, UITableViewD
             .bind { [weak self] _ in
                 guard let `self` = self else { return }
                 let isShared = self.notesType == NotesType.shared
-                guard case .success(let noteId) = DataService.shared.setNote(id: nil, body: "", isCompleted: false, isShared: isShared) else { return }
-                self.navigationController?.pushViewController(EditNoteViewController(noteId: noteId), animated: true)
+                Task {
+                    guard case .success(let noteId) = await DataService.shared.setNote(id: nil, body: "", isCompleted: false, isShared: isShared) else { return }
+                    self.navigationController?.pushViewController(EditNoteViewController(noteId: noteId), animated: true)
+                }
             }
             .disposed(by: disposeBag)
 
@@ -154,7 +156,9 @@ class NotesViewController: UIViewController, UITableViewDataSource, UITableViewD
         let destinationIndex: Int = destinationIndexPath.row
         let differentSection = (sourceIndexPath.section != destinationIndexPath.section)
         let newOrdinal = calculateOrdinal(sourceIndex: sourceIndex, destinationIndex: destinationIndex, items: notes, differentSection: differentSection)
-        DataService.shared.changeNoteOrdinal(id: noteId, newOrdinal: newOrdinal)
+        Task {
+            await DataService.shared.changeNoteOrdinal(id: noteId, newOrdinal: newOrdinal)
+        }
     }
 
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
@@ -178,7 +182,9 @@ class NotesViewController: UIViewController, UITableViewDataSource, UITableViewD
     @objc func checkDidTap(sender: IndexPathTapGestureRecognizer) {
         guard let indexPath = sender.indexPath else { return }
         let note = notes[indexPath.row]
-        DataService.shared.setNoteCompletion(id: note.id, isCompleted: !note.isCompleted)
+        Task {
+            await DataService.shared.setNoteCompletion(id: note.id, isCompleted: !note.isCompleted)
+        }
     }
 
 }

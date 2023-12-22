@@ -127,11 +127,7 @@ class OrdersViewController: UIViewController, UITableViewDelegate, OrdersHeaderT
                 cell = tableView.dequeueReusableCell(withIdentifier: "Cell") ?? UITableViewCell(style: .subtitle, reuseIdentifier: "Cell")
                 cell.backgroundColor = UIColor.systemGray6
                 cell.selectionStyle = .none
-                if let remainsCount = i.menuItem.remainsCount, Bundle.main.isCrew {
-                    cell.textLabel?.text = "\(i.cartLineItem.quantity) \(i.menuItem.name) (remains: \(remainsCount))"
-                } else {
-                    cell.textLabel?.text = "\(i.cartLineItem.quantity) \(i.menuItem.name)"
-                }
+                cell.textLabel?.text = "\(i.cartLineItem.quantity) \(i.menuItem.name)"
                 cell.textLabel?.font = UIFont.boldSystemFont(ofSize: UIFont.labelFontSize + 2)
                 cell.textLabel?.numberOfLines = 0
                 cell.detailTextLabel?.text = i.menuItem.details + self.createOptionsText(i.cartLineItem)
@@ -184,7 +180,9 @@ class OrdersViewController: UIViewController, UITableViewDelegate, OrdersHeaderT
         }
 
         alert.addAction(UIAlertAction(title: "Yes, Delete", style: .destructive, handler: { (_) in
-            DataService.shared.deleteOrder(orderId: order.id)
+            Task {
+                await DataService.shared.deleteOrder(orderId: order.id)
+            }
         }))
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
@@ -197,7 +195,9 @@ class OrdersViewController: UIViewController, UITableViewDelegate, OrdersHeaderT
     @objc func segmentedControlValueChanged(_ sender: OrderSegmentedControl) {
         let newStatus = Order.Status.allCases[sender.index]
         guard let orderId = sender.orderId else { return }
-        DataService.shared.changeOrderStatus(orderId: orderId, status: newStatus)
+        Task {
+            await DataService.shared.changeOrderStatus(orderId: orderId, status: newStatus)
+        }
     }
 
     @objc private func listTypeChanged(_ sender: UISegmentedControl) {
@@ -212,7 +212,9 @@ class OrdersViewController: UIViewController, UITableViewDelegate, OrdersHeaderT
         let alert = UIAlertController(title: "Delete Order?", message: nil, preferredStyle: .alert)
 
         alert.addAction(UIAlertAction(title: "Yes, Delete", style: .destructive, handler: { (_) in
-            DataService.shared.deleteOrder(orderId: orderId)
+            Task {
+                await DataService.shared.deleteOrder(orderId: orderId)
+            }
         }))
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -271,7 +273,9 @@ class OrdersViewController: UIViewController, UITableViewDelegate, OrdersHeaderT
 
         alert.addAction(UIAlertAction(title: "Cancel", style: .destructive, handler: nil))
         alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in
-            DataService.shared.updateCrewNote(order: order, newNote: textView.text)
+            Task {
+                await DataService.shared.updateCrewNote(order: order, newNote: textView.text)
+            }
         })
         present(alert, animated: false, completion: nil)
     }

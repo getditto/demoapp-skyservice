@@ -23,16 +23,22 @@ extension EditMenuItemViewController {
                     alert.popoverPresentationController?.sourceRect = cell.frame
                 }
 
-                alert.addAction(UIAlertAction(title: "Single Selection Option", style: .default, handler: { (_) in
-                    DataService.shared.createMenuItemOption(menuItemId: self.menuItemId, type: .single)
+                alert.addAction(UIAlertAction(title: "Single Selection Option", style: .default, handler: { _ in
+                    Task {
+                        await DataService.shared.createMenuItemOption(menuItemId: self.menuItemId, type: .single)
+                    }
                 }))
 
                 alert.addAction(UIAlertAction(title: "Multi Selection Option", style: .default, handler: { (_) in
-                    DataService.shared.createMenuItemOption(menuItemId: self.menuItemId, type: .multiple)
+                    Task {
+                        await DataService.shared.createMenuItemOption(menuItemId: self.menuItemId, type: .multiple)
+                    }
                 }))
 
                 alert.addAction(UIAlertAction(title: "Text Option", style: .default, handler: { (_) in
-                    DataService.shared.createMenuItemOption(menuItemId: self.menuItemId, type: .text)
+                    Task {
+                        await DataService.shared.createMenuItemOption(menuItemId: self.menuItemId, type: .text)
+                    }
                 }))
 
                 alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { (_) in
@@ -54,7 +60,9 @@ extension EditMenuItemViewController {
                         row.title = option.type.formTitle
                         row.value = option
                         let deleteAction = SwipeAction(style: .destructive, title: "Delete") { (action, row, completionHandler) in
-                            DataService.shared.deleteMenuItemOption(menuItemOptionId: option.id)
+                            Task {
+                                await DataService.shared.deleteMenuItemOption(menuItemOptionId: option.id)
+                            }
                             completionHandler?(true)
                         }
                         row.trailingSwipe.actions = [deleteAction]

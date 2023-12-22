@@ -11,15 +11,25 @@ extension DataService {
         return self.workspaceId$
             .flatMapLatest { [weak self] (workspaceId) -> Observable<[CartLineItem]> in
                 guard let `self` = self else { return Observable.empty() }
-
-                var query = "workspaceId == '\(workspaceId)' && userId == '\(userId)' && orderId == null && deleted == false"
+                
+                var query = "SELECT * FROM cartLineItems WHERE workspaceId = :workspaceId AND userId = :userId AND orderId IS NULL AND deleted = false"
+                var args: [String: Any?] = [
+                    "workspaceId": workspaceId,
+                    "userId": userId,
+                ]
+                
                 if let orderId = orderId {
-                    query = "workspaceId == '\(workspaceId)' && userId == '\(userId)' && orderId == '\(orderId)' && deleted == false"
+                    query = "SELECT * FROM cartLineItems WHERE workspaceId = :workspaceId AND userId = :userId AND orderId = :orderId AND deleted = false"
+                    args = [
+                        "workspaceId": workspaceId,
+                        "userId": userId,
+                        "orderId": orderId
+                    ]
                 }
-
-                return self.ditto.store["cartLineItems"]
-                    .find(query)
-                    .documents$().mapToDittoModel(type: CartLineItem.self)
+                
+                return self.ditto
+                    .resultItems$(query: query, args: args)
+                    .mapToDittoModel(type: CartLineItem.self)
             }
     }
 
@@ -27,11 +37,19 @@ extension DataService {
         return self.workspaceId$
             .flatMapLatest { [weak self] (workspaceId) -> Observable<[CartLineItem]> in
                 guard let `self` = self else { return Observable.empty() }
-                let containsPredicate: String = orderIds.map{ "'\($0)'" }.joined(separator: ",")
-                let query = "workspaceId == '\(workspaceId)' && contains([\(containsPredicate)], orderId) && deleted == false"
-                return self.ditto.store["cartLineItems"]
-                    .find(query)
-                    .documents$().mapToDittoModel(type: CartLineItem.self)
+
+                let containsPredicate: [String] = orderIds.map { $0 }
+                
+                let query = "SELECT * FROM cartLineItems WHERE workspaceId = :workspaceId AND deleted = false AND array_contains(:containsPredicate, orderId)"
+                
+                let args: [String: Any?] = [
+                    "workspaceId": workspaceId,
+                    "containsPredicate": containsPredicate
+                ]
+                
+                return self.ditto
+                    .resultItems$(query: query, args: args)
+                    .mapToDittoModel(type: CartLineItem.self)
             }
     }
 
@@ -42,71 +60,148 @@ extension DataService {
      */
     func setCartLineItem(cartLineItemId: String? = nil, userId: String, menuItemId: String, quantity: Int, options: [String]) -> Observable<Void> {
         guard let workspaceId = UserDefaults.standard.workspaceId?.description else { return Observable.empty() }
-        self.ditto.store.write { (trx) in
-            if let cartLineItemId = cartLineItemId {
-                trx["cartLineItems"].findByID(cartLineItemId).update { (doc) in
-                    guard let doc = doc else { return }
-                    doc["quantity"].set(quantity)
-                    doc["options"].set(DittoRegister(value: options))
-                    doc["menuItemId"].set(menuItemId)
-                    doc["userId"].set(userId)
-                    doc["workspaceId"].set(workspaceId)
+        
+        Task {
+            do {
+                
+                if let cartLineItemId = cartLineItemId {
+                    
+                    let query = "UPDATE cartLineItems SET quantity = :quantity, options = :options, menuItemId = :menuItemId, userId = :userId, workspaceId = :workspaceId WHERE _id = :id"
+                    
+                    let args: [String:Any] = [
+                        "quantity": quantity,
+                        "options": options,
+                        "menuItemId": menuItemId,
+                        "userId": userId,
+                        "workspaceId": workspaceId,
+                        "id": cartLineItemId as Any
+                    ]
+                    
+                    try await self.ditto.store.execute(query: query, arguments: args)
+                } else {
+                    
+                    let query = "INSERT INTO cartLineItems DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE"
+                    
+                    let newDoc: [String:Any?] = [
+                        "quantity": quantity,
+                        "options": options,
+                        "menuItemId": menuItemId,
+                        "userId": userId,
+                        "workspaceId": workspaceId,
+                        "orderId": nil,
+                        "deleted": false
+                    ]
+                    
+                    try await self.ditto.store.execute(query: query, arguments: ["newDoc": newDoc])
                 }
-            } else {
-                try! trx["cartLineItems"].upsert([
-                    "quantity": quantity,
-                    "options": options,
-                    "menuItemId": menuItemId,
-                    "userId": userId,
-                    "workspaceId": workspaceId,
-                    "orderId": nil,
-                    "deleted": false
-                ])
+                
+            } catch {
+                print("Error \(error)")
             }
         }
+
         return Observable.just(Void())
     }
 
     func clearCartLineItems(for userId: String, with orderId: String? = nil) -> Observable<Void> {
         return self.workspaceId$
             .flatMapLatest { workspaceId -> Observable<Void> in
+                Task {
+                    do {
+                        
+                        var query = "SELECT * FROM cartLineItems WHERE workspaceId = :workspaceId AND userId = :userId AND orderId IS NULL"
+                        
+                        var args: [String: Any?] = [
+                            "workspaceId": workspaceId,
+                            "userId": userId,
+                        ]
+                        
+                        if let orderId = orderId {
+                            query = "SELECT * FROM cartLineItems WHERE workspaceId = :workspaceId AND userId = :userId AND orderId = :orderId"
 
-                var query = "workspaceId == '\(workspaceId)' && userId == '\(userId)' && orderId == null"
-                if let orderId = orderId {
-                    query = "workspaceId == '\(workspaceId)' && userId == '\(userId)' && orderId == '\(orderId)'"
-                }
-                                
-                let cartLineItemsDocs = self.ditto.store["cartLineItems"].find(query).exec()
-                for doc in cartLineItemsDocs {
-                    self.ditto.store["cartLineItems"].findByID(doc.id).update { (mutable) in
-                        guard let mutable = mutable else { return }
-                        mutable["deleted"].set(true)
+                            args = [
+                                "workspaceId": workspaceId,
+                                "userId": userId,
+                                "orderId": orderId
+                            ]
+                        }
+                        
+                        let cartLineItemsDocs = try await self.ditto.store.execute(query: query, arguments: args).items
+                        
+                        for result in cartLineItemsDocs {
+                            let query = "UPDATE cartLineItems SET deleted = :deleted WHERE _id = :id"
+                            
+                            let args: [String:Any] = [
+                                "deleted": true,
+                                "id": result.value["_id"] as Any
+                            ]
+                            
+                            try await self.ditto.store.execute(query: query, arguments: args)
+                        }
+                        
+                    } catch {
+                        print("Error \(error)")
                     }
                 }
-                
                 
                 return Observable.just(())
             }
     }
 
     func removeCartLineItem(id: String) -> Observable<Void> {
-        self.ditto.store["cartLineItems"].findByID(id).update { (mutable) in
-            guard let mutable = mutable else { return }
-            mutable["deleted"].set(true)
+
+        Task {
+            do {
+                
+                let query = "UPDATE cartLineItems SET deleted = :deleted WHERE _id = :id"
+                
+                let args: [String:Any] = [
+                    "deleted": true,
+                    "id": id
+                ]
+                
+                try await self.ditto.store.execute(query: query, arguments: args)
+                
+            } catch {
+                print("Error \(error)")
+            }
         }
+
         return Observable.just(())
     }
 
-    func changeOrderStatus(orderId: String, status: Order.Status) {
-        self.orders.findByID(orderId).update { (m) in
-            m?["status"].set(status.rawValue)
+    func changeOrderStatus(orderId: String, status: Order.Status) async {
+        
+        do {
+            
+            let query = "UPDATE orders SET status = :status WHERE _id = :id"
+            
+            let args: [String:Any] = [
+                "status": status.rawValue,
+                "id": orderId
+            ]
+            
+            try await self.ditto.store.execute(query: query, arguments: args)
+            
+        } catch {
+            print("Error \(error)")
         }
     }
 
-    func deleteOrder(orderId: String) {
-        self.orders.findByID(orderId).update { (mutable) in
-            guard let mutable = mutable else { return }
-            mutable["deleted"].set(true)
+    func deleteOrder(orderId: String) async {
+        do {
+            
+            let query = "UPDATE orders SET deleted = :deleted WHERE _id = :id"
+            
+            let args: [String:Any] = [
+                "deleted": true,
+                "id": orderId
+            ]
+            
+            try await self.ditto.store.execute(query: query, arguments: args)
+            
+        } catch {
+            print("Error \(error)")
         }
     }
 

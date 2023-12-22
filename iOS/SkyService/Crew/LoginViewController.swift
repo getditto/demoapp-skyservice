@@ -181,7 +181,9 @@ final class LoginViewController: FormViewController {
         let seat: String? = (form.values()["seat"] as? String)?.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         let workspaceId: WorkspaceId = WorkspaceId(departureDate: departureDate, flightNumber: formattedFlightNumber)
         UserDefaults.standard.workspaceId = workspaceId
-        DataService.shared.setUser(id: DataService.shared.userId, name: name, seat: seat, role: Bundle.main.isCrew ? .crew : .passenger)
+        Task {
+            await DataService.shared.setUser(id: DataService.shared.userId, name: name, seat: seat, role: Bundle.main.isCrew ? .crew : .passenger)
+        }
 
         if Bundle.main.isCrew {
             (UIApplication.shared.delegate as? AppDelegate)?.setRootViewController(MainCrewTabController(), animated: true)

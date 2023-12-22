@@ -129,15 +129,15 @@ struct Order: Equatable, DittoModel {
     var userId: String
     var crewNote: String
     var deleted: Bool
-
-    init(document: DittoDocument) {
-        self.id = document.id.toString()
-        self.createdOn = Date(dateString: document["createdOn"].stringValue)
-        self.userId = document["userId"].stringValue
-        self.total = document["total"].floatValue
-        self.status = Status(rawValue: document["status"].intValue) ?? .open
-        self.crewNote = document["crewNote"].stringValue
-        self.deleted = document["deleted"].boolValue
+    
+    init(resultItem: [String : Any?]) {
+        self.id = resultItem["_id"] as! String
+        self.total = resultItem["total"] as? Float ?? 0
+        self.createdOn = Date(dateString: resultItem["createdOn"] as? String ?? "")
+        self.status = Status(rawValue: resultItem["status"] as? Int ?? 0) ?? .open
+        self.userId = resultItem["userId"] as? String ?? ""
+        self.crewNote = resultItem["crewNote"] as? String ?? ""
+        self.deleted = resultItem["deleted"] as? Bool ?? false
     }
 }
 

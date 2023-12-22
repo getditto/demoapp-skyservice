@@ -7,10 +7,12 @@ extension DataService {
         return workspaceId$
             .flatMapLatest { [weak self] workspaceId -> Observable<Bool> in
                 guard let `self` = self else { return Observable.just(false) }
-                return self.ditto.store["workspaces"].findByID(workspaceId).document$()
-                    .map({ doc in
-                        guard let doc = doc else { return true }
-                        return doc["isOrderingEnabled"].bool ?? true
+                
+                return self.ditto
+                    .resultItems$(query: "SELECT * FROM workspaces WHERE _id = :id", args: ["id": workspaceId])
+                    .map({ docs in
+                        guard let doc = docs.first else { return true }
+                        return doc.value["isOrderingEnabled"] as? Bool ?? true
                     })
             }
     }
@@ -20,33 +22,61 @@ extension DataService {
         return workspaceId$
             .flatMapLatest { [weak self] workspaceId -> Observable<String> in
                 guard let self = self else { return Observable.just("") }
-                return self.ditto.store["workspaces"].findByID(workspaceId).document$()
-                    .map({ doc in
-                        return doc?["welcomeMessage"].string ?? defaultMessage
+                
+                return self.ditto
+                    .resultItems$(query: "SELECT * FROM workspaces WHERE _id = :id", args: ["id": workspaceId])
+                    .map({ docs in
+                        guard let doc = docs.first else { return "" }
+                        return doc.value["welcomeMessage"] as? String ?? defaultMessage
                     })
             }
     }
 
-    func updateWelcomeMessage(_ message: String) {
+    func updateWelcomeMessage(_ message: String) async {
         guard let workspaceId = UserDefaults.standard.workspaceId?.description else { return }
-        ditto.store["workspaces"].findByID(workspaceId).update { m in
-            m?["welcomeMessage"].set(message)
+        
+        do {
+            let query = "UPDATE workspaces SET welcomeMessage = :welcomeMessage WHERE _id = :id"
+            
+            let args: [String:Any] = [
+                "welcomeMessage": message,
+                "id": workspaceId
+            ]
+            
+            try await ditto.store.execute(query: query, arguments: args)
+            
+        } catch {
+            print("Error \(error)")
         }
     }
 
-    func setEnableOrdering(isOrderingEnabled: Bool) {
+    func setEnableOrdering(isOrderingEnabled: Bool) async {
         guard let workspaceId = UserDefaults.standard.workspaceId?.description else { return }
-        ditto.store.write { (txn) in
-            if txn["workspaces"].findByID(workspaceId).exec() != nil {
-                txn["workspaces"].findByID(workspaceId).update { (m) in
-                    m?["isOrderingEnabled"].set(isOrderingEnabled)
-                }
+        
+        do {
+            
+            if (try await ditto.store.execute(query: "SELECT * FROM workspaces WHERE workspaceId = :workspaceId", arguments: ["workspaceId": workspaceId]).items.isNotEmpty) {
+                
+                let query = "UPDATE workspaces SET isOrderingEnabled = :isOrderingEnabled WHERE _id = :id"
+                
+                let args: [String:Any] = [
+                    "isOrderingEnabled": isOrderingEnabled,
+                    "id": workspaceId
+                ]
+                
+                try await self.ditto.store.execute(query: query, arguments: args)
             } else {
-                try! txn["workspaces"].upsert([
+                
+                let newDoc: [String:Any] = [
                     "_id": workspaceId.toDittoID(),
                     "isOrderingEnabled": isOrderingEnabled
-                ])
+                ]
+                        
+                try await self.ditto.store.execute(query: "INSERT INTO workspaces DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE", arguments: ["newDoc": newDoc])
             }
+
+        } catch {
+            print("Error \(error)")
         }
     }
 

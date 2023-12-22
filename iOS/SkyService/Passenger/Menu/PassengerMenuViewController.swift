@@ -139,11 +139,7 @@ class PassengerMenuViewController: UIViewController, SettingsViewControllerDeleg
                 .map({ _ in item })
                 .bind(to: self.viewModel.addButtonTappedSubject$)
                 .disposed(by: cell.disposeBag)
-            if Bundle.main.isCrew, let remainsCount = item.menuItem.remainsCount {
-                cell.textLabel?.text = "(\(remainsCount)) " + item.menuItem.name
-            } else {
-                cell.textLabel?.text = item.menuItem.name
-            }
+            cell.textLabel?.text = item.menuItem.name
             cell.textLabel?.font = UIFont.boldSystemFont(ofSize: UIFont.labelFontSize + 3)
             cell.detailTextLabel?.text = item.menuItem.details
             cell.detailTextLabel?.font = UIFont.systemFont(ofSize: UIFont.systemFontSize)
@@ -200,7 +196,9 @@ class PassengerMenuViewController: UIViewController, SettingsViewControllerDeleg
 
     func logoutButtonDidClick() {
         DataService.shared.stopSyncing()
-        DataService.shared.evictAllData()
+        Task {
+            await DataService.shared.evictAllData()
+        }
         UserDefaults.standard.workspaceId = nil
         let loginNav = UINavigationController(rootViewController: LoginViewController())
         (UIApplication.shared.delegate as! AppDelegate).setRootViewController(loginNav, animated: true)

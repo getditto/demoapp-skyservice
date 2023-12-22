@@ -3,28 +3,30 @@ import DittoSwift
 
 extension DataService {
 
-    func deleteCategoriesAndMenu() {
+    func deleteCategoriesAndMenu() async {
         guard let workspaceId = UserDefaults.standard.workspaceId?.description else { return }
-        ditto.store.write { (tx) in
-            let categoriesDocs = tx["categories"].find("workspaceId == '\(workspaceId)'").exec()
-            for doc in categoriesDocs {
-                tx["categories"].findByID(doc.id).update { (mutable) in
-                    guard let mutable = mutable else { return }
-                    mutable["deleted"].set(true)
-                }
+        
+        //Use Write Transactions when available in DQL
+        do {
+            let categoryRresults = try await ditto.store.execute(query: "SELECT * FROM categories WHERE workspaceId = :workspaceId", arguments: ["workspaceId": workspaceId]).items
+            
+            for result in categoryRresults {
+                try await self.ditto.store.execute(query: "UPDATE categories SET deleted = :deleted WHERE _id = :id", arguments: ["deleted": true, "id": result.value["_id"] as Any?])
             }
             
-            let menuDocs = tx["menuItems"].find("workspaceId == '\(workspaceId)'").exec()
-            for doc in menuDocs {
-                tx["menuItems"].findByID(doc.id).update { (mutable) in
-                    guard let mutable = mutable else { return }
-                    mutable["deleted"].set(true)
-                }
+            let menuResults = try await ditto.store.execute(query: "SELECT * FROM menuItems WHERE workspaceId = :workspaceId", arguments: ["workspaceId": workspaceId]).items
+            
+            for result in menuResults {
+                try await self.ditto.store.execute(query: "UPDATE menuItems SET deleted = :deleted WHERE _id = :id", arguments: ["deleted": true, "id": result.value["_id"] as Any?])
             }
+
+        } catch {
+            print("Error: \(error)")
         }
+
     }
 
-    func prepopulateMenuItems() {
+    func prepopulateMenuItems() async {
         guard let workspaceId = UserDefaults.standard.workspaceId?.description else { return }
 
         let categoryData: [[String: Any]] = [
@@ -88,8 +90,6 @@ extension DataService {
                 "details": "A simple light garden salad with red wine vinagrette.",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -101,8 +101,6 @@ extension DataService {
                 "details": "Also comes with a side of balsamic vinagrette.",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -114,8 +112,6 @@ extension DataService {
                 "details": "Crispy sea salted potato chips. 120 calories.",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -127,8 +123,6 @@ extension DataService {
                 "details": "Bite size chocolate cookies. 11 calories each.",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -140,8 +134,6 @@ extension DataService {
                 "details": "Cheese, dates, nuts, and dried berries",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -153,8 +145,6 @@ extension DataService {
                 "details": "Turkey, lettuce, mustard, mayonaise sandwich warmed.",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -166,8 +156,6 @@ extension DataService {
                 "details": "Cold fresh curry and sweet potato chicken with fork and knife.",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -179,8 +167,6 @@ extension DataService {
                 "details": "Roast beef, lettuce, mustard, mayonaise sandwich warmed.",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -192,8 +178,6 @@ extension DataService {
                 "details": "Spaghetti and vegan meatballs. Hot and comes with a side of grated parmesan cheese.",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             // desserts
@@ -206,8 +190,6 @@ extension DataService {
                 "details": "Comes with strawberry, mango, or green tea flavors",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -219,8 +201,6 @@ extension DataService {
                 "details": "Fudge comes hot.",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
 
@@ -234,8 +214,6 @@ extension DataService {
                 "details": "From Australia",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -247,8 +225,6 @@ extension DataService {
                 "details": "From Boston",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -260,8 +236,6 @@ extension DataService {
                 "details": "From California",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             // non-alcoholic-drinks
@@ -274,8 +248,6 @@ extension DataService {
                 "details": "Classic or Vanilla",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -287,8 +259,6 @@ extension DataService {
                 "details": "Comes also as diet pepsi",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ],
             [
@@ -300,13 +270,11 @@ extension DataService {
                 "details": "With Cream or Sugar",
                 "maxCartQuantityPerUser": 5,
                 "createdOn": Date().isoDateString,
-                "totalCount": nil,
-                "usedCount": nil,
                 "deleted": false
             ]
         ]
 
-        ditto.store.write { (tx) in
+        do {
             for category in categoryData {
                 let id = category["id"] as! String
                 let name = category["name"] as! String
@@ -314,8 +282,8 @@ extension DataService {
                 let ordinal = category["ordinal"] as! Double
                 let workspaceId = category["workspaceId"] as! String
                 let isCrewOnly = category["isCrewOnly"] as! Bool
-
-                let _ = try! tx["categories"].upsert([
+                
+                let newDoc: [String:Any] = [
                     "_id": id.toDittoID(),
                     "name": name,
                     "details": details,
@@ -323,15 +291,21 @@ extension DataService {
                     "workspaceId": workspaceId,
                     "isCrewOnly": isCrewOnly,
                     "deleted": false
-                ], writeStrategy: .insertDefaultIfAbsent)
+                ]
+                
+                try await self.ditto.store.execute(query: "INSERT INTO categories DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE", arguments: ["newDoc": newDoc])
+            }
+                
+            for menuItem in menuItemsData {
+                try await self.ditto.store.execute(query: "INSERT INTO menuItems DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE", arguments: ["newDoc": menuItem])
             }
 
-            for menuItem in menuItemsData {
-                let _ = try? tx["menuItems"].upsert(
-                    menuItem,
-                    writeStrategy: .insertDefaultIfAbsent)
-            }
+        } catch {
+            print("Error \(error)")
         }
+        
+        
+        
     }
 
 
