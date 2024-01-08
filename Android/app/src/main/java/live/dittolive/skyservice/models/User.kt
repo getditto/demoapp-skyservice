@@ -4,10 +4,11 @@ import live.ditto.DittoDocument
 import live.ditto.DittoDocumentId
 
 data class User(
-    val document: DittoDocument
+    val resultItem: Map<String, Any?>
 ) {
-    val id: DittoDocumentId = document.id
-    val name: String = document["name"].stringValue
-    val seat: String? = document["seat"].string
-    var deleted = document["deleted"].booleanValue
+    val id: String = resultItem["_id"] as String
+    val name: String = resultItem["name"] as String
+    val seat: String? = resultItem["seat"] as String
+    var deleted = resultItem["deleted"] as Boolean
+
 }

@@ -15,12 +15,14 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.switchmaterial.SwitchMaterial
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import kotlinx.coroutines.launch
 import live.dittolive.skyservice.*
 import live.dittolive.skyservice.models.SectionOfSettingItems
 import java.util.*
@@ -77,7 +79,9 @@ class SettingsActivity: AppCompatActivity(), ListAction {
         )
 
         if (name.isValidName() || seat.isValidSeatFormat()) {
-            DataService.setMyUser(name, seat)
+            lifecycleScope.launch {
+                DataService.setMyUser(name, seat)
+            }
             finish()
         }
     }

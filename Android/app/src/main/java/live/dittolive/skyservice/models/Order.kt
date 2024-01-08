@@ -6,7 +6,7 @@ import live.dittolive.skyservice.toISODate
 import org.joda.time.DateTime
 import java.util.*
 
-data class Order(val document: DittoDocument) {
+data class Order(val resultItem: Map<String, Any?>) {
     enum class Status(val value: Int) {
         OPEN(0),
         PREPARING(1),
@@ -48,8 +48,8 @@ data class Order(val document: DittoDocument) {
         }
     }
 
-    var id: String = document.id.toString()
-    val createdOn: DateTime = document["createdOn"].stringValue.toISODate()
-    val status: Status = Status.fromInt(document["status"].intValue) ?: Status.OPEN
-    var deleted = document["deleted"].booleanValue
+    var id: String = resultItem["_id"] as String
+    val createdOn: DateTime = (resultItem["createdOn"] as String).toISODate()
+    val status: Status = Status.fromInt(resultItem["status"] as Int) ?: Status.OPEN
+    var deleted = resultItem["deleted"] as Boolean
 }

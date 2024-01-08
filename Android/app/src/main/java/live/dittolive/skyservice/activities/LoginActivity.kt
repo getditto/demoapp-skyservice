@@ -6,7 +6,10 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.AppCompatButton
+import androidx.lifecycle.lifecycleScope
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import live.ditto.*
 import live.ditto.transports.DittoSyncPermissions
 import live.ditto.transports.DittoTransportConfig
@@ -80,7 +83,9 @@ open class LoginActivity : AppCompatActivity(), DateSelection, FlightSelection {
             DataService.workspaceId = workspaceId.description
             DataService.userId = userId.toString()
             DataService.cachedDepartureDate = departureDate.time
-            DataService.setMyUser(name, seat);
+            lifecycleScope.launch {
+                DataService.setMyUser(name, seat);
+            }
             //24 hours from now
             val expiration = Date().time + (3600000 * 24)
             DataService.sessionExpiration = expiration
@@ -113,7 +118,9 @@ open class LoginActivity : AppCompatActivity(), DateSelection, FlightSelection {
              transportConfig.enableAllPeerToPeer()
              ditto.transportConfig = transportConfig
             ditto.startSync()
-            DataService.resetWorkspaces()
+             lifecycleScope.launch {
+                 DataService.resetWorkspaces()
+             }
         }
     }
 

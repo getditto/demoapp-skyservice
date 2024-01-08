@@ -45,7 +45,7 @@ class SkyServiceApplication: Application() {
                 true
             )
         )
-
+        
         // Sync Small Peer Info to Big Peer
         ditto?.smallPeerInfo?.isEnabled = true
         ditto?.smallPeerInfo?.syncScope = DittoSmallPeerInfoSyncScope.BigPeerOnly

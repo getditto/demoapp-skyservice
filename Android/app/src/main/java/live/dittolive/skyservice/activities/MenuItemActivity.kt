@@ -13,12 +13,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.functions.BiFunction
+import kotlinx.coroutines.launch
 import live.dittolive.skyservice.DataService
 import live.dittolive.skyservice.R
 import live.dittolive.skyservice.models.*
@@ -73,7 +75,9 @@ class MenuItemActivity: AppCompatActivity(), AddToCart {
 
     override fun addItemsToCart(menuItem: MenuItem, rowOfCartItems: List<RowOfCartItem>, quantity: Int) {
         val options = combineOptions(rowOfCartItems)
-        DataService.setCartLineItem(userId, menuItemId, quantity, options)
+        lifecycleScope.launch {
+            DataService.setCartLineItem(userId, menuItemId, quantity, options)
+        }
         finish()
     }
 
