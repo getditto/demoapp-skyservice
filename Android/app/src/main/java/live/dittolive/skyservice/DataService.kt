@@ -105,9 +105,7 @@ object DataService {
         val disposable = CompositeDisposable()
         val workspaceId = workspaceId ?: return
         val userId = this.userId ?: return
-
-//        this.populateSeenItems(workspaceId)
-
+        
         ditto?.let { ditto ->
             context?.let { context ->
 
