@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +21,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.functions.BiFunction
+import kotlinx.coroutines.launch
 import live.dittolive.skyservice.DataService
 import live.dittolive.skyservice.R
 import live.dittolive.skyservice.models.CartLineItem
@@ -37,7 +39,9 @@ class CartActivity: AppCompatActivity() {
 
         val checkoutButton = findViewById<AppCompatButton>(R.id.button_checkout)
         checkoutButton.setOnClickListener {
-            DataService.createOrder()
+            lifecycleScope.launch {
+                DataService.createOrder()
+            }
             val intent = Intent(this, OrdersActivity::class.java)
             startActivity(intent)
             finish()
@@ -53,7 +57,9 @@ class CartActivity: AppCompatActivity() {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val item = adapter.sectionOfCartMenuItems[viewHolder.adapterPosition]
                 val id = item.cartLineItem.id
-                DataService.removeCartLineItem(id)
+                lifecycleScope.launch {
+                    DataService.removeCartLineItem(id)
+                }
             }
         }
 
@@ -105,7 +111,9 @@ class CartActivity: AppCompatActivity() {
                 setTitle(getString(R.string.clear_cart))
                 setNegativeButton(getString(R.string.clear_yes)
                 ) { dialog, id ->
-                    DataService.clearCartLineItems()
+                    lifecycleScope.launch {
+                        DataService.clearCartLineItems()
+                    }
                     finish()
                 }
 

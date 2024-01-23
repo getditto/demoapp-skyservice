@@ -2,15 +2,15 @@ package live.dittolive.skyservice.models
 
 import live.ditto.DittoDocument
 
-data class MenuItemOption(val document: DittoDocument) {
+data class MenuItemOption(val resultItem: Map<String, Any?>) {
 
-    var id: String = document.id.toString()
-    var label: String = document["label"].stringValue
-    var menuItemId = document["menuItemId"].stringValue
-    var type = MenuItemOptionType.valueOf(document["type"].stringValue)
-    var isRequired: Boolean = document["isRequired"].booleanValue
-    var allowedValues = document["allowedValues"].listValue.map { it as? String ?: "" }
-    var deleted = document["deleted"].booleanValue
+    var id: String = resultItem["_id"] as String
+    var label: String = resultItem["label"] as String
+    var menuItemId = resultItem["menuItemId"] as String
+    var type = MenuItemOptionType.valueOf(resultItem["type"] as String)
+    var isRequired: Boolean = resultItem["isRequired"] as Boolean
+    var allowedValues = listOf(resultItem["allowedValues"] as String)
+    var deleted = resultItem["deleted"] as String
 
     companion object {
         enum class MenuItemOptionType constructor(val value: String) {

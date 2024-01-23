@@ -6,15 +6,13 @@ import org.joda.time.DateTime
 import java.util.*
 import kotlin.random.Random
 
-data class MenuItem(val document: DittoDocument) {
-    val id: String = document.id.toString()
-    val name: String = document["name"].stringValue
-    val details: String = document["details"].stringValue
-    val categoryId: String? = document["categoryId"].string
-    var totalCount: Int? = document["totalCount"].int
-    var usedCount: Int? = document["usedCount"].int
-    var isCrewOnly: Boolean = document["isCrewOnly"].booleanValue
-    var deleted = document["deleted"].booleanValue
+data class MenuItem(val resultItem: Map<String, Any?>) {
+    val id: String = resultItem["_id"] as String
+    val name: String = resultItem["name"] as String
+    val details: String = resultItem["details"] as String
+    val categoryId: String? = resultItem["categoryId"] as String
+    var isCrewOnly: Boolean = resultItem["isCrewOnly"] as Boolean? ?: false
+    var deleted = resultItem["deleted"] as Boolean
 
 
     var ordinal: Float? = null
@@ -24,20 +22,8 @@ data class MenuItem(val document: DittoDocument) {
     var options: List<MenuItemOption>? = null
 
     init {
-        document["ordinal"].float?.also {
-            this.ordinal = it
-        } ?: run {
-            this.ordinal = Random.nextDouble(0.0, 0.5).toFloat()
+        resultItem["ordinal"] as? Float ?: run {
+            this.ordinal = 0.0.toFloat()
         }
-    }
-
-    val remainsCount: Int?
-    get() {
-        totalCount?.let { total ->
-            val used = usedCount ?: 0
-            return total - used
-        }
-
-        return null
     }
 }

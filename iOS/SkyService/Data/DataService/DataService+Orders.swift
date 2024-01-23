@@ -44,9 +44,7 @@ extension DataService {
                             "deleted": false
                         ]
                         let resultID = try await self.ditto.store.execute(query: query, arguments: ["newDoc": newDoc]).mutatedDocumentIDs()
-                        
-                        var usedItems = [[String: Any]]()
-                        
+                                                
                         query = "UPDATE cartLineItems SET orderId = :orderId WHERE workspaceId = :workspaceId AND userId = :userId AND orderId IS NULL"
                         
                         let args: [String:Any] = [
@@ -59,13 +57,6 @@ extension DataService {
                         
                         query = "SELECT * FROM cartLineItems WHERE workspaceId = :workspaceId AND userId = :userId AND orderId = :orderId"
                         let results = try await self.ditto.store.execute(query: query, arguments: args).items
-                        
-                        for result in results {
-                            if let menuItemId = result.value["menuItemId"] as? String,
-                               let quantity = result.value["quantity"] as? Double {
-                                usedItems.append(["menuItemId": menuItemId, "quantity": quantity])
-                            }
-                        }
                         
                     } catch {
                         print("Error \(error)")

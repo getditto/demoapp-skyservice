@@ -2,25 +2,24 @@ package live.dittolive.skyservice.models
 
 import live.ditto.DittoDocument
 
-class CartLineItem(document: DittoDocument) {
+class CartLineItem(resultItem: Map<String, Any?>) {
 
     var id: String
     var menuItemId: String
     var quantity: Int
     var userId: String
     var options: List<String>
-    var orderId: String? = null
+    var orderId: String? = ""
     var deleted: Boolean
 
     init {
-        this.id = document.id.toString()
-        this.menuItemId = document["menuItemId"].stringValue
-        this.userId = document["userId"].stringValue
-        this.quantity = document["quantity"].intValue
-        this.userId = document["userId"].stringValue
-        this.options = document["options"].listValue.map { it as? String? ?: "" }
-        this.orderId = document["orderId"].string
-        this.deleted = document["deleted"].booleanValue
+        this.id = resultItem["_id"] as String
+        this.menuItemId = resultItem["menuItemId"] as String
+        this.userId = resultItem["userId"] as String
+        this.quantity = resultItem["quantity"] as Int
+        this.options = (resultItem["options"] as? Array<*>)?.filterIsInstance<String>() ?: emptyList()
+        this.orderId = resultItem["orderId"] as String? ?: ""
+        this.deleted = resultItem["deleted"] as Boolean
     }
 }
 

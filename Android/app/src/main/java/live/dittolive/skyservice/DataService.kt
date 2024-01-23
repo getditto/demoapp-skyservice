@@ -11,15 +11,22 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.functions.BiFunction
 import io.reactivex.rxjava3.functions.Function5
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import live.ditto.DittoLiveQueryEvent
-import live.ditto.DittoCounter
+import live.ditto.DittoQueryResultItem
 import live.ditto.DittoSubscription
 import live.dittolive.skyservice.SkyServiceApplication.Companion.context
 import live.dittolive.skyservice.SkyServiceApplication.Companion.ditto
 import live.dittolive.skyservice.models.*
 import org.joda.time.DateTime
+import java.lang.Exception
 import java.util.Optional
 import kotlin.collections.ArrayList
+
 
 
 object DataService {
@@ -71,10 +78,26 @@ object DataService {
      * Start listening to orders and menu items
      */
     fun setupSubscriptions(workspaceId: String) {
-        dittoSubscriptions.add(ditto!!.store.collection("orders").find("workspaceId == '${workspaceId}' && deleted == false").subscribe())
-        dittoSubscriptions.add(ditto!!.store.collection("menuItems").find("workspaceId == '${workspaceId}' && deleted == false").subscribe())
-        dittoSubscriptions.add(ditto!!.store.collection("categories").find("workspaceId == '${workspaceId}' && deleted == false").subscribe())
+        ditto!!.sync.registerSubscription("SELECT * FROM orders WHERE workspaceId = :workspaceId AND deleted = false", arguments = mapOf("workspaceId" to workspaceId))
+        ditto!!.sync.registerSubscription("SELECT * FROM menuItems WHERE workspaceId = :workspaceId AND deleted = false", arguments = mapOf("workspaceId" to workspaceId))
+        ditto!!.sync.registerSubscription("SELECT * FROM categories WHERE workspaceId = :workspaceId AND deleted = false", arguments = mapOf("workspaceId" to workspaceId))
+
         observeOrders()
+    }
+
+    private var seenOrders = mutableListOf<DittoQueryResultItem>()
+    private fun populateSeenItems(workspaceId: String) {
+        val dataScope: CoroutineScope = CoroutineScope(Job() + Dispatchers.Main)
+        dataScope.launch {
+
+            seenOrders = (ditto?.store?.execute(
+                "SELECT * FROM orders WHERE deleted = false AND workspaceId = :workspaceId",
+                mapOf("workspaceId" to workspaceId)
+            )?.items
+                ?: emptyList()).toMutableList()
+        }
+
+        dataScope.cancel()
     }
 
     @SuppressLint("MissingPermission")
@@ -82,17 +105,30 @@ object DataService {
         val disposable = CompositeDisposable()
         val workspaceId = workspaceId ?: return
         val userId = this.userId ?: return
-
+        
         ditto?.let { ditto ->
             context?.let { context ->
-                ditto.store.collection("orders")
-                    .find("workspaceId == '${workspaceId}' && userId == '${userId}' && deleted == false")
-                    .documentsWithEventInfo()
-                    .map { info ->
-                        when (info.liveQueryEvent) {
-                            is DittoLiveQueryEvent.Update -> {
-                                for (i in info.liveQueryEvent.updates) {
-                                    val order = Order(info.documents[i])
+
+                ditto.resultItems("SELECT * FROM orders WHERE workspaceId = :workspaceId AND userId = :userId AND deleted = false", mapOf("workspaceId" to workspaceId, "userId" to userId))
+                    .map { resultItems ->
+                        resultItems.forEach { item ->
+                            val itemId = item.value["_id"] as? String
+
+                            if (itemId != null) {
+                                val prevStatus = this.seenOrders
+                                    .mapNotNull { seenItem ->
+                                        if (seenItem.value["_id"] as? String == itemId) {
+                                            return@mapNotNull seenItem.value["status"] as? Int
+                                        } else {
+                                            return@mapNotNull null
+                                        }
+                                    }
+                                    .firstOrNull()
+
+                                val newStatus = item.value["status"] as? Int
+
+                                if (prevStatus != newStatus) {
+                                    val order = Order(item.value)
                                     val title = "Order Status Update"
                                     val body = "Your order has been ${order.status.humanReadable}"
                                     val builder =
@@ -106,8 +142,6 @@ object DataService {
                                     }
                                 }
                             }
-
-                            else -> {}
                         }
                     }
                     .doOnSubscribe { disposable.add(it) }
@@ -130,9 +164,12 @@ object DataService {
         val cartLineItems = cartLineItems(userId)
         val menuItemOptions = menuItemOptions()
         val menuItemsObs: Observable<List<MenuItem>> =
-            ditto!!.store.collection("menuItems").find("workspaceId == '${workspaceId}' && deleted == false").documents().map { docs ->
-                docs.map { MenuItem(it) }
-            } ?: Observable.empty()
+
+            ditto?.resultItems("SELECT * FROM menuItems WHERE workspaceId = :workspaceId AND deleted = false", mapOf("workspaceId" to workspaceId))
+                ?.map { docs ->
+                    docs.map { MenuItem(it.value) }
+                } ?: Observable.empty()
+
         val categories = categories()
         val canOrder = canOrder()
         return Observable.combineLatest(
@@ -147,10 +184,6 @@ object DataService {
 
                     if (menuItem.isCrewOnly) {
                         return@forEach
-                    }
-
-                    menuItem.remainsCount?.let { remains ->
-                        if (remains <= 0) return@forEach
                     }
 
                     menuItem.category = categoriesOriginal.firstOrNull { it.id == menuItem.categoryId }
@@ -176,97 +209,118 @@ object DataService {
             })
     }
 
-     fun resetWorkspaces() {
-        ditto!!.store.collection("workspaces").findAll().evict()
+     suspend fun resetWorkspaces() {
+         ditto!!.store.execute(query = "EVICT FROM workspaces")
     }
 
     fun welcomeMessage(): Observable<String> {
         val defaultMessage = "Welcome to SkyService!"
         val workspaceId = workspaceId ?: return Observable.empty()
-        return ditto!!.store.collection("workspaces").findByID(workspaceId).documentWithOptional().map { optional ->
-            if (optional.isPresent) {
-                val document = optional.get()
-                return@map document["welcomeMessage"].string ?: defaultMessage
-            }
-            return@map defaultMessage
-        }
+
+        return ditto?.resultWithOptional("SELECT * FROM workspaces WHERE _id = :id", mapOf("id" to workspaceId))
+            ?.map { optional ->
+                if (optional.isPresent) {
+                    val document = optional.get()
+                    return@map document.value["welcomeMessage"] as String? ?: defaultMessage
+                }
+                return@map defaultMessage
+            } ?: Observable.empty()
     }
 
     fun observeNearFlights(): Observable<List<Map<String, String>>> {
-        return ditto!!.store.collection("workspaces").findAll()
-            .documents().map { docs ->
-                val nearbyFlights = mutableListOf<Map<String, String>>()
-                val ids = docs.map { it.id.toString().split("::") }
-                ids.map {
-                    val map = mutableMapOf<String, String>()
-                    map.put("date", it[0])
-                    map.put("number", it[1])
-                    nearbyFlights.add(map)
-                }
-                nearbyFlights
+
+        return ditto?.resultItems("SELECT * FROM workspaces")?.map { docs ->
+            val nearbyFlights = mutableListOf<Map<String, String>>()
+            val ids = docs.map { it.value["_id"].toString().split("::") }
+            ids.map {
+                val map = mutableMapOf<String, String>()
+                map.put("date", it[0])
+                map.put("number", it[1])
+                nearbyFlights.add(map)
             }
+            nearbyFlights
+        } ?: Observable.just(emptyList())
+
     }
 
     fun orders(): Observable<List<Order>> {
         val workspaceId = workspaceId ?: return Observable.empty()
         val userId = this.userId ?: return Observable.empty()
-        return ditto!!.store.collection("orders").find("workspaceId == '${workspaceId}' && userId == '${userId}' && deleted == false")
-            .documentsWithEventInfo()
-            .map { info ->
-                return@map info.documents.map { Order(it) }.sortedByDescending { it.createdOn }
-            }
+
+        return ditto?.resultItems("SELECT * FROM orders WHERE workspaceId = :workspaceId AND userId = :userId AND deleted = false", mapOf("workspaceId" to workspaceId, "userId" to userId))
+            ?.map { items ->
+                return@map items.map { Order(it.value) }.sortedByDescending { it.createdOn }
+            } ?: Observable.just(emptyList())
     }
 
     fun categories(): Observable<List<Category>> {
         val workspaceId = workspaceId ?: return Observable.empty()
-        return ditto!!.store.collection("categories").find("workspaceId == '${workspaceId}' && deleted == false")
-            .documents().map { docs -> docs.map { Category(it) }.sortedBy { it.ordinal }
-            }
+
+        return ditto?.resultItems("SELECT * FROM categories WHERE workspaceId =:workspaceId AND deleted = false", mapOf("workspaceId" to workspaceId))
+            ?.map { docs -> docs.map { Category(it.value) }.sortedBy { it.ordinal }
+            } ?: Observable.empty()
     }
 
     fun canOrder(): Observable<Boolean> {
         val workspaceId = workspaceId ?: return Observable.empty()
-        return ditto!!.store.collection("workspaces").findByID(workspaceId).documentWithOptional().map { optional ->
-            if (optional.isPresent) {
-                val document = optional.get()
-                return@map document["isOrderingEnabled"].booleanValue
-            }
-            return@map true
-        }
+
+        return ditto?.resultWithOptional("SELECT * FROM workspaces WHERE _id = :id", mapOf("id" to workspaceId))
+            ?.map { optional ->
+                if (optional.isPresent) {
+                    val document = optional.get()
+                    return@map document.value["isOrderingEnabled"] as Boolean
+                }
+                return@map true
+            } ?: Observable.empty()
     }
 
     fun me(): Observable<User> {
-        return ditto!!.store.collection("users").findByID(this.userId!!).document()
-            .map { document ->
 
-                User(document)
-            }
+        return ditto?.resultItems("SELECT * FROM users WHERE _id = :id", mapOf("id" to this.userId as Any))
+            ?.map { document ->
+                User(document.first().value)
+            } ?: Observable.empty()
     }
 
     /**
      * This is only the passenger application
      * This will only set the name and the seat. The seat is non optional
      */
-    fun setMyUser(name: String, seat: String) {
+    suspend fun setMyUser(name: String, seat: String) {
         val workspaceId = workspaceId ?: return
-        ditto!!.store.write { txn ->
-            txn["users"].findById(this.userId!!.toDittoID()).exec()?.let { doc ->
-                txn["users"].findById(this.userId!!.toDittoID()).update { mutable ->
-                    val mutableDoc = mutable.let { it } ?: return@update
-                    mutableDoc["name"].set(name)
-                    mutableDoc["seat"].set(seat)
-                    mutableDoc["workspaceId"].set(workspaceId)
+            try {
+                if (this.userId != null && ditto!!.store.execute(
+                        "SELECT * FROM users WHERE _id = :id",
+                        arguments = mapOf("id" to this.userId)
+                    ).items.isNotEmpty()
+                ) {
+                    val query =
+                        "UPDATE users SET name = :name, seat = :seat, workspaceId = :workspaceId WHERE _id = :id"
+                    val args = mapOf(
+                        "id" to this.userId!!,
+                        "name" to name,
+                        "seat" to seat,
+                        "workspaceId" to workspaceId,
+                    )
+                    ditto!!.store.execute(query = query, arguments = args)
+                } else {
+                    var query = "INSERT INTO users DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE"
+                    var newDoc = mapOf(
+                        "_id" to this.userId!!,
+                        "name" to name,
+                        "seat" to seat,
+                        "workspaceId" to workspaceId,
+                        "deleted" to false
+                    )
+                    ditto!!.store.execute(query = query, arguments = mapOf("newDoc" to newDoc))
                 }
-            } ?: run {
-                txn["users"].upsert(mapOf(
-                    "_id" to this.userId!!,
-                    "name" to name,
-                    "seat" to seat,
-                    "workspaceId" to workspaceId,
-                    "deleted" to false
-                ))
+
+            } catch (e: Exception) {
+                println("Error: $e")
             }
-        }
+
+
+
         with(sharedPref.edit()) {
             putString("name", name);
             putString("seat", seat)
@@ -274,69 +328,83 @@ object DataService {
         }
     }
 
-    fun createOrder() {
+    suspend fun createOrder() {
         val workspaceId = workspaceId ?: return
         val userId = this.userId ?: return
-        ditto!!.store.write { txn ->
-            val insertedOrderId = txn["orders"].upsert(mapOf(
+
+        try {
+            var query = "INSERT INTO orders DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE"
+            var newDoc = mapOf (
                 "createdOn" to DateTime().toISOString(),
                 "userId" to userId,
                 "status" to Order.Status.OPEN.value,
                 "workspaceId" to workspaceId,
                 "total" to 0,
-                "usedCount" to DittoCounter(),
                 "deleted" to false
+            )
 
-            ))
-            var usedItems = mutableListOf<Map<String, Any>>()
-            txn["cartLineItems"].find("workspaceId == '${workspaceId}' && userId == '${userId}' && orderId == null").update { mutableDocs ->
-                for (mutableDoc in mutableDocs) {
-                    mutableDoc["orderId"].set(insertedOrderId)
-                    usedItems.add(mapOf("menuItemId" to mutableDoc["menuItemId"].stringValue, "quantity" to mutableDoc["quantity"].doubleValue))
-                }
-            }
-            usedItems.forEach { used ->
-                val id = used["menuItemId"] as String
-                val quantity = used["quantity"] as Double
-                txn["menuItems"].findById(id.toDittoID()).update { mutableDoc ->
-                    mutableDoc?.let {
-                        it["usedCount"].counter?.increment(quantity)
-                    }
-                }
-            }
+            var resultId = ditto?.store?.execute(query= query, arguments = mapOf("newDoc" to newDoc))
+                ?.mutatedDocumentIds()
+
+            query = "UPDATE cartLineItems SET orderId = :orderId WHERE workspaceId = :workspaceId AND userId = :userId AND orderId IS NULL"
+            var args = mapOf(
+                "orderId" to (resultId?.first() ?: ""),
+                "workspaceId" to workspaceId,
+                "userId" to userId
+            )
+
+            ditto?.store?.execute(query= query, arguments = args)
+
+        } catch (e: Exception) {
+            println("Error: $e")
         }
     }
 
     fun menuItemOptions(): Observable<List<MenuItemOption>> {
         val workspaceId = workspaceId ?: return Observable.empty()
-        return ditto!!.store.collection("menuItemOptions").find("workspaceId == '${workspaceId}' && deleted == false")
-            .documents().map { docs -> docs.map { MenuItemOption(it) }
-            }
+
+        return ditto?.resultItems(
+            "SELECT * FROM menuItemOptions WHERE workspaceId = :workspaceId AND deleted = false",
+            mapOf("workspaceId" to workspaceId)
+        )
+            ?.map { docs ->
+                docs.map { MenuItemOption(it.value) }
+            } ?: Observable.empty()
     }
 
     fun menuItemOptions(menuItemId: String): Observable<List<MenuItemOption>> {
-        return ditto!!.store.collection("menuItemOptions").find("menuItemId == '${menuItemId}' && deleted == false")
-            .documents().map { docs -> docs.map { MenuItemOption(it) }
-            }
+
+        return ditto?.resultItems(
+            "SELECT * FROM menuItemOptions WHERE menuItemId = :menuItemId AND deleted = false",
+            mapOf("menuItemId" to menuItemId)
+        )
+            ?.map { docs ->
+                docs.map { MenuItemOption(it.value) }
+
+
+            } ?: Observable.empty()
     }
 
     fun menuItems(): Observable<List<MenuItem>> {
         val workspaceId = workspaceId ?: return Observable.empty()
-        return ditto!!.store.collection("menuItems")
-            .find("workspaceId == '${workspaceId}' && deleted == false").documents().map { docs ->
-                docs.map { MenuItem(it) }
-            }
+
+        return ditto?.resultItems("SELECT * FROM menuItems WHERE workspaceId = :workspaceId AND deleted = false", mapOf("workspaceId" to workspaceId))
+            ?.map { docs ->
+                docs.map { MenuItem(it.value) }
+            } ?: Observable.empty()
     }
 
     fun menuItemById(id: String): Observable<Optional<MenuItem>> {
-        val menuItems: Observable<Optional<MenuItem>> = ditto!!.store.collection("menuItems")
-            .findByID(id).documentWithOptional().map { optional ->
-                if (optional.isPresent) {
-                    val document = optional.get()
-                    return@map Optional.of(MenuItem(document))
-                }
-                return@map Optional.empty()
-        }
+
+        val menuItems: Observable<Optional<MenuItem>> =
+            ditto?.resultWithOptional("SELECT * FROM menuItems WHERE _id = :id", mapOf("id" to id))
+                ?.map { optional ->
+                    if (optional.isPresent) {
+                        val document = optional.get()
+                        return@map Optional.of(MenuItem(document.value))
+                    }
+                    return@map Optional.empty()
+                } ?: Observable.empty()
 
         val categories = categories()
         return Observable.combineLatest(menuItems, categories, BiFunction<Optional<MenuItem>, List<Category>, Optional<MenuItem>> { menuItemOriginal, categoriesOriginal ->
@@ -355,27 +423,35 @@ object DataService {
      */
     fun cartLineItems(userId: String): Observable<List<CartLineItem>> {
         val workspaceId = workspaceId ?: return Observable.empty()
-        val query = "workspaceId == '${workspaceId}' && userId == '${userId}' && orderId == null && deleted == false"
-        return ditto!!.store.collection("cartLineItems").find(query)
-            .observeLocalDocuments().map { docs ->
-                docs.map { CartLineItem(it) }
-            }
+
+        return ditto?.observeLocalDocuments("SELECT * FROM cartLineItems WHERE workspaceId = :workspaceId AND userId = :userId AND orderId IS NULL AND deleted = false", mapOf("workspaceId" to workspaceId, "userId" to userId))
+            ?.map { docs ->
+                docs.map { CartLineItem(it.value) }
+            } ?: Observable.empty()
+
     }
 
     fun cartLineItems(orderIds: List<String>): Observable<List<CartLineItem>> {
         val workspaceId = workspaceId ?: return Observable.empty()
-        val containsPredicate: String = orderIds.joinToString { "'${it}'" }
-        val query = "workspaceId == '${workspaceId}' && contains([${containsPredicate}], orderId) &&  deleted == false"
-        return ditto!!.store.collection("cartLineItems").find(query)
-            .observeLocalDocuments().map { docs ->
-                docs.map { CartLineItem(it) }
-            }
+
+        val containsPredicate: List<String> = orderIds.map { it }
+
+        val query = "SELECT * FROM cartLineItems WHERE workspaceId = :workspaceId AND deleted = false AND array_contains(:containsPredicate, orderId)"
+
+        val args = mapOf("workspaceId" to workspaceId, "containsPredicate" to containsPredicate)
+
+        return ditto?.observeLocalDocuments(query, args)?.map { docs ->
+            docs.map { CartLineItem(it.value) }
+        } ?: Observable.empty()
+
     }
 
-    fun setCartLineItem(userId: String, menuItemId: String, quantity: Int, options: List<String>) {
+    suspend fun setCartLineItem(userId: String, menuItemId: String, quantity: Int, options: List<String>) {
         val workspaceId = workspaceId ?: return
-        ditto!!.store.write { txn ->
-            txn["cartLineItems"].upsert(mapOf(
+
+        try {
+            var query = "INSERT INTO cartLineItems DOCUMENTS (:newDoc) ON ID CONFLICT DO UPDATE"
+            var newDoc = mapOf (
                 "quantity" to quantity,
                 "options" to options,
                 "menuItemId" to menuItemId,
@@ -383,31 +459,42 @@ object DataService {
                 "workspaceId" to workspaceId,
                 "orderId" to null,
                 "deleted" to false
-            ))
+            )
+
+            ditto?.store?.execute(query = query, arguments = mapOf("newDoc" to newDoc))
+
+        } catch (e:Exception) {
+            println("Error: $e")
         }
     }
 
-    fun clearCartLineItems() {
+    suspend fun clearCartLineItems() {
         val workspaceId = workspaceId ?: return
         val userId = this.userId ?: return
-        val query = "workspaceId == '${workspaceId}' && userId == '${userId}' && orderId == null"
-        ditto!!.store.collection("cartLineItems").find(query).update { mutableDocs ->
-            for (mutableDoc in mutableDocs) {
-                mutableDoc["deleted"].set(true)
-            }
-        }
+
+        var query = "UPDATE cartLineItems SET deleted = :deleted WHERE workspaceId = :workspaceId AND userId = :userId AND orderId IS NULL"
+        var args = mapOf (
+            "workspaceId" to workspaceId,
+            "userId" to userId,
+            "deleted" to true
+        )
+
+        ditto?.store?.execute(query = query, arguments = args)
     }
 
-    fun removeCartLineItem(id: String) {
-        ditto!!.store.collection("cartLineItems").findByID(id).update { mutable ->
-            val mutableDoc = mutable.let { it } ?: return@update
-            mutableDoc["deleted"].set(true)
-        }
+    suspend fun removeCartLineItem(id: String) {
+        var query = "UPDATE cartLineItems SET deleted = :deleted WHERE workspaceId = :workspaceId AND userId = :userId AND orderId IS NULL"
+        var args = mapOf (
+            "workspaceId" to workspaceId,
+            "userId" to userId,
+            "deleted" to true
+        )
+        ditto?.store?.execute(query = query, arguments = args)
     }
 
-    fun evictAllData() {
+    suspend fun evictAllData() {
         ditto!!.store.collectionNames().forEach {
-            ditto!!.store.collection(it).findAll().evict()
+            ditto!!.store.execute("EVICT FROM $it")
         }
     }
 }

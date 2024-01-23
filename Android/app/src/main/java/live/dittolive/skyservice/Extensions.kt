@@ -12,35 +12,53 @@ import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.ISODateTimeFormat
 import java.util.*
 
-data class DocumentsWithEventInfo(val documents: List<DittoDocument>, val liveQueryEvent: DittoLiveQueryEvent)
-
-fun DittoPendingCursorOperation.documents(): Observable<List<DittoDocument>> {
+fun Ditto.resultItems(query: String, args: Map<String, Any>? = null): Observable<List<DittoQueryResultItem>> {
     return Observable.create { observer ->
+        try {
+            val subs: DittoSyncSubscription
+            val handler: DittoStoreObserver
 
-       val s = this.subscribe()
-       val h = this.observeLocal { docs, _ ->
-           observer.onNext(docs)
-       }
+            if (args == null) {
+                subs = sync.registerSubscription(query)
+                handler = store.registerObserver(query) { result ->
+                    observer.onNext(result.items)
+                }
+            } else {
+                subs = sync.registerSubscription(query, args)
+                handler = store.registerObserver(query, args) { result ->
+                    observer.onNext(result.items)
+                }
+            }
 
-        observer.setCancellable {
-            h.close()
-            s.close()
+            observer.setCancellable() {
+                subs.close()
+                handler.close()
+            }
+        } catch (e: Exception) {
+            println("Error $e")
         }
     }
 }
 
-fun DittoPendingCursorOperation.observeLocalDocuments(): Observable<List<DittoDocument>> {
+fun Ditto.observeLocalDocuments(query: String, args: Map<String, Any>? = null): Observable<List<DittoQueryResultItem>> {
     return Observable.create { observer ->
 
-        val h = this.observeLocal { docs, _ ->
-            observer.onNext(docs)
+        val handler: DittoStoreObserver = if (args == null) {
+            this.store.registerObserver(query) { result ->
+                observer.onNext(result.items)
+            }
+        } else {
+            this.store.registerObserver(query, args) { result ->
+                observer.onNext(result.items)
+            }
         }
 
         observer.setCancellable {
-            h.close()
+            handler.close()
         }
     }
 }
+
 fun String.toDittoID(): DittoDocumentId {
     return DittoDocumentId(this)
 }
@@ -49,47 +67,38 @@ fun DittoCollection.findByID(id: String): DittoPendingIdSpecificOperation {
     return findById(id)
 }
 
-fun DittoPendingCursorOperation.documentsWithEventInfo(): Observable<DocumentsWithEventInfo> {
+fun Ditto.resultWithOptional(query: String, args: Map<String, Any>? = null): Observable<Optional<DittoQueryResultItem>> {
     return Observable.create { observer ->
-        val s = this.subscribe()
-        val h = this.observeLocal { docs, event ->
-            observer.onNext(DocumentsWithEventInfo(docs, event))
-        }
-        observer.setCancellable {
-            h.close()
-            s.close()
-        }
-    }
-}
+        try {
+            val subs: DittoSyncSubscription
+            val handler: DittoStoreObserver
 
-fun DittoPendingIdSpecificOperation.document(): Observable<DittoDocument> {
-    return Observable.create { observer ->
-        val s = this.subscribe()
-        val h = this.observeLocal { doc, _ ->
-            if (doc != null) {
-                observer.onNext(doc)
-            }
-        }
-        observer.setCancellable {
-            h.close()
-            s.close()
-        }
-    }
-}
-
-fun DittoPendingIdSpecificOperation.documentWithOptional(): Observable<Optional<DittoDocument>> {
-    return Observable.create { observer ->
-        val s = this.subscribe()
-        val h = this.observeLocal { doc, _ ->
-            if (doc == null) {
-                observer.onNext(Optional.empty())
+            if (args == null) {
+                subs = sync.registerSubscription(query)
+                handler = store.registerObserver(query) { result ->
+                    if (result.items.isEmpty()) {
+                        observer.onNext(Optional.empty())
+                    } else {
+                        observer.onNext(Optional.of(result.items.first()))
+                    }
+                }
             } else {
-                observer.onNext(Optional.of(doc))
+                subs = sync.registerSubscription(query, args)
+                handler = store.registerObserver(query, args) { result ->
+                    if (result.items.isEmpty()) {
+                        observer.onNext(Optional.empty())
+                    } else {
+                        observer.onNext(Optional.of(result.items.first()))
+                    }
+                }
             }
-        }
-        observer.setCancellable {
-            h.close()
-            s.close()
+
+            observer.setCancellable() {
+                subs.close()
+                handler.close()
+            }
+        } catch (e: Exception) {
+            println("Error $e")
         }
     }
 }
