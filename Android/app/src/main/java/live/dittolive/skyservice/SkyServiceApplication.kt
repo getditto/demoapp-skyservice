@@ -23,6 +23,9 @@ class SkyServiceApplication: Application() {
             val workspaceId = DataService.workspaceId ?: return
             ditto?.startSync()
             DataService.setupSubscriptions(workspaceId)
+
+            // add workspaceId to small_peer_info
+            ditto?.smallPeerInfo?.metadata = mapOf("workspaceId" to workspaceId)
         }
     }
 
