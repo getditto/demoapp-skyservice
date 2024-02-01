@@ -25,7 +25,7 @@ class SkyServiceApplication: Application() {
             DataService.setupSubscriptions(workspaceId)
 
             // add workspaceId to small_peer_info
-            ditto?.smallPeerInfo?.metadata = mapOf("workspaceId" to workspaceId)
+            ditto?.smallPeerInfo?.metadata = mapOf("workspace_id" to workspaceId)
         }
     }
 
