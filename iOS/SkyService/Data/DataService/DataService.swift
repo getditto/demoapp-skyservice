@@ -429,6 +429,12 @@ final class DataService {
         }
         
         do {
+            
+            
+            //Add workspaceId to small_peer_info metadata
+            //This adds it right after the user logs in
+            try ditto.smallPeerInfo.setMetadata(["workspace_id": workspaceId])
+            
             if let id = id, !(try await ditto.store.execute(query: "SELECT * FROM users WHERE _id = :id", arguments: ["id": id]).items.isEmpty) {
                 
                 let query = "UPDATE users SET name = :name, seat = :seat, role = :role, workspaceId = :workspaceId WHERE _id = :id"
