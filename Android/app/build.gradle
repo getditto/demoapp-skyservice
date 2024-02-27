@@ -58,7 +58,7 @@ android {
 }
 
 dependencies {
-    implementation "live.ditto:ditto:4.4.4"
+    implementation "live.ditto:ditto:4.5.4"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     implementation 'androidx.appcompat:appcompat:1.2.0'
