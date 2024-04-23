@@ -1,4 +1,5 @@
 {
+  "originHash" : "d6e2eba8790513e2f686b0fa00f0fba4675db9e0b813fcc87342a593bc66f579",
   "pins" : [
     {
       "identity" : "bettersegmentedcontrol",
@@ -32,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getditto/DittoSwiftPackage",
       "state" : {
-        "revision" : "be03dc47d1517fb669f173833625262340b4aab8",
-        "version" : "4.5.1"
+        "revision" : "808b636b11ddd129b956cc8d9c71534880a8a1f1",
+        "version" : "4.7.0"
       }
     },
     {
@@ -145,5 +146,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
