@@ -1227,7 +1227,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.3;
+				MARKETING_VERSION = 2.1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = live.ditto.skyservice.pax;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1253,7 +1253,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.3;
+				MARKETING_VERSION = 2.1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = live.ditto.skyservice.pax;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "match AppStore *";
@@ -1279,7 +1279,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.3;
+				MARKETING_VERSION = 2.1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = live.ditto.skyservice.crew;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1302,7 +1302,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2.1.3;
+				MARKETING_VERSION = 2.1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = live.ditto.skyservice.crew;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_COMPILATION_MODE = singlefile;
@@ -1349,7 +1349,7 @@
 			repositoryURL = "https://github.com/getditto/DittoSwiftPackage";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 4.5.1;
+				minimumVersion = 4.7.0;
 			};
 		};
 		CC8F6073297927BF0088D5CF /* XCRemoteSwiftPackageReference "DittoSwiftTools" */ = {
