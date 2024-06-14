@@ -5,14 +5,14 @@ import RxOptional
 
 final class AuthDelegate: DittoAuthenticationDelegate {
     func authenticationRequired(authenticator: DittoAuthenticator) {
-        authenticator.loginWithToken(Env.DITTO_AUTH_PASSWORD, provider: Env.DITTO_AUTH_PROVIDER)  { err in
-            print("Login request completed. Error? \(String(describing: err))")
+        authenticator.login(token: "password", provider: "dnero-test")  { message, err in
+            print("Login request completed. Error? \(message ?? "") \(String(describing: err))")
         }
     }
 
     func authenticationExpiringSoon(authenticator: DittoAuthenticator, secondsRemaining: Int64) {
-        authenticator.loginWithToken(Env.DITTO_AUTH_PASSWORD, provider: Env.DITTO_AUTH_PROVIDER)  { err in
-            print("Login request completed. Error? \(String(describing: err))")
+        authenticator.login(token: "password", provider: "dnero-test")  { message, err in
+            print("Login request completed. Error? \(message ?? "") \(String(describing: err))")
         }
     }
 }
@@ -50,7 +50,12 @@ final class DataService {
         DittoLogger.minimumLogLevel = DittoLogLevel.debug
 
         self.authDelegate = AuthDelegate()
-        ditto = Ditto(identity: .onlineWithAuthentication(appID: Env.DITTO_APP_ID, authenticationDelegate: authDelegate))
+        ditto = Ditto(
+            identity: .onlineWithAuthentication(
+                appID: Env.DITTO_APP_ID,
+                authenticationDelegate: authDelegate
+            )
+        )
 
         // Sync Small Peer Info to Big Peer
         ditto.smallPeerInfo.isEnabled = true
