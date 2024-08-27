@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
 
     defaultConfig {
         applicationId "live.dittolive.skyservice"
         minSdkVersion 26
-        targetSdkVersion 33
-        versionCode 38
+        targetSdkVersion 34
+        versionCode 39
         versionName "1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
