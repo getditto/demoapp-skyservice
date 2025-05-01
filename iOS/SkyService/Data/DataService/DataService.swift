@@ -5,13 +5,13 @@ import RxOptional
 
 final class AuthDelegate: DittoAuthenticationDelegate {
     func authenticationRequired(authenticator: DittoAuthenticator) {
-        authenticator.loginWithToken(Env.DITTO_AUTH_PASSWORD, provider: Env.DITTO_AUTH_PROVIDER)  { err in
+        authenticator.login(token: Env.DITTO_AUTH_PASSWORD, provider: Env.DITTO_AUTH_PROVIDER)  { _, err in
             print("Login request completed. Error? \(String(describing: err))")
         }
     }
 
     func authenticationExpiringSoon(authenticator: DittoAuthenticator, secondsRemaining: Int64) {
-        authenticator.loginWithToken(Env.DITTO_AUTH_PASSWORD, provider: Env.DITTO_AUTH_PROVIDER)  { err in
+        authenticator.login(token: Env.DITTO_AUTH_PASSWORD, provider: Env.DITTO_AUTH_PROVIDER)  { _, err in
             print("Login request completed. Error? \(String(describing: err))")
         }
     }
