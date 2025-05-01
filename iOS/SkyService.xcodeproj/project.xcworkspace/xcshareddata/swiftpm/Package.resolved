@@ -29,12 +29,21 @@
       }
     },
     {
+      "identity" : "dittopresenceviewercore",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/getditto/DittoPresenceViewerCore.git",
+      "state" : {
+        "revision" : "e67bc1e91054a0116d836c6a7e6bbf5b4a3d63bd",
+        "version" : "2.1.1"
+      }
+    },
+    {
       "identity" : "dittoswiftpackage",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getditto/DittoSwiftPackage",
       "state" : {
-        "revision" : "808b636b11ddd129b956cc8d9c71534880a8a1f1",
-        "version" : "4.7.0"
+        "revision" : "61d0027eef10737df1aacef7237cf5e2f126c46d",
+        "version" : "4.10.2"
       }
     },
     {
@@ -42,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getditto/DittoSwiftTools",
       "state" : {
-        "branch" : "v4",
-        "revision" : "600e3b82dbdf5d70ee35d1b470f3e47f2b69bb54"
+        "revision" : "974a281d0fc0ac35ee948e7d29c4875344af67bd",
+        "version" : "8.0.0"
       }
     },
     {

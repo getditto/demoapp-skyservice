@@ -1,9 +1,8 @@
 import RxSwift
 import SwiftUI
-import DittoExportLogs
 import Eureka
 import NotificationBannerSwift
-import DittoPresenceViewer
+import DittoAllToolsMenu
 import MessageUI
 
 protocol SettingsViewControllerDelegate: AnyObject {
@@ -144,29 +143,14 @@ class SettingsViewController: FormViewController {
             }.onCellSelection({ [unowned self] (_, _) in
                 self.sendFeedbackEmail()
             })
-            <<< ButtonRow("presence", { (row) in
-                row.title = "Presence"
+            <<< ButtonRow("dittoTools", { (row) in
+                row.title = "Ditto Tools"
                 row.cell.tintColor = .systemPurple
             }).onCellSelection({ [weak self] (_, _) in
                 guard let `self` = self else { return }
-                let viewController = DittoPresenceView(ditto: DataService.shared.ditto).viewController
-                if UIDevice.current.userInterfaceIdiom == .pad {
-                    viewController.modalPresentationStyle = .formSheet
-                }
-
-                self.present(viewController, animated: true) {
-                    if UIDevice.current.userInterfaceIdiom == .pad {
-                        viewController.presentationController?.presentedView?.gestureRecognizers?[0].isEnabled = false
-                    }
-                }
+                let vc = UIHostingController(rootView: AllToolsMenu(ditto: DataService.shared.ditto))
+                navigationController?.pushViewController(vc, animated: true)
             })
-        <<< ButtonRow("exportLogs", { (row) in
-            row.title = "Export Logs"
-            row.cell.tintColor = .systemPurple
-        }).onCellSelection({ [weak self] (_, _) in
-            guard let `self` = self else { return }
-            self.shareDittoLogs()
-        })
             
 
         form
@@ -250,23 +234,6 @@ class SettingsViewController: FormViewController {
 
     @objc func cancelButtonDidClick() {
         self.dismiss(animated: true, completion: nil)
-    }
-    
-    private func shareDittoLogs() {
-        let alert = UIAlertController(title: "Export Logs", message: "Compressing the logs may take a few seconds.", preferredStyle: .alert)
-
-        alert.addAction(UIAlertAction(title: "Export", style: .default) { [weak self] _ in
-            self?.exportLogs()
-        })
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-
-        present(alert, animated: true)
-    }
-    
-    private func exportLogs() {
-        let vc = UIHostingController(rootView: ExportLogs())
-
-        present(vc, animated: true)
     }
 
     func saveButtonDidClick() {

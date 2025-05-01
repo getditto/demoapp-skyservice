@@ -11,6 +11,8 @@
 		0E6382E3298C78AB0099A79A /* DittoPresenceViewer in Frameworks */ = {isa = PBXBuildFile; productRef = 0E6382E2298C78AB0099A79A /* DittoPresenceViewer */; };
 		0E6382EE298D94220099A79A /* DittoExportLogs in Frameworks */ = {isa = PBXBuildFile; productRef = 0E6382ED298D94220099A79A /* DittoExportLogs */; };
 		0E6382F0298D942C0099A79A /* DittoExportLogs in Frameworks */ = {isa = PBXBuildFile; productRef = 0E6382EF298D942C0099A79A /* DittoExportLogs */; };
+		1117FD872DC3C3E800D4C12F /* DittoAllToolsMenu in Frameworks */ = {isa = PBXBuildFile; productRef = 1117FD862DC3C3E800D4C12F /* DittoAllToolsMenu */; };
+		1117FD892DC3C3EE00D4C12F /* DittoAllToolsMenu in Frameworks */ = {isa = PBXBuildFile; productRef = 1117FD882DC3C3EE00D4C12F /* DittoAllToolsMenu */; };
 		2D024B1C260D29C100EE1044 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D024B1B260D29C100EE1044 /* AppDelegate.swift */; };
 		2D024B25260D29C400EE1044 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2D024B24260D29C400EE1044 /* Assets.xcassets */; };
 		2D024B28260D29C400EE1044 /* LaunchScreen-pax.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2D024B26260D29C400EE1044 /* LaunchScreen-pax.storyboard */; };
@@ -343,6 +345,7 @@
 				CC93C62F29E407FA0070B083 /* NotificationBannerSwift in Frameworks */,
 				CCB7014829E40C6600A0782C /* Differentiator in Frameworks */,
 				CC93C62529E4068C0070B083 /* SwiftHEXColors in Frameworks */,
+				1117FD872DC3C3E800D4C12F /* DittoAllToolsMenu in Frameworks */,
 				CC93C62C29E406FA0070B083 /* RxSwift in Frameworks */,
 				CCBE0DA629E42BE60066AFAE /* RxOptional in Frameworks */,
 				CC8F6072297927B00088D5CF /* DittoSwift in Frameworks */,
@@ -381,6 +384,7 @@
 				0E6382EE298D94220099A79A /* DittoExportLogs in Frameworks */,
 				CC33F58C29E433DF001CBF17 /* RxOptional in Frameworks */,
 				0E6382E3298C78AB0099A79A /* DittoPresenceViewer in Frameworks */,
+				1117FD892DC3C3EE00D4C12F /* DittoAllToolsMenu in Frameworks */,
 				CC33F58829E433DF001CBF17 /* RxSwift in Frameworks */,
 				CC33F57A29E43397001CBF17 /* Eureka in Frameworks */,
 			);
@@ -739,6 +743,7 @@
 				CCB7014729E40C6600A0782C /* Differentiator */,
 				CCB7014929E40C6600A0782C /* RxDataSources */,
 				CCBE0DA529E42BE60066AFAE /* RxOptional */,
+				1117FD862DC3C3E800D4C12F /* DittoAllToolsMenu */,
 			);
 			productName = Etihad;
 			productReference = 2D024B18260D29C100EE1044 /* SkyService Pax.app */;
@@ -778,6 +783,7 @@
 				CC33F58729E433DF001CBF17 /* RxSwift */,
 				CC33F58929E433DF001CBF17 /* RxDataSources */,
 				CC33F58B29E433DF001CBF17 /* RxOptional */,
+				1117FD882DC3C3EE00D4C12F /* DittoAllToolsMenu */,
 			);
 			productName = Etihad;
 			productReference = 2D6B863C260E283E00D05A97 /* SkyService Crew.app */;
@@ -1349,15 +1355,15 @@
 			repositoryURL = "https://github.com/getditto/DittoSwiftPackage";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 4.7.0;
+				minimumVersion = 4.10.0;
 			};
 		};
 		CC8F6073297927BF0088D5CF /* XCRemoteSwiftPackageReference "DittoSwiftTools" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/getditto/DittoSwiftTools";
 			requirement = {
-				branch = v4;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
 			};
 		};
 		CC93C62029E4065C0070B083 /* XCRemoteSwiftPackageReference "Eureka" */ = {
@@ -1470,6 +1476,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CC8F6073297927BF0088D5CF /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;
 			productName = DittoExportLogs;
+		};
+		1117FD862DC3C3E800D4C12F /* DittoAllToolsMenu */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC8F6073297927BF0088D5CF /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;
+			productName = DittoAllToolsMenu;
+		};
+		1117FD882DC3C3EE00D4C12F /* DittoAllToolsMenu */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CC8F6073297927BF0088D5CF /* XCRemoteSwiftPackageReference "DittoSwiftTools" */;
+			productName = DittoAllToolsMenu;
 		};
 		CC33F56F29E4336F001CBF17 /* BetterSegmentedControl */ = {
 			isa = XCSwiftPackageProductDependency;
