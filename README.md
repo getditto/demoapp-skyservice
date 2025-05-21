@@ -1,3 +1,5 @@
+[⚠️ This repository is now archived, and the code may be outdated.]
+
 # SkyService
 
 Inflight Meal Order without internet
